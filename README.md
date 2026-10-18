@@ -137,3 +137,18 @@ pytest -q --cov=literature_evidence_mcp --cov-branch --cov-report=term-missing -
 - Work records with no DOI are kept separate, even when providers report identical titles or the same provider returns repeated titles. Their `doi_status=MISSING` denotes missing evidence of work identity, not evidence that no DOI exists.
 - Provider disagreements and source provenance from v0.3.1 remain visible. No metadata consistency check or DOI format validation is a scientific truth verdict.
 - **Quality gate unchanged:** 100% statement and branch coverage across Python 3.11, 3.12 and 3.13, including DOI normalization and all error paths.
+
+## Node.js / TypeScript MCP adapter (v0.3.2)
+
+An optional **TypeScript v2 MCP stdio front end** is available under [`packages/npm`](packages/npm). It dynamically discovers the existing Python server's 17 MCP tools, forwards their input schemas and result/error statuses unchanged, and keeps all scientific decisions in the Python core. It provides a Node/npm integration point without rewriting or duplicating the scientific methodology. **Both Python and Node.js are required; this is not a standalone TypeScript scientific engine.**
+
+From a checked-out repository:
+
+```sh
+python -m pip install -e .
+npm install --prefix packages/npm
+npm run --prefix packages/npm build
+LITERATURE_EVIDENCE_PYTHON=python3 node packages/npm/dist/cli.js
+```
+
+Windows users should point `LITERATURE_EVIDENCE_PYTHON` to their installed Python executable. The npm package is prepared for publication; **a successful npm registry publication is not implied** by CI success. The Python test gate remains 100% statement/branch coverage; a separate Node.js CI job checks real client-to-Python MCP protocol behavior and **100% TypeScript line/branch/function coverage**, plus package packing. No Rust acceleration has been added.

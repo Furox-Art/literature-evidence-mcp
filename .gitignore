@@ -14,3 +14,7 @@ htmlcov/
 
 # Competing server smoke tests can generate this local-only cache.
 .athenaeum_cache/
+
+# Node.js MCP adapter build and dependency artifacts
+node_modules/
+*.tgz
