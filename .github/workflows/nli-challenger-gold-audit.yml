@@ -51,6 +51,29 @@ jobs:
           echo "ebc79588dd73ccfb6a3f6078519cfbf512c5305384c5ea1845bc71cd32216e86  $RUNNER_TEMP/small/model.safetensors" | sha256sum -c -
           echo "06d6fd89edd4f97816831626daafbdb0b029cf63bae8edc0bccab1d64e2e7707  $RUNNER_TEMP/fever/model.safetensors" | sha256sum -c -
           echo "d8148c6d49e0a7925134294c56326c71fe0ab1dc390e37355e00c7efbb488afa  $RUNNER_TEMP/general/model.safetensors" | sha256sum -c -
+      - name: Verify complete pinned challenger checkpoint manifests
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from literature_evidence_mcp.nli_challenger import CANDIDATES, verify_candidate_files
+
+          for candidate, directory in (
+              ("fever_anli_deberta_base", "fever"),
+              ("general_deberta_base", "general"),
+          ):
+              required = {
+                  "model.safetensors", "config.json", "tokenizer.json",
+                  "tokenizer_config.json", "spm.model",
+                  "special_tokens_map.json", "added_tokens.json",
+              }
+              assert required <= set(CANDIDATES[candidate]["files"])
+              verify_candidate_files(
+                  candidate, Path(os.environ["RUNNER_TEMP"]) / directory
+              )
+              print("Verified complete SHA-256 checkpoint manifest:", candidate)
+          PY
       - name: Recompute full HealthVer and SciFact comparisons on CPU
         shell: bash
         env:
