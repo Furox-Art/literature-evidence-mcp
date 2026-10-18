@@ -35,7 +35,7 @@ def metrics(ranked: list[int], gold: set[int]) -> dict[str, float]:
         raise ValueError("Repeated ranked document")
     positions = {doc: rank for rank, doc in enumerate(ranked)}
     answers = {
-        f"known_gold_recall_at_{k}": sum(positions.get(doc, len(ranked)) < k for doc in gold) / len(gold)
+        f"known_gold_recall_at_{k}": sum(positions.get(doc, math.inf) < k for doc in gold) / len(gold)
         for k in CUTOFFS
     }
     gold_ranks = sorted(positions[doc] for doc in gold if doc in positions)
