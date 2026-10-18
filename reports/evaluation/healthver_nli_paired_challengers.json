@@ -1,0 +1,565 @@
+{
+  "candidate_results": {
+    "fever_anli_deberta_base": {
+      "candidate": {
+        "id": "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
+        "license": "mit",
+        "revision": "6f5cf0a2b59cabb106aca4c287eed12e357e90eb",
+        "weights_sha256": "06d6fd89edd4f97816831626daafbdb0b029cf63bae8edc0bccab1d64e2e7707"
+      },
+      "label_mapping": {
+        "0": "entailment",
+        "1": "neutral",
+        "2": "contradiction"
+      },
+      "mean_multiclass_brier_score": 0.8844521562345525,
+      "mean_top_softmax": 0.9249608564592624,
+      "metrics": {
+        "accuracy": 0.48985189248491495,
+        "balanced_accuracy": 0.4550714762973434,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 670,
+            "REFUTE": 44,
+            "SUPPORT": 13
+          },
+          "REFUTE": {
+            "NEUTRAL": 287,
+            "REFUTE": 129,
+            "SUPPORT": 9
+          },
+          "SUPPORT": {
+            "NEUTRAL": 546,
+            "REFUTE": 31,
+            "SUPPORT": 94
+          }
+        },
+        "count": 1823,
+        "label_distribution": {
+          "NEUTRAL": 727,
+          "REFUTE": 425,
+          "SUPPORT": 671
+        },
+        "macro_f1": 0.4166511904942756,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.600896860986547,
+            "precision": 0.4457751164337991,
+            "recall": 0.921595598349381
+          },
+          "REFUTE": {
+            "f1": 0.41017488076311603,
+            "precision": 0.6323529411764706,
+            "recall": 0.3035294117647059
+          },
+          "SUPPORT": {
+            "f1": 0.2388818297331639,
+            "precision": 0.8103448275862069,
+            "recall": 0.14008941877794337
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 1503,
+          "REFUTE": 204,
+          "SUPPORT": 116
+        }
+      },
+      "raw_argmax_metrics": {
+        "accuracy": 0.5024684585847504,
+        "balanced_accuracy": 0.47098199594053813,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 658,
+            "REFUTE": 52,
+            "SUPPORT": 17
+          },
+          "REFUTE": {
+            "NEUTRAL": 269,
+            "REFUTE": 143,
+            "SUPPORT": 13
+          },
+          "SUPPORT": {
+            "NEUTRAL": 522,
+            "REFUTE": 34,
+            "SUPPORT": 115
+          }
+        },
+        "count": 1823,
+        "label_distribution": {
+          "NEUTRAL": 727,
+          "REFUTE": 425,
+          "SUPPORT": 671
+        },
+        "macro_f1": 0.441317008454758,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.6047794117647058,
+            "precision": 0.45410628019323673,
+            "recall": 0.9050894085281981
+          },
+          "REFUTE": {
+            "f1": 0.43730886850152906,
+            "precision": 0.6244541484716157,
+            "recall": 0.33647058823529413
+          },
+          "SUPPORT": {
+            "f1": 0.2818627450980392,
+            "precision": 0.7931034482758621,
+            "recall": 0.17138599105812222
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 1449,
+          "REFUTE": 229,
+          "SUPPORT": 145
+        }
+      },
+      "raw_argmax_neutral_count": 1449,
+      "selective": {
+        "accuracy_given_non_neutral_prediction": 0.696875,
+        "neutral_class_correct_out_of_all": 0.36752605595172794,
+        "non_neutral_correct_out_of_all": 0.12232583653318706,
+        "non_neutral_coverage": 0.1755348326933626,
+        "warning": "NEUTRAL blends model neutral softmax and low-confidence abstention; it cannot be assumed to mean evidence is truly insufficient."
+      },
+      "support_recall": 0.14008941877794337,
+      "unique_pair_metrics": {
+        "accuracy": 0.4551357733175915,
+        "balanced_accuracy": 0.452625707938296,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 548,
+            "REFUTE": 39,
+            "SUPPORT": 13
+          },
+          "REFUTE": {
+            "NEUTRAL": 286,
+            "REFUTE": 129,
+            "SUPPORT": 9
+          },
+          "SUPPORT": {
+            "NEUTRAL": 545,
+            "REFUTE": 31,
+            "SUPPORT": 94
+          }
+        },
+        "count": 1694,
+        "label_distribution": {
+          "NEUTRAL": 600,
+          "REFUTE": 424,
+          "SUPPORT": 670
+        },
+        "macro_f1": 0.4023753364627812,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.5538150581101566,
+            "precision": 0.397389412617839,
+            "recall": 0.9133333333333333
+          },
+          "REFUTE": {
+            "f1": 0.41412520064205455,
+            "precision": 0.6482412060301508,
+            "recall": 0.30424528301886794
+          },
+          "SUPPORT": {
+            "f1": 0.23918575063613232,
+            "precision": 0.8103448275862069,
+            "recall": 0.14029850746268657
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 1379,
+          "REFUTE": 199,
+          "SUPPORT": 116
+        }
+      },
+      "weights_sha256": "06d6fd89edd4f97816831626daafbdb0b029cf63bae8edc0bccab1d64e2e7707"
+    },
+    "frozen_original_deberta_small": {
+      "candidate": {
+        "id": "cross-encoder/nli-deberta-v3-small",
+        "license": "apache-2.0",
+        "revision": "fa2804872c3b4bd748f38c0185cc85775361e735",
+        "weights_sha256": "ebc79588dd73ccfb6a3f6078519cfbf512c5305384c5ea1845bc71cd32216e86"
+      },
+      "label_mapping": {
+        "0": "contradiction",
+        "1": "entailment",
+        "2": "neutral"
+      },
+      "mean_multiclass_brier_score": 1.0118911474441594,
+      "mean_top_softmax": 0.9614815623042221,
+      "metrics": {
+        "accuracy": 0.46571585298957763,
+        "balanced_accuracy": 0.4389436250744463,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 648,
+            "REFUTE": 70,
+            "SUPPORT": 9
+          },
+          "REFUTE": {
+            "NEUTRAL": 273,
+            "REFUTE": 146,
+            "SUPPORT": 6
+          },
+          "SUPPORT": {
+            "NEUTRAL": 555,
+            "REFUTE": 61,
+            "SUPPORT": 55
+          }
+        },
+        "count": 1823,
+        "label_distribution": {
+          "NEUTRAL": 727,
+          "REFUTE": 425,
+          "SUPPORT": 671
+        },
+        "macro_f1": 0.3842303854567833,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.5882886972310486,
+            "precision": 0.43902439024390244,
+            "recall": 0.8913342503438789
+          },
+          "REFUTE": {
+            "f1": 0.41595441595441596,
+            "precision": 0.5270758122743683,
+            "recall": 0.34352941176470586
+          },
+          "SUPPORT": {
+            "f1": 0.1484480431848853,
+            "precision": 0.7857142857142857,
+            "recall": 0.08196721311475409
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 1476,
+          "REFUTE": 277,
+          "SUPPORT": 70
+        }
+      },
+      "raw_argmax_metrics": {
+        "accuracy": 0.4684585847504114,
+        "balanced_accuracy": 0.44296030812261766,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 638,
+            "REFUTE": 80,
+            "SUPPORT": 9
+          },
+          "REFUTE": {
+            "NEUTRAL": 269,
+            "REFUTE": 150,
+            "SUPPORT": 6
+          },
+          "SUPPORT": {
+            "NEUTRAL": 540,
+            "REFUTE": 65,
+            "SUPPORT": 66
+          }
+        },
+        "count": 1823,
+        "label_distribution": {
+          "NEUTRAL": 727,
+          "REFUTE": 425,
+          "SUPPORT": 671
+        },
+        "macro_f1": 0.393045034699794,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.5869365225390984,
+            "precision": 0.44091223220456116,
+            "recall": 0.8775790921595599
+          },
+          "REFUTE": {
+            "f1": 0.4166666666666667,
+            "precision": 0.5084745762711864,
+            "recall": 0.35294117647058826
+          },
+          "SUPPORT": {
+            "f1": 0.17553191489361702,
+            "precision": 0.8148148148148148,
+            "recall": 0.09836065573770492
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 1447,
+          "REFUTE": 295,
+          "SUPPORT": 81
+        }
+      },
+      "raw_argmax_neutral_count": 1447,
+      "selective": {
+        "accuracy_given_non_neutral_prediction": 0.579250720461095,
+        "neutral_class_correct_out_of_all": 0.35545803620405925,
+        "non_neutral_correct_out_of_all": 0.11025781678551838,
+        "non_neutral_coverage": 0.19034558420186506,
+        "warning": "NEUTRAL blends model neutral softmax and low-confidence abstention; it cannot be assumed to mean evidence is truly insufficient."
+      },
+      "support_recall": 0.08196721311475409,
+      "unique_pair_metrics": {
+        "accuracy": 0.4309327036599764,
+        "balanced_accuracy": 0.43603194718232735,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 529,
+            "REFUTE": 62,
+            "SUPPORT": 9
+          },
+          "REFUTE": {
+            "NEUTRAL": 272,
+            "REFUTE": 146,
+            "SUPPORT": 6
+          },
+          "SUPPORT": {
+            "NEUTRAL": 555,
+            "REFUTE": 60,
+            "SUPPORT": 55
+          }
+        },
+        "count": 1694,
+        "label_distribution": {
+          "NEUTRAL": 600,
+          "REFUTE": 424,
+          "SUPPORT": 670
+        },
+        "macro_f1": 0.37050458735624875,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.5408997955010225,
+            "precision": 0.39011799410029496,
+            "recall": 0.8816666666666667
+          },
+          "REFUTE": {
+            "f1": 0.42196531791907516,
+            "precision": 0.5447761194029851,
+            "recall": 0.3443396226415094
+          },
+          "SUPPORT": {
+            "f1": 0.14864864864864866,
+            "precision": 0.7857142857142857,
+            "recall": 0.08208955223880597
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 1356,
+          "REFUTE": 268,
+          "SUPPORT": 70
+        }
+      },
+      "weights_sha256": "ebc79588dd73ccfb6a3f6078519cfbf512c5305384c5ea1845bc71cd32216e86"
+    },
+    "general_deberta_base": {
+      "candidate": {
+        "id": "cross-encoder/nli-deberta-v3-base",
+        "license": "apache-2.0",
+        "revision": "6c749ce3425cd33b46d187e45b92bbf96ee12ec7",
+        "weights_sha256": "d8148c6d49e0a7925134294c56326c71fe0ab1dc390e37355e00c7efbb488afa"
+      },
+      "label_mapping": {
+        "0": "contradiction",
+        "1": "entailment",
+        "2": "neutral"
+      },
+      "mean_multiclass_brier_score": 1.0257732268543045,
+      "mean_top_softmax": 0.9772807918141585,
+      "metrics": {
+        "accuracy": 0.4684585847504114,
+        "balanced_accuracy": 0.4379015354801767,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 665,
+            "REFUTE": 55,
+            "SUPPORT": 7
+          },
+          "REFUTE": {
+            "NEUTRAL": 287,
+            "REFUTE": 136,
+            "SUPPORT": 2
+          },
+          "SUPPORT": {
+            "NEUTRAL": 578,
+            "REFUTE": 40,
+            "SUPPORT": 53
+          }
+        },
+        "count": 1823,
+        "label_distribution": {
+          "NEUTRAL": 727,
+          "REFUTE": 425,
+          "SUPPORT": 671
+        },
+        "macro_f1": 0.3828410452123859,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.5892778023925564,
+            "precision": 0.434640522875817,
+            "recall": 0.9147180192572214
+          },
+          "REFUTE": {
+            "f1": 0.4146341463414634,
+            "precision": 0.5887445887445888,
+            "recall": 0.32
+          },
+          "SUPPORT": {
+            "f1": 0.1446111869031378,
+            "precision": 0.8548387096774194,
+            "recall": 0.07898658718330849
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 1530,
+          "REFUTE": 231,
+          "SUPPORT": 62
+        }
+      },
+      "raw_argmax_metrics": {
+        "accuracy": 0.4728469555677455,
+        "balanced_accuracy": 0.4437540226733209,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 661,
+            "REFUTE": 58,
+            "SUPPORT": 8
+          },
+          "REFUTE": {
+            "NEUTRAL": 280,
+            "REFUTE": 142,
+            "SUPPORT": 3
+          },
+          "SUPPORT": {
+            "NEUTRAL": 569,
+            "REFUTE": 43,
+            "SUPPORT": 59
+          }
+        },
+        "count": 1823,
+        "label_distribution": {
+          "NEUTRAL": 727,
+          "REFUTE": 425,
+          "SUPPORT": 671
+        },
+        "macro_f1": 0.39178800475974146,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.5909700491729996,
+            "precision": 0.4377483443708609,
+            "recall": 0.9092159559834938
+          },
+          "REFUTE": {
+            "f1": 0.4251497005988024,
+            "precision": 0.5843621399176955,
+            "recall": 0.3341176470588235
+          },
+          "SUPPORT": {
+            "f1": 0.1592442645074224,
+            "precision": 0.8428571428571429,
+            "recall": 0.08792846497764531
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 1510,
+          "REFUTE": 243,
+          "SUPPORT": 70
+        }
+      },
+      "raw_argmax_neutral_count": 1510,
+      "selective": {
+        "accuracy_given_non_neutral_prediction": 0.6450511945392492,
+        "neutral_class_correct_out_of_all": 0.36478332419089415,
+        "non_neutral_correct_out_of_all": 0.10367526055951728,
+        "non_neutral_coverage": 0.16072408118486012,
+        "warning": "NEUTRAL blends model neutral softmax and low-confidence abstention; it cannot be assumed to mean evidence is truly insufficient."
+      },
+      "support_recall": 0.07898658718330849,
+      "unique_pair_metrics": {
+        "accuracy": 0.43270365997638727,
+        "balanced_accuracy": 0.435508620419913,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 544,
+            "REFUTE": 49,
+            "SUPPORT": 7
+          },
+          "REFUTE": {
+            "NEUTRAL": 286,
+            "REFUTE": 136,
+            "SUPPORT": 2
+          },
+          "SUPPORT": {
+            "NEUTRAL": 578,
+            "REFUTE": 39,
+            "SUPPORT": 53
+          }
+        },
+        "count": 1694,
+        "label_distribution": {
+          "NEUTRAL": 600,
+          "REFUTE": 424,
+          "SUPPORT": 670
+        },
+        "macro_f1": 0.3687981663039537,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.5418326693227091,
+            "precision": 0.38636363636363635,
+            "recall": 0.9066666666666666
+          },
+          "REFUTE": {
+            "f1": 0.41975308641975306,
+            "precision": 0.6071428571428571,
+            "recall": 0.32075471698113206
+          },
+          "SUPPORT": {
+            "f1": 0.1448087431693989,
+            "precision": 0.8548387096774194,
+            "recall": 0.0791044776119403
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 1408,
+          "REFUTE": 224,
+          "SUPPORT": 62
+        }
+      },
+      "weights_sha256": "d8148c6d49e0a7925134294c56326c71fe0ab1dc390e37355e00c7efbb488afa"
+    }
+  },
+  "dataset": "HealthVer human-labeled held-out TEST (already previously inspected)",
+  "dataset_sha256": {
+    "dev": "6f8ea31cbcf2ea5a2d3c82d65587d66e96de4f70e72642bbf7f61fec6ef8a93a",
+    "test": "cf457d2dcddd7a736408082d0037527884f7ca3bda06729e1da5ec9e3b135819",
+    "train": "57668949f79d0f46e66d74df4b0bc9812cad4d5ad7c5dd03dfba008a608b3f2a"
+  },
+  "evaluation": "Zero-shot, same ordered text pairs, same 0.70 confidence / 0.15 margin, no model tuning and no training on HealthVer by this project.",
+  "limitations": [
+    "No new model has been deployed in the MCP server.",
+    "Test samples include 129 duplicate exact pairs; unique-pair sensitivity included.",
+    "Source passages are gold-supplied; source authenticity and retrieval untested.",
+    "Medical reliability, causality, RoB, and real evidence insufficiency unproven.",
+    "Separate MedNLI/SciFact training provenance claims derive from model cards, not an audited full training manifest.",
+    "Uncalibrated softmax scores are not probabilities of scientific truth.",
+    "Repeated retrospective HealthVer test comparison is not blinded scientific confirmation."
+  ],
+  "paired_differences_vs_frozen_production": {
+    "fever_anli_deberta_base": {
+      "accuracy_difference": 0.024136039495337325,
+      "paired_claim_cluster_bootstrap_95pct": [
+        0.00216,
+        0.04688
+      ]
+    },
+    "general_deberta_base": {
+      "accuracy_difference": 0.002742731760833783,
+      "paired_claim_cluster_bootstrap_95pct": [
+        -0.01735,
+        0.02263
+      ]
+    }
+  },
+  "selection_disclaimer": "This reused previously inspected TEST labels for exploratory comparisons; selecting a winning model here would require fresh independent confirmation before production promotion.",
+  "status": "EXPLORATORY_PINNED_MODEL_COMPARISON_NOT_PRODUCTION_SELECTION",
+  "test_size": 1823,
+  "unique_test_pairs": 1694
+}

@@ -269,3 +269,21 @@ module's existing thresholds; no model or production decision rule was changed.
 [Full HealthVer test methodology, class confusion and repeat-sensitivity
 analysis](docs/healthver_three_way_validation.md). The raw HealthVer
 data and large model weights are never published to the repository.
+
+
+## Explicitly selected experimental NLI alternatives (32nd MCP tool)
+
+Two additional pinned third-party NLI checkpoints are now available
+**only through an explicitly selected, local, offline challenger tool**,
+with model files, tokenizer and configuration SHA-256 validated.
+The current scientific model and original tools are unchanged.
+
+Exploratory HealthVer comparison: FEVER/ANLI DeBERTa-base had **48.99%
+accuracy and 41.67% macro-F1** versus original **46.57% and 38.42%**;
+its SUPPORT recall remained only **14.01%**. SciFact oracle-rationale
+classification also improved. Previously examined datasets are **not
+sufficient to select a production winner**. Neither alternative is
+clinically reliable or a scientific truth verifier.
+
+[Two-dataset protocol, test artifacts, and opt-in usage](docs/nli_challenger_comparison.md).
+No npm registry publication.
