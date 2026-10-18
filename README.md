@@ -140,7 +140,7 @@ pytest -q --cov=literature_evidence_mcp --cov-branch --cov-report=term-missing -
 
 ## Node.js / TypeScript MCP adapter (v0.3.2)
 
-An optional **TypeScript v2 MCP stdio front end** is available under [`packages/npm`](packages/npm). It dynamically discovers the existing Python server's 17 MCP tools, forwards their input schemas and result/error statuses unchanged, and keeps all scientific decisions in the Python core. It provides a Node/npm integration point without rewriting or duplicating the scientific methodology. **Both Python and Node.js are required; this is not a standalone TypeScript scientific engine.**
+An optional **TypeScript v2 MCP stdio front end** is available under [`packages/npm`](packages/npm). It dynamically discovers the Python server's available MCP tools (20 in v0.4), forwards their input schemas and result/error statuses unchanged, and keeps all scientific decisions in the Python core. It provides a Node/npm integration point without rewriting or duplicating the scientific methodology. **Both Python and Node.js are required; this is not a standalone TypeScript scientific engine.**
 
 From a checked-out repository:
 
@@ -151,7 +151,7 @@ npm run --prefix packages/npm build
 LITERATURE_EVIDENCE_PYTHON=python3 node packages/npm/dist/cli.js
 ```
 
-Windows users should point `LITERATURE_EVIDENCE_PYTHON` to their installed Python executable. The npm package is prepared for publication; **a successful npm registry publication is not implied** by CI success. The Python test gate remains 100% statement/branch coverage; a separate Node.js CI job checks real client-to-Python MCP protocol behavior and **100% TypeScript line/branch/function coverage**, plus package packing. No Rust acceleration has been added.
+Windows users should point `LITERATURE_EVIDENCE_PYTHON` to their installed Python executable. The npm package is prepared for publication; **a successful npm registry publication is not implied** by CI success. The Python test gate remains 100% statement/branch coverage; a separate Node.js CI job checks real client-to-Python MCP protocol behavior and **100% TypeScript line/branch/function coverage**, plus package packing. The opt-in Rust text matcher was added in v0.4 (not in the original TypeScript adapter release).
 
 ## Parallel native accelerators / numerical component (v0.4)
 
