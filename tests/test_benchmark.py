@@ -1,7 +1,7 @@
 """Tests exercise external benchmark scoring without embedding third-party data."""
 import pytest
 
-from scripts.benchmark_roboto2 import compute_metrics, load_records
+from literature_evidence_mcp.benchmark import compute_metrics, load_records
 
 
 def test_benchmark_aggregates_and_abstains():

@@ -26,6 +26,7 @@ jobs:
           ruff check
           src/literature_evidence_mcp/methodology.py
           src/literature_evidence_mcp/server.py
+          src/literature_evidence_mcp/benchmark.py
           scripts/benchmark_roboto2.py
           scripts/compare_search_engines.py
           tests/test_methodology.py
