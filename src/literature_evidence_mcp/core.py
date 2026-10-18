@@ -144,9 +144,10 @@ class ResearchClient:
             try:
                 # Stream and cap bytes before buffering any untrusted provider response.
                 async with self._client.stream("GET", base + path, params=params) as response:
-                    if response.status_code in {429, 500, 502, 503, 504} and attempt < 2:
-                        await asyncio.sleep(0.2 * (2**attempt))
-                        continue
+                    if response.status_code in {429, 500, 502, 503, 504}:
+                        if attempt < 2:
+                            await asyncio.sleep(0.2 * (2**attempt))
+                        continue  # After the third attempt the loop reports retry exhaustion.
                     response.raise_for_status()
                     cap = 4_000_000 if xml else 2_000_000
                     chunks, total = [], 0
@@ -184,7 +185,7 @@ class ResearchClient:
                     raw = (await self._get(EUROPE_PMC, "/europepmc/webservices/rest/search", {
                         "query": query, "pageSize": limit, "format": "json"})).get("resultList", {}).get("result", [])
                 return source, {"status": "OK", "count": len(raw)}, [_as_paper(x, source) for x in raw]
-            except (ProviderError, KeyError, TypeError) as exc:
+            except (ProviderError, KeyError, TypeError, AttributeError, ValueError) as exc:
                 return source, {"status": "ERROR", "error": str(exc)}, []
 
         collected = await asyncio.gather(*(one(source) for source in sources))

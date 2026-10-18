@@ -106,9 +106,19 @@ Apache-2.0. See [LICENSE](LICENSE), [CONTRIBUTING.md](CONTRIBUTING.md), [SECURIT
 ## v0.3 technical change log
 
 - Real Europe PMC XML paragraph source-bound annotation audit, distinguishing incomplete retrieval from proven absence; never claims RoB2 assessment.
-- 58 deterministic unit and protocol tests; 91% measured Python line coverage on local Python 3.12 (verification pending CI).
+- 98 deterministic unit and protocol tests; 100% Python statement and branch coverage on local Python 3.12, including error paths. GitHub CI enforces 100% across Python 3.11, 3.12 and 3.13.
 
 - Human-supplied outcome-specific methods evidence traceability; unknowns and contradictions explicit.
 - Mechanical checks for invalid p-values, sample sizes and interval bounds; no fabricated inferential statistics.
 - Pinned external ROBoto2 research benchmark with aggregate report, licensing caveat and non-comparable RoB category warning.
 - Three-engine public-provider retrieval smoke and evidence-based competitor feature matrix; no claimed superiority.
+
+## Coverage policy (strict)
+
+The CI workflow runs the complete deterministic suite with both statement and branch coverage. The fail-under threshold is **100%** across all packaged Python code; no modules, files, functions, or error paths are excluded via coverage omit directives or pragma flags. Code changes must add executable tests covering every new line and branch before merging. Coverage is not equivalent to scientific or statistical validity.
+
+Reproduce locally:
+
+```sh
+pytest -q --cov=literature_evidence_mcp --cov-branch --cov-report=term-missing --cov-fail-under=100
+```
