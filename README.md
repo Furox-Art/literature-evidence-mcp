@@ -32,7 +32,8 @@ Requires Python 3.11 or later.
 
 ```sh
 python -m venv .venv
-. .venv/bin/activate                # Windows: .venv\\Scripts\\activate
+. .venv/bin/activate                     # Linux/macOS
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
 python -m pip install -e '.[dev]'
 pytest -q
 literature-evidence-mcp           # stdio; no terminal output is expected
