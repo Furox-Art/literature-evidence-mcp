@@ -5,7 +5,6 @@ import pytest
 
 from literature_evidence_mcp import bm25_retrieval, server
 
-
 DOCS = [
     {"id": "paper-3", "title": "Neural imaging", "abstract": "Magnetic resonance study."},
     {"id": "paper-2", "title": "Cardiac outcomes", "abstract": "The liver is unaffected."},
