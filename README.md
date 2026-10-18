@@ -122,3 +122,10 @@ Reproduce locally:
 ```sh
 pytest -q --cov=literature_evidence_mcp --cov-branch --cov-report=term-missing --cov-fail-under=100
 ```
+
+## v0.3.1: live full-text negotiation and guarded literal citation matching
+
+- Fixed Europe PMC `fullTextXML` HTTP content negotiation: XML requests use `Accept: application/xml` instead of the JSON default, which previously produced `406 Not Acceptable` in live calls. Live smoke on 2026-10-18 retrieved 47 XML paragraphs from `PMC7121925` and verified a sourced paragraph quote; external API availability may change.
+- Aligned quoted-text checks across `verify_claim`, `verify_source_quote` and methodology audits. Case-insensitive and whitespace-flexible comparison now requires intact Unicode word boundaries where a quoted token begins or ends with a word character. The word `significant` can no longer be verified from `insignificant`, nor `effective` from `ineffective`. Punctuation in quoted snippets remains literal.
+- Both direct-text and Europe PMC JATS quote lookups return start/end character offsets (direct text or local paragraph) and source hashes; absence from truncated XML is explicitly marked `NOT_VERIFIED_SOURCE_TRUNCATED`. No claim of scientific validity or inferred method quality is introduced.
+- The GitHub CI gate remains **100% statement AND branch coverage** on Python 3.11, 3.12 and 3.13; no coverage exclusions.
