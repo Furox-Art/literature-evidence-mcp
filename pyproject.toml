@@ -15,6 +15,7 @@ dependencies = ["mcp>=2,<3", "httpx>=0.27,<1", "defusedxml>=0.7.1,<1", "filelock
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10", "pytest-asyncio>=0.24,<2", "pytest-cov>=6,<8", "ruff>=0.9,<1", "build>=1,<2", "reportlab>=4,<5"]
+retrieval = ["rank-bm25==0.2.2"]
 
 [project.scripts]
 literature-evidence-mcp = "literature_evidence_mcp.server:main"

@@ -17,9 +17,11 @@ query bootstrap compares BM25 with Jaccard and word coverage.
 provide exhaustive negative relevance labels for every claim/document pair.
 Unlabeled documents cannot be considered truly irrelevant. Consequently
 precision, corpus false-positive rate and scientific false-proof rate
-**cannot** be estimated from this snapshot. There is also no native MCP
-hypothesis-conditioned retrieval output, so its full-corpus recall is
-**unavailable**, not a fabricated zero. This benchmark measures baseline
+**cannot** be estimated from this snapshot. At the time of this benchmark there was no native MCP hypothesis-conditioned
+retrieval tool. The separately added opt-in `bm25_rank_evidence` tool now
+ranks **user-supplied** abstracts, but the archived full-corpus benchmark
+measures the *independent reference implementation*, not an independently
+validated product-wide result. This benchmark measures baseline
 retrieval only, *not* verified scientific claim correctness.
 
 Run after obtaining the same pinned SciFact data and hashes from

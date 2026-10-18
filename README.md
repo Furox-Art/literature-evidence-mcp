@@ -209,4 +209,20 @@ No npm registry publication is performed.
 
 ## Open-corpus SciFact retrieval evaluation
 
-A separate [full-corpus evaluation protocol](docs/scifact_full_corpus.md) measures independent BM25 and lexical retrieval across all 5,183 SciFact abstracts. This does **not** modify the scientific MCP; the existing product has no hypothesis-conditioned open-corpus retrieval component. No unsupported science-accuracy claims are made. Aggregated results are persisted as GitHub CI artifacts and are not published to npm.
+A separate [full-corpus evaluation protocol](docs/scifact_full_corpus.md) measures independent BM25 and lexical retrieval across all 5,183 SciFact abstracts. The historical benchmark did **not** modify the scientific MCP; a separate opt-in local BM25 candidate ranker is now available. No unsupported science-accuracy claims are made. Aggregated results are persisted as GitHub CI artifacts and are not published to npm.
+
+## Optional BM25 evidence candidate ranking (30th MCP tool)
+
+`bm25_rank_evidence` uses [rank-bm25](https://pypi.org/project/rank-bm25/) to
+rank **caller-supplied** paper titles and abstracts. It is not invoked by the
+existing scientific methods, does not fetch publications, and cannot verify a
+paper's authenticity or whether a scientific claim is supported. The
+dependency is installed *only by explicit choice*:
+
+```bash
+python -m pip install -e '.[retrieval]'
+```
+
+Without that optional extra, the tool remains discoverable but returns
+`OPTIONAL_BM25_NOT_INSTALLED`. No automatic installation or npm publication
+takes place. See [usage, input restrictions and scientific cautions](docs/bm25_evidence_ranking.md).

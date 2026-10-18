@@ -111,7 +111,7 @@ No downloads or derived artifacts are published to npm.
 * No blinded expert-gold RoB2, ROBINS-I V2, GRADE or full PRISMA outcome
   accuracy, and no expert clinical inter-rater calibration.
 * No real 9+/10 scientific accuracy score; the current tool has **no semantic
-  fact-checker and no hypothesis-conditioned evidence ranker**.
+  fact-checker and no *automatically operated*, source-verified evidence ranker**. A later opt-in user-supplied BM25 candidate ranker does not verify semantic claims.
 * A model for clinical-grade scientific correctness would require an
   explicitly designed and independently tested semantic verification stage.
   This benchmark does not silently insert a new model or claim a validated

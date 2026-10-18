@@ -9,6 +9,7 @@ import os
 from mcp.server import MCPServer
 
 from literature_evidence_mcp.appraisal import grade_domain_record, risk_of_bias_review
+from literature_evidence_mcp.bm25_retrieval import rank_supplied_evidence
 from literature_evidence_mcp.core import (
     EvidenceLedger,
     ResearchClient,
@@ -254,6 +255,12 @@ async def crossref_update_alerts(dois: list[str], edges: list[dict]) -> dict:
     """Fetch Crossref publication notices and flag citation descendants for review."""
     return await crossref_notice_chain(dois, edges)
 
+
+
+@mcp.tool()
+def bm25_rank_evidence(query: str, documents: list[dict], top_k: int = 10) -> dict:
+    """Opt-in BM25 of caller-supplied abstracts; never certifies scientific support."""
+    return rank_supplied_evidence(query, documents, top_k)
 
 
 def main() -> None:
