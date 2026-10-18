@@ -10,7 +10,6 @@ from mcp.server import MCPServer
 
 from literature_evidence_mcp.appraisal import grade_domain_record, risk_of_bias_review
 from literature_evidence_mcp.bm25_retrieval import rank_supplied_evidence
-from literature_evidence_mcp.evidence_nli import assess_evidence_nli
 from literature_evidence_mcp.core import (
     EvidenceLedger,
     ResearchClient,
@@ -20,6 +19,7 @@ from literature_evidence_mcp.core import (
     screen_methodology,
     verify_quote,
 )
+from literature_evidence_mcp.evidence_nli import assess_evidence_nli
 from literature_evidence_mcp.go_records import go_cached_papers
 from literature_evidence_mcp.graph_audit import crossref_notice_chain, publication_alerts
 from literature_evidence_mcp.methodology import (
