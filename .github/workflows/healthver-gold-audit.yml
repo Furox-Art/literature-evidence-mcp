@@ -62,6 +62,31 @@ jobs:
           assert len(d["test_metrics_all_rows"]["per_class"])==3
           print("Three-class HealthVer held-out audit completed.")
           PY
+      - name: Verify raw-neutral vs low-confidence decomposition against committed report
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          actual = json.loads((Path(os.environ["RUNNER_TEMP"]) / "healthver_audit.json").read_text())
+          expected = json.loads(Path("reports/evaluation/healthver_test.json").read_text())
+          for key in ("source_sha256", "model_weights_sha256", "split",
+                      "test_metrics_all_rows", "deduplicated_test_metrics",
+                      "test_selective_metrics", "test_claim_cluster_bootstrap_95pct",
+                      "exact_train_claim_overlap_excluded_sensitivity",
+                      "topic_stratified_exploratory"):
+              assert actual[key] == expected[key], f"Unexpected audited metric: {key}"
+          actual_details = actual["neutral_and_abstention_diagnostics"]
+          saved_details = expected["neutral_and_abstention_diagnostics"]
+          for key in ("decision_origin", "argmax_three_class_metrics_without_abstention_mapping"):
+              assert actual_details[key] == saved_details[key], f"Unexpected diagnostic: {key}"
+          for key in ("brier_score_multiclass_uncalibrated",
+                      "expected_calibration_error_10_bins_descriptive"):
+              assert abs(actual_details[key] - saved_details[key]) < 0.0005, key
+          assert sum(x["count"] for x in actual_details["decision_origin"].values()) == 1823
+          print("Independent CPU diagnostic counts, score bins and gold report confirmed.")
+          PY
       - uses: actions/upload-artifact@v4
         with:
           name: healthver-test-three-way-offline-cpu

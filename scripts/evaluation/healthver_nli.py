@@ -14,6 +14,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 from literature_evidence_mcp.evidence_nli import (
+    LABELS,
     MODEL_ID,
     MODEL_REVISION,
     WEIGHTS_SHA256,
@@ -118,6 +119,111 @@ def bootstrap(gold: list[str], prediction: list[str], claim_ids: list[str],
             for name, values in out.items()}
 
 
+def classify_decision_origin(scores: dict[str, float]) -> str:
+    """Explain current frozen abstention rule; NOT a newly fitted classifier."""
+    order = sorted(LABELS, key=lambda label: scores[label], reverse=True)
+    if order[0] == "neutral":
+        return "neutral_argmax"
+    if scores[order[0]] < THRESHOLD:
+        return "directional_below_threshold"
+    if scores[order[0]] - scores[order[1]] < MARGIN:
+        return "directional_below_margin"
+    return "directional_decision"
+
+
+def label_diagnostics(gold: list[str], probs: list[dict[str, float]],
+                      predictions: list[str]) -> dict:
+    """Assess actual neutral softmax vs confidence abstention, no threshold tuning."""
+    if len(gold) != len(probs) or len(gold) != len(predictions) or not gold:
+        raise ValueError("NLI diagnostic vectors must align and be nonempty")
+    # Validate every probability vector through the frozen production rule.
+    for item in probs:
+        decide(item, THRESHOLD, MARGIN)
+    origins = [classify_decision_origin(item) for item in probs]
+    raw_map = {"entailment": "SUPPORT", "contradiction": "REFUTE",
+               "neutral": "NEUTRAL"}
+    raw_pred = [raw_map[max(LABELS, key=lambda label: p[label])] for p in probs]
+    mismatch = [i for i, origin in enumerate(origins)
+                if (origin == "directional_decision") != (predictions[i] != "NEUTRAL")]
+    if mismatch:
+        raise ValueError("Diagnostic diverges from the frozen production decision")
+    explanation = {}
+    for key in ("neutral_argmax", "directional_below_threshold",
+                "directional_below_margin", "directional_decision"):
+        matching = [i for i, origin in enumerate(origins) if origin == key]
+        explanation[key] = {
+            "count": len(matching),
+            "gold_distribution": dict(sorted(Counter(gold[i] for i in matching).items())),
+        }
+    # True three-label softmax scoring before mixing abstentions into NEUTRAL.
+    brier = 0.0
+    bins = [{"count": 0, "confidence_sum": 0.0, "correct": 0}
+            for _ in range(10)]
+    for truth, probability, guessed in zip(gold, probs, raw_pred):
+        if not all(label in probability for label in LABELS):
+            raise ValueError("Missing softmax class")
+        actual_probs = {raw_map[key]: probability[key] for key in LABELS}
+        if any(not 0 <= val <= 1 for val in actual_probs.values()):
+            raise ValueError("Invalid softmax scores")
+        brier += sum((actual_probs[label] - (truth == label)) ** 2
+                     for label in CLASSES)
+        confidence = max(probability.values())
+        index = min(int(confidence * 10), 9)
+        bins[index]["count"] += 1
+        bins[index]["confidence_sum"] += confidence
+        bins[index]["correct"] += truth == guessed
+    n = len(gold)
+    ece = sum(abs(row["confidence_sum"] / row["count"]
+                  - row["correct"] / row["count"]) * row["count"] / n
+              for row in bins if row["count"])
+    return {
+        "decision_origin": explanation,
+        "argmax_three_class_metrics_without_abstention_mapping": three_way(gold, raw_pred),
+        "brier_score_multiclass_uncalibrated": brier / n,
+        "expected_calibration_error_10_bins_descriptive": ece,
+        "confidence_bins": [
+            {"lower_inclusive": k / 10, "upper_exclusive_except_last": (k + 1) / 10,
+             "n": row["count"],
+             "mean_top_softmax": row["confidence_sum"] / row["count"] if row["count"] else None,
+             "empirical_top1_accuracy": row["correct"] / row["count"] if row["count"] else None}
+            for k, row in enumerate(bins)
+        ],
+        "interpretation": "Model softmax is not calibrated factual confidence. "
+            "A NEUTRAL gold label does not validate generic abstention, "
+            "and argmax neutral is distinct from a directional low-confidence refusal.",
+    }
+
+
+def topic_diagnostics(test: list[dict], gold: list[str],
+                      predictions: list[str], minimum: int = 30) -> dict:
+    """Group by the dataset's own topic identifier, suppress tiny groups."""
+    if not (len(test) == len(gold) == len(predictions)):
+        raise ValueError("Topic vectors differ in size")
+    groups: dict[str, list[int]] = defaultdict(list)
+    for index, row in enumerate(test):
+        groups[str(row["topic_ip"])].append(index)
+    included = {}
+    suppressed = {}
+    for group, indices in sorted(groups.items()):
+        if len(indices) < minimum:
+            suppressed[group] = len(indices)
+            continue
+        result = three_way([gold[i] for i in indices],
+                           [predictions[i] for i in indices])
+        included[group] = {
+            "n": len(indices), "accuracy": result["accuracy"],
+            "macro_f1": result["macro_f1"],
+            "support_recall": result["per_class"]["SUPPORT"]["recall"],
+            "label_distribution": result["label_distribution"],
+        }
+    return {
+        "min_rows_per_reported_topic": minimum,
+        "included": included, "suppressed_topic_counts": suppressed,
+        "warning": "Subgroups use original dataset topic IDs and may overlap "
+                   "by claim; exploratory, no multiple-testing correction.",
+    }
+
+
 def evaluate(folder: Path, model_folder: Path) -> dict:
     import os
 
@@ -144,6 +250,8 @@ def evaluate(folder: Path, model_folder: Path) -> dict:
     probs = scores_for_pairs([(row["evidence"], row["claim"]) for row in test])
     predicted = [PRED_MAP[decide(score, THRESHOLD, MARGIN)] for score in probs]
     truth = [GOLD_MAP[x["label"]] for x in test]
+    diagnostics = label_diagnostics(truth, probs, predicted)
+    topics = topic_diagnostics(test, truth, predicted)
     baseline = [majority] * len(test)
     by_pair = sorted(first_occurrence.values())
     dedup_truth = [truth[i] for i in by_pair]
@@ -171,9 +279,16 @@ def evaluate(folder: Path, model_folder: Path) -> dict:
         "label_mapping": GOLD_MAP, "predicted_mapping": PRED_MAP,
         "test_metrics_all_rows": three_way(truth, predicted),
         "test_selective_metrics": selective(truth, predicted),
+        "neutral_and_abstention_diagnostics": diagnostics,
+        "topic_stratified_exploratory": topics,
         "test_claim_cluster_bootstrap_95pct": bootstrap(
             truth, predicted, [norm(r["claim"]) for r in test]),
         "deduplicated_test_metrics": three_way(dedup_truth, dedup_pred),
+        "exact_train_claim_overlap_excluded_sensitivity": three_way(
+            [truth[i] for i, row in enumerate(test)
+             if norm(row["claim"]) not in train_claims],
+            [predicted[i] for i, row in enumerate(test)
+             if norm(row["claim"]) not in train_claims]),
         "train_majority_label_baseline": {
             "label": majority, "test": three_way(truth, baseline)},
         "always_neutral_baseline": three_way(truth, ["NEUTRAL"] * len(test)),
@@ -186,6 +301,8 @@ def evaluate(folder: Path, model_folder: Path) -> dict:
             "One exact test claim also exists in HealthVer train, but this model never trains on HealthVer.",
             "No RoB/GRADE, causal inference, medical safety, or full scientific truth claims.",
             "Published HealthVer leaderboard systems used HealthVer training; direct performance superiority comparison is invalid.",
+            "Topic and calibration summaries are exploratory and do not tune model decisions.",
+            "Argmax NEUTRAL and non-neutral low-confidence abstentions are not synonymous.",
         ],
     }
 

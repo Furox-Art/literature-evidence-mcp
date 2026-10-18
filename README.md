@@ -261,6 +261,11 @@ reliable fact verification or scientific superiority. Both neutral
 predictions and low-confidence abstentions count as NEUTRAL for this
 limited benchmarking task; they are **not proof of insufficient evidence**.
 
+A frozen-model error audit finds **1,447 raw NEUTRAL-argmax cases**,
+including **540 gold SUPPORT and 269 gold REFUTE** errors. The uncalibrated
+model also has **ECE 0.493**. These are not problems fixed by the optional
+module's existing thresholds; no model or production decision rule was changed.
+
 [Full HealthVer test methodology, class confusion and repeat-sensitivity
 analysis](docs/healthver_three_way_validation.md). The raw HealthVer
 data and large model weights are never published to the repository.

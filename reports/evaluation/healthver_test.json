@@ -98,6 +98,56 @@
       "SUPPORT": 70
     }
   },
+  "exact_train_claim_overlap_excluded_sensitivity": {
+    "accuracy": 0.46505228398459,
+    "balanced_accuracy": 0.439195241002094,
+    "confusion": {
+      "NEUTRAL": {
+        "NEUTRAL": 644,
+        "REFUTE": 69,
+        "SUPPORT": 9
+      },
+      "REFUTE": {
+        "NEUTRAL": 273,
+        "REFUTE": 146,
+        "SUPPORT": 6
+      },
+      "SUPPORT": {
+        "NEUTRAL": 554,
+        "REFUTE": 61,
+        "SUPPORT": 55
+      }
+    },
+    "count": 1817,
+    "label_distribution": {
+      "NEUTRAL": 722,
+      "REFUTE": 425,
+      "SUPPORT": 670
+    },
+    "macro_f1": 0.38417324631175864,
+    "per_class": {
+      "NEUTRAL": {
+        "f1": 0.5873233014135887,
+        "precision": 0.43779741672331746,
+        "recall": 0.8919667590027701
+      },
+      "REFUTE": {
+        "f1": 0.4165477888730385,
+        "precision": 0.5289855072463768,
+        "recall": 0.34352941176470586
+      },
+      "SUPPORT": {
+        "f1": 0.14864864864864866,
+        "precision": 0.7857142857142857,
+        "recall": 0.08208955223880597
+      }
+    },
+    "prediction_distribution": {
+      "NEUTRAL": 1471,
+      "REFUTE": 276,
+      "SUPPORT": 70
+    }
+  },
   "frozen_margin": 0.15,
   "frozen_threshold": 0.7,
   "label_mapping": {
@@ -113,12 +163,171 @@
     "Contains 129 repeated identical claim-evidence pairs; deduplicated sensitivity shown.",
     "One exact test claim also exists in HealthVer train, but this model never trains on HealthVer.",
     "No RoB/GRADE, causal inference, medical safety, or full scientific truth claims.",
-    "Published HealthVer leaderboard systems used HealthVer training; direct performance superiority comparison is invalid."
+    "Published HealthVer leaderboard systems used HealthVer training; direct performance superiority comparison is invalid.",
+    "Topic and calibration summaries are exploratory and do not tune model decisions.",
+    "Argmax NEUTRAL and non-neutral low-confidence abstentions are not synonymous."
   ],
   "model": "cross-encoder/nli-deberta-v3-small",
   "model_fitted_on_healthver": false,
   "model_revision": "fa2804872c3b4bd748f38c0185cc85775361e735",
   "model_weights_sha256": "ebc79588dd73ccfb6a3f6078519cfbf512c5305384c5ea1845bc71cd32216e86",
+  "neutral_and_abstention_diagnostics": {
+    "argmax_three_class_metrics_without_abstention_mapping": {
+      "accuracy": 0.4684585847504114,
+      "balanced_accuracy": 0.44296030812261766,
+      "confusion": {
+        "NEUTRAL": {
+          "NEUTRAL": 638,
+          "REFUTE": 80,
+          "SUPPORT": 9
+        },
+        "REFUTE": {
+          "NEUTRAL": 269,
+          "REFUTE": 150,
+          "SUPPORT": 6
+        },
+        "SUPPORT": {
+          "NEUTRAL": 540,
+          "REFUTE": 65,
+          "SUPPORT": 66
+        }
+      },
+      "count": 1823,
+      "label_distribution": {
+        "NEUTRAL": 727,
+        "REFUTE": 425,
+        "SUPPORT": 671
+      },
+      "macro_f1": 0.393045034699794,
+      "per_class": {
+        "NEUTRAL": {
+          "f1": 0.5869365225390984,
+          "precision": 0.44091223220456116,
+          "recall": 0.8775790921595599
+        },
+        "REFUTE": {
+          "f1": 0.4166666666666667,
+          "precision": 0.5084745762711864,
+          "recall": 0.35294117647058826
+        },
+        "SUPPORT": {
+          "f1": 0.17553191489361702,
+          "precision": 0.8148148148148148,
+          "recall": 0.09836065573770492
+        }
+      },
+      "prediction_distribution": {
+        "NEUTRAL": 1447,
+        "REFUTE": 295,
+        "SUPPORT": 81
+      }
+    },
+    "brier_score_multiclass_uncalibrated": 1.0118911474441594,
+    "confidence_bins": [
+      {
+        "empirical_top1_accuracy": null,
+        "lower_inclusive": 0.0,
+        "mean_top_softmax": null,
+        "n": 0,
+        "upper_exclusive_except_last": 0.1
+      },
+      {
+        "empirical_top1_accuracy": null,
+        "lower_inclusive": 0.1,
+        "mean_top_softmax": null,
+        "n": 0,
+        "upper_exclusive_except_last": 0.2
+      },
+      {
+        "empirical_top1_accuracy": null,
+        "lower_inclusive": 0.2,
+        "mean_top_softmax": null,
+        "n": 0,
+        "upper_exclusive_except_last": 0.3
+      },
+      {
+        "empirical_top1_accuracy": null,
+        "lower_inclusive": 0.3,
+        "mean_top_softmax": null,
+        "n": 0,
+        "upper_exclusive_except_last": 0.4
+      },
+      {
+        "empirical_top1_accuracy": 0.5,
+        "lower_inclusive": 0.4,
+        "mean_top_softmax": 0.47753461201985675,
+        "n": 6,
+        "upper_exclusive_except_last": 0.5
+      },
+      {
+        "empirical_top1_accuracy": 0.48148148148148145,
+        "lower_inclusive": 0.5,
+        "mean_top_softmax": 0.5563727793870149,
+        "n": 27,
+        "upper_exclusive_except_last": 0.6
+      },
+      {
+        "empirical_top1_accuracy": 0.26666666666666666,
+        "lower_inclusive": 0.6,
+        "mean_top_softmax": 0.6489512304464976,
+        "n": 30,
+        "upper_exclusive_except_last": 0.7
+      },
+      {
+        "empirical_top1_accuracy": 0.4418604651162791,
+        "lower_inclusive": 0.7,
+        "mean_top_softmax": 0.7492650941360829,
+        "n": 43,
+        "upper_exclusive_except_last": 0.8
+      },
+      {
+        "empirical_top1_accuracy": 0.5094339622641509,
+        "lower_inclusive": 0.8,
+        "mean_top_softmax": 0.8566089261252925,
+        "n": 106,
+        "upper_exclusive_except_last": 0.9
+      },
+      {
+        "empirical_top1_accuracy": 0.46989447548106766,
+        "lower_inclusive": 0.9,
+        "mean_top_softmax": 0.9884581832616393,
+        "n": 1611,
+        "upper_exclusive_except_last": 1.0
+      }
+    ],
+    "decision_origin": {
+      "directional_below_margin": {
+        "count": 0,
+        "gold_distribution": {}
+      },
+      "directional_below_threshold": {
+        "count": 29,
+        "gold_distribution": {
+          "NEUTRAL": 10,
+          "REFUTE": 4,
+          "SUPPORT": 15
+        }
+      },
+      "directional_decision": {
+        "count": 347,
+        "gold_distribution": {
+          "NEUTRAL": 79,
+          "REFUTE": 152,
+          "SUPPORT": 116
+        }
+      },
+      "neutral_argmax": {
+        "count": 1447,
+        "gold_distribution": {
+          "NEUTRAL": 638,
+          "REFUTE": 269,
+          "SUPPORT": 540
+        }
+      }
+    },
+    "expected_calibration_error_10_bins_descriptive": 0.49317085723332893,
+    "interpretation": "Model softmax is not calibrated factual confidence. A NEUTRAL gold label does not validate generic abstention, and argmax neutral is distinct from a directional low-confidence refusal."
+  },
   "original_license": "No explicit repository LICENSE detected; do not redistribute source CSV.",
   "predicted_mapping": {
     "INSUFFICIENT_MODEL_EVIDENCE": "NEUTRAL",
@@ -213,6 +422,255 @@
     "non_neutral_correct_out_of_all": 0.11025781678551838,
     "non_neutral_coverage": 0.19034558420186506,
     "warning": "NEUTRAL blends model neutral softmax and low-confidence abstention; it cannot be assumed to mean evidence is truly insufficient."
+  },
+  "topic_stratified_exploratory": {
+    "included": {
+      "1": {
+        "accuracy": 0.6818181818181818,
+        "label_distribution": {
+          "NEUTRAL": 44,
+          "REFUTE": 16,
+          "SUPPORT": 6
+        },
+        "macro_f1": 0.5351049283633553,
+        "n": 66,
+        "support_recall": 0.16666666666666666
+      },
+      "10": {
+        "accuracy": 0.5205479452054794,
+        "label_distribution": {
+          "NEUTRAL": 35,
+          "REFUTE": 10,
+          "SUPPORT": 28
+        },
+        "macro_f1": 0.3563218390804597,
+        "n": 73,
+        "support_recall": 0.03571428571428571
+      },
+      "16": {
+        "accuracy": 0.4215686274509804,
+        "label_distribution": {
+          "NEUTRAL": 38,
+          "REFUTE": 8,
+          "SUPPORT": 56
+        },
+        "macro_f1": 0.29849552969312704,
+        "n": 102,
+        "support_recall": 0.08928571428571429
+      },
+      "18": {
+        "accuracy": 0.5476190476190477,
+        "label_distribution": {
+          "NEUTRAL": 24,
+          "REFUTE": 3,
+          "SUPPORT": 15
+        },
+        "macro_f1": 0.3317972350230415,
+        "n": 42,
+        "support_recall": 0.0
+      },
+      "2": {
+        "accuracy": 0.26373626373626374,
+        "label_distribution": {
+          "NEUTRAL": 24,
+          "REFUTE": 29,
+          "SUPPORT": 38
+        },
+        "macro_f1": 0.15719859168331907,
+        "n": 91,
+        "support_recall": 0.0
+      },
+      "20": {
+        "accuracy": 0.5428571428571428,
+        "label_distribution": {
+          "NEUTRAL": 15,
+          "REFUTE": 12,
+          "SUPPORT": 8
+        },
+        "macro_f1": 0.4971916971916972,
+        "n": 35,
+        "support_recall": 0.25
+      },
+      "21": {
+        "accuracy": 0.6,
+        "label_distribution": {
+          "NEUTRAL": 16,
+          "REFUTE": 9,
+          "SUPPORT": 5
+        },
+        "macro_f1": 0.4343434343434343,
+        "n": 30,
+        "support_recall": 0.0
+      },
+      "24": {
+        "accuracy": 0.4523809523809524,
+        "label_distribution": {
+          "NEUTRAL": 16,
+          "REFUTE": 8,
+          "SUPPORT": 18
+        },
+        "macro_f1": 0.4222222222222222,
+        "n": 42,
+        "support_recall": 0.05555555555555555
+      },
+      "28": {
+        "accuracy": 0.4489795918367347,
+        "label_distribution": {
+          "NEUTRAL": 8,
+          "REFUTE": 22,
+          "SUPPORT": 19
+        },
+        "macro_f1": 0.3997465948685461,
+        "n": 49,
+        "support_recall": 0.10526315789473684
+      },
+      "3": {
+        "accuracy": 0.9888888888888889,
+        "label_distribution": {
+          "NEUTRAL": 180
+        },
+        "macro_f1": 0.33147113594040967,
+        "n": 180,
+        "support_recall": 0.0
+      },
+      "42": {
+        "accuracy": 0.1927710843373494,
+        "label_distribution": {
+          "NEUTRAL": 14,
+          "REFUTE": 24,
+          "SUPPORT": 45
+        },
+        "macro_f1": 0.20057720057720055,
+        "n": 83,
+        "support_recall": 0.0
+      },
+      "44": {
+        "accuracy": 0.4,
+        "label_distribution": {
+          "NEUTRAL": 12,
+          "SUPPORT": 18
+        },
+        "macro_f1": 0.19512195121951217,
+        "n": 30,
+        "support_recall": 0.0
+      },
+      "5": {
+        "accuracy": 0.7272727272727273,
+        "label_distribution": {
+          "NEUTRAL": 54,
+          "SUPPORT": 1
+        },
+        "macro_f1": 0.2807017543859649,
+        "n": 55,
+        "support_recall": 0.0
+      },
+      "51": {
+        "accuracy": 0.4358974358974359,
+        "label_distribution": {
+          "NEUTRAL": 11,
+          "REFUTE": 18,
+          "SUPPORT": 10
+        },
+        "macro_f1": 0.3811188811188811,
+        "n": 39,
+        "support_recall": 0.1
+      },
+      "52": {
+        "accuracy": 0.20408163265306123,
+        "label_distribution": {
+          "NEUTRAL": 10,
+          "REFUTE": 14,
+          "SUPPORT": 25
+        },
+        "macro_f1": 0.18891618891618892,
+        "n": 49,
+        "support_recall": 0.0
+      },
+      "63": {
+        "accuracy": 0.21568627450980393,
+        "label_distribution": {
+          "NEUTRAL": 7,
+          "REFUTE": 26,
+          "SUPPORT": 18
+        },
+        "macro_f1": 0.20634920634920637,
+        "n": 51,
+        "support_recall": 0.16666666666666666
+      },
+      "67": {
+        "accuracy": 0.20987654320987653,
+        "label_distribution": {
+          "NEUTRAL": 14,
+          "REFUTE": 36,
+          "SUPPORT": 31
+        },
+        "macro_f1": 0.15606060606060604,
+        "n": 81,
+        "support_recall": 0.0
+      },
+      "69": {
+        "accuracy": 0.34782608695652173,
+        "label_distribution": {
+          "NEUTRAL": 17,
+          "REFUTE": 68,
+          "SUPPORT": 76
+        },
+        "macro_f1": 0.33404752596564086,
+        "n": 161,
+        "support_recall": 0.07894736842105263
+      },
+      "82": {
+        "accuracy": 0.32142857142857145,
+        "label_distribution": {
+          "NEUTRAL": 22,
+          "REFUTE": 30,
+          "SUPPORT": 60
+        },
+        "macro_f1": 0.3035285800428337,
+        "n": 112,
+        "support_recall": 0.13333333333333333
+      }
+    },
+    "min_rows_per_reported_topic": 30,
+    "suppressed_topic_counts": {
+      "103": 8,
+      "107": 5,
+      "116": 18,
+      "117": 13,
+      "119": 7,
+      "120": 6,
+      "125": 17,
+      "135": 16,
+      "142": 28,
+      "154": 7,
+      "19": 21,
+      "22": 6,
+      "23": 21,
+      "26": 16,
+      "27": 4,
+      "30": 6,
+      "39": 6,
+      "4": 18,
+      "45": 7,
+      "46": 8,
+      "47": 2,
+      "53": 20,
+      "55": 8,
+      "56": 21,
+      "58": 12,
+      "6": 2,
+      "60": 27,
+      "73": 5,
+      "75": 20,
+      "80": 19,
+      "87": 19,
+      "90": 17,
+      "92": 6,
+      "93": 3,
+      "95": 22,
+      "97": 11
+    },
+    "warning": "Subgroups use original dataset topic IDs and may overlap by claim; exploratory, no multiple-testing correction."
   },
   "train_majority_label_baseline": {
     "label": "NEUTRAL",
