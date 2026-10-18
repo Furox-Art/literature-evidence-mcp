@@ -147,4 +147,4 @@ jobs:
           PYTHONPATH: ${{ runner.temp }}/cpp-build
       - name: Require 100 percent executable C++ source lines
         run: |
-          gcovr --root native/cpp_meta/src             --filter '.*/native/cpp_meta/src/.*'             --exclude-noncode-lines --fail-under-line 100             "$RUNNER_TEMP/cpp-build" --txt
+          gcovr --root .             --filter 'native/cpp_meta/src/.*'             --exclude-noncode-lines --fail-under-line 100             "$RUNNER_TEMP/cpp-build" --txt
