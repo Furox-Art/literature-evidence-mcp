@@ -21,6 +21,11 @@ from literature_evidence_mcp.methodology import (
     audit_methodology_evidence,
     audit_statistical_fields,
 )
+from literature_evidence_mcp.native import (
+    cpp_fixed_effect_meta_analysis,
+    go_probe_sources,
+    rust_locate,
+)
 from literature_evidence_mcp.source_audit import audit_pmc_paragraph_evidence
 
 mcp = MCPServer("Literature Evidence MCP")
@@ -162,6 +167,24 @@ async def export_evidence(kind: str, payload: dict) -> dict:
 def verify_evidence_ledger() -> dict:
     """Check local JSONL ledger integrity; cannot detect replacement of the entire ledger."""
     return EvidenceLedger().verify()
+
+
+@mcp.tool()
+def rust_locate_quote(source_text: str, quote: str) -> dict:
+    """Opt-in Rust PyO3 literal quote match, no interpretation of scientific meaning."""
+    return rust_locate(source_text, quote)
+
+
+@mcp.tool()
+async def go_parallel_provider_status(query: str, limit: int = 5) -> dict:
+    """Opt-in concurrent Go status probe for three fixed literature APIs."""
+    return await go_probe_sources(query, limit)
+
+
+@mcp.tool()
+def cpp_fixed_effect_meta(studies: list[dict]) -> dict:
+    """Opt-in C++ fixed-effect numerical pooling; heterogeneity/bias not assessed."""
+    return cpp_fixed_effect_meta_analysis(studies)
 
 
 def main() -> None:

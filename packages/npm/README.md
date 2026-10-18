@@ -2,7 +2,7 @@
 
 This is the **npm / Node.js MCP stdio adapter** for the Python scientific literature and evidence-traceability engine in [`Furox-Art/literature-evidence-mcp`](https://github.com/Furox-Art/literature-evidence-mcp).
 
-It does **not** reimplement scientific evaluations or make correctness claims. All 17 Python tools are discovered and forwarded dynamically, retaining their JSON schemas, error states, evidence provenance, and results.
+It does **not** reimplement scientific evaluations or make correctness claims. All 20 Python tools are discovered and forwarded dynamically, retaining their JSON schemas, error states, evidence provenance, and results.
 
 ## Install and run
 

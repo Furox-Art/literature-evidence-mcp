@@ -43,5 +43,17 @@ mod tests {
         assert_eq!(quote_location("one (N = 20) trial", "(N = 20)"), Some((4, 12)));
         assert_eq!(quote_location("citation", "    "), None);
         assert_eq!(quote_location("short text", "missing"), None);
+        assert_eq!(find_quote("scientific method", "scientific"), Some((0, 10)));
+    }
+    #[test]
+    fn python_module_registers_callable() {
+        pyo3::prepare_freethreaded_python();
+        Python::with_gil(|py| {
+            let module = PyModule::new(py, "literature_evidence_rust").unwrap();
+            literature_evidence_rust(&module).unwrap();
+            let outcome: Option<(usize,usize)> = module.getattr("find_quote").unwrap()
+                .call1(("unblinded", "blinded")).unwrap().extract().unwrap();
+            assert_eq!(outcome, None);
+        });
     }
 }

@@ -152,3 +152,26 @@ LITERATURE_EVIDENCE_PYTHON=python3 node packages/npm/dist/cli.js
 ```
 
 Windows users should point `LITERATURE_EVIDENCE_PYTHON` to their installed Python executable. The npm package is prepared for publication; **a successful npm registry publication is not implied** by CI success. The Python test gate remains 100% statement/branch coverage; a separate Node.js CI job checks real client-to-Python MCP protocol behavior and **100% TypeScript line/branch/function coverage**, plus package packing. No Rust acceleration has been added.
+
+## Parallel native accelerators / numerical component (v0.4)
+
+Three independently developed components are available in native/rust_text,
+native/go_sources and native/cpp_meta. Their explicit MCP endpoints are
+rust_locate_quote, go_parallel_provider_status and cpp_fixed_effect_meta.
+They are optional: an unavailable component returns NATIVE_NOT_INSTALLED,
+and the original Python scientific pipeline remains unchanged. The TypeScript
+MCP bridge dynamically discovers the now 20 Python tools. There is NO npm
+registry publication in this change.
+
+Rust matches source text, not research claims. Go probes availability of three
+fixed API endpoints concurrently, not research quality. C++ computes fixed-effect
+inverse-variance pooling from supplied effects and standard errors; it does not
+establish study eligibility, homogeneity, bias control or causal validity.
+Details: [native module instructions](docs/native-modules.md).
+
+Quality rules: the existing Python/TypeScript CI retains 100% statement and
+branch coverage. Rust enforces 100% executable-source-line coverage, Go
+combines instrumented unit tests and the real CLI for 100% statements, and
+C++ enforces 100% executable-source-line coverage while excluding only
+noncode-only braces from GCC's mapping (explicitly reported). All native
+modules have distinct integration CI jobs; no scientific superiority is claimed.

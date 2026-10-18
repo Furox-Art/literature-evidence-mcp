@@ -7,6 +7,9 @@ description = "Optional Unicode-aware literal citation matcher for Literature Ev
 [lib]
 name = "literature_evidence_rust"
 crate-type = ["cdylib", "rlib"]
+[features]
+default = ["extension-module"]
+extension-module = ["pyo3/extension-module"]
 [dependencies]
-pyo3 = {version = "0.25", features = ["extension-module"]}
+pyo3 = {version = "0.25"}
 regex = "1.11"
