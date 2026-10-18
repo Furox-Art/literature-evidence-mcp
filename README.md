@@ -83,6 +83,16 @@ Offline deterministic tests mock every external provider and check concurrent le
 
 **Verification:** On 2026-10-18, 20 baseline v0.2 tests passed with the real MCP v2 SDK in a connected development environment, including in-process MCP tool discovery/call. The opt-in `python scripts/live_smoke.py` also passed for OpenAlex, Europe PMC and Crossref. CI does not run live provider checks. Hosted Streamable HTTP, production resilience, source accuracy, formal risk-of-bias validity, and competitive superiority have NOT been independently verified.
 
+## Bibliographic export (33rd MCP tool)
+
+The offline, opt-in `export_bibliography` MCP tool converts supplied citation metadata
+to **BibTeX, RIS or CSL-JSON**, with injection-safe escaping, explicit DOI
+syntax/verification separation, missing-field honesty and conflict flags. It
+closes an earlier documented reference-export feature gap without adding a
+source provider or asserting scientific accuracy. See
+[reference export and reproducibility](docs/bibliography_export.md).
+No Zotero sync/account integration and no npm Registry release.
+
 ## License and contributions
 
 Apache-2.0. See [LICENSE](LICENSE), [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md). Neither the license nor this repository grants rights to republish third-party scientific articles.
