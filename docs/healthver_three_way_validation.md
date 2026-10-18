@@ -96,6 +96,62 @@ between TRAIN and TEST; no HealthVer data was used for our model
 training. The duplicate-free sensitivity analysis shows that
 repeats can inflate headline accuracy.
 
+## Diagnostic extension: why support fails
+
+The same fixed NLI weights and frozen threshold/margin were re-run on the
+same exact HealthVer TEST snapshot. **No retraining, threshold tuning,
+new scientific axiom or change to the production MCP verdicts.** We
+inspected the three model softmax scores *before* the existing
+neutral/low-confidence paths are combined into
+`INSUFFICIENT_MODEL_EVIDENCE`.
+
+| Production decision origin | TEST cases | Actual SUPPORT | Actual REFUTE | Actual NEUTRAL |
+| --- | ---: | ---: | ---: | ---: |
+| Model's raw top class is NEUTRAL | **1,447** | **540** | **269** | 638 |
+| Directional score below 0.70 threshold | 29 | 15 | 4 | 10 |
+| Model emitted SUPPORT or REFUTE | 347 | 116 | 152 | 79 |
+| Directional margin below 0.15 | 0 | 0 | 0 | 0 |
+
+This is a critical difference: the **809 wrong gold SUPPORT/REFUTE
+examples with raw NEUTRAL argmax** were not simply rejected by the
+confidence threshold; the model *ranked* NEUTRAL above both directional
+labels. Lowering a threshold cannot by itself fix these rankings, and
+we have **not** changed that threshold.
+
+The 0.15 winning-label margin is mathematically redundant here:
+if a class has a probability of at least 0.70, the runner-up can be no
+higher than 0.30, so the winning margin is at least 0.40 > 0.15.
+This statement describes the **frozen configuration**, not a proposal to
+automatically change the classifier.
+
+Without mixing abstentions into NEUTRAL, the raw argmax NLI model
+achieved **46.85% three-way accuracy** and **39.30% macro-F1**,
+compared with 46.57% and 38.42% under the published frozen
+production mapping. This small difference does **not** establish that
+unthresholded results are reliable.
+
+The uncalibrated raw three-class model's 10-bin **expected calibration
+error (ECE) is 0.4932**, and its three-class Brier score is **1.0119**.
+These *descriptive held-out HealthVer estimates* are especially poor on
+this out-of-training-domain dataset and must not be used as calibrated
+probabilities that medical claims are true. Model calibration,
+threshold selection and independent confirmation would require a
+separate, explicitly authorized scientific design.
+
+The data include original topic identifiers. We report exploratory
+topic-stratified results only for groups with **at least 30 TEST
+rows** (19 reportable topics, 36 smaller topic groups suppressed).
+These are not pre-registered superiority tests and were not used
+to tune parameters. Separately, excluding the exact training-overlap
+claim leaves **1,817 TEST rows**, with **46.51% accuracy**.
+The model was never trained on HealthVer, so this is a sensitivity
+rather than a leakage correction.
+
+Full counts, raw argmax three-way confusion, ten calibration bins,
+topic-level aggregated metrics and label provenance are committed
+in [the machine-readable report](../reports/evaluation/healthver_test.json).
+The original third-party raw claim/evidence texts are not committed.
+
 ## Baseline and comparison boundaries
 
 The frozen model beat the simple *unconditional majority-label* comparator
