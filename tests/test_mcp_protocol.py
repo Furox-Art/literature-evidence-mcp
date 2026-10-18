@@ -14,8 +14,8 @@ async def test_protocol_lists_and_executes_tools():
     async with Client(mcp) as client:
         listed = await client.list_tools()
         names = {tool.name for tool in listed.tools}
-        assert len(names) == 29
-        assert {"search_literature", "verify_source_quote", "verify_claim",
+        assert len(names) == 30
+        assert {"search_literature", "bm25_rank_evidence", "verify_source_quote", "verify_claim",
                 "audit_methodology", "audit_pmc_methodology", "check_statistical_reporting",
                 "export_evidence", "verify_evidence_ledger"} <= names
         call = await client.call_tool("verify_claim", {
