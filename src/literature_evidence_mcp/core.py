@@ -11,7 +11,7 @@ import hashlib
 import json
 import os
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote
@@ -24,8 +24,9 @@ from literature_evidence_mcp.methodology import _locate
 CROSSREF = "https://api.crossref.org"
 OPENALEX = "https://api.openalex.org"
 EUROPE_PMC = "https://www.ebi.ac.uk"
-DOI_RE = re.compile(r"^10\.\d{4,9}/\S{1,240}$", re.I)
-PMCID_RE = re.compile(r"^PMC[0-9]{1,15}$", re.I)
+SEMANTIC_SCHOLAR = "https://api.semanticscholar.org"
+DOI_RE = re.compile(r"^10\.\d{4,9}/\S{1,240}$", re.IGNORECASE)
+PMCID_RE = re.compile(r"^PMC[0-9]{1,15}$", re.IGNORECASE)
 RETR_TYPES = {"retraction", "withdrawal", "removed"}
 MAX_QUERY = 600
 MAX_TEXT = 30_000
@@ -37,7 +38,7 @@ class ProviderError(RuntimeError):
 
 def normalize_doi(value: str) -> str:
     value = value.strip()
-    value = re.sub(r"^(?:https?://(?:dx\.)?doi\.org/|doi:)", "", value, flags=re.I)
+    value = re.sub(r"^(?:https?://(?:dx\.)?doi\.org/|doi:)", "", value, flags=re.IGNORECASE)
     if not DOI_RE.fullmatch(value) or any(c in value for c in "?#\\"):
         raise ValueError("Expected a valid DOI (10.<registrant>/<suffix>)")
     return value.lower()
@@ -57,7 +58,7 @@ def _limit(value: int, upper: int = 20) -> int:
 
 
 def _utcnow() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _authors_crossref(record: dict) -> list[str]:
@@ -129,7 +130,7 @@ class ResearchClient:
 
     async def _get(self, base: str, path: str, params: dict | None = None,
                    *, xml: bool = False) -> Any:
-        if base not in {CROSSREF, OPENALEX, EUROPE_PMC}:
+        if base not in {CROSSREF, OPENALEX, EUROPE_PMC, SEMANTIC_SCHOLAR}:
             raise ValueError("Unapproved provider origin")
         if not path.startswith("/") or ".." in path or path.startswith("//"):
             raise ValueError("Unapproved API path")
@@ -140,6 +141,7 @@ class ResearchClient:
             EUROPE_PMC: path == "/europepmc/webservices/rest/search" or bool(
                 re.fullmatch(r"/europepmc/webservices/rest/PMC[0-9]{1,15}/fullTextXML", path)
             ),
+            SEMANTIC_SCHOLAR: path == "/graph/v1/paper/search",
         }
         if not allowed[base]:
             raise ValueError("Unapproved API route")
@@ -149,7 +151,9 @@ class ResearchClient:
             try:
                 # Stream and cap bytes before buffering any untrusted provider response.
                 # Europe PMC fullTextXML rejects the default JSON Accept header (HTTP 406).
-                headers = {"Accept": "application/xml"} if xml else None
+                headers = {"Accept": "application/xml"} if xml else {}
+                if base == SEMANTIC_SCHOLAR and os.getenv("SEMANTIC_SCHOLAR_API_KEY"):
+                    headers["x-api-key"] = os.environ["SEMANTIC_SCHOLAR_API_KEY"]
                 async with self._client.stream(
                     "GET", base + path, params=params, headers=headers,
                 ) as response:
@@ -408,7 +412,7 @@ def screen_methodology(text: str, source_id: str) -> dict:
     for field, patterns in DESIGN_HINTS.items():
         found = []
         for pattern in patterns:
-            match = re.search(pattern, text, re.I)
+            match = re.search(pattern, text, re.IGNORECASE)
             if match:
                 found.append({"snippet": text[max(0, match.start() - 70):match.end() + 70],
                               "offset": match.start()})

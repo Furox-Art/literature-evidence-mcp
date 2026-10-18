@@ -11,6 +11,7 @@ from mcp.server import MCPServer
 from literature_evidence_mcp.appraisal import grade_domain_record, risk_of_bias_review
 from literature_evidence_mcp.bibliography import export_bibliography_records
 from literature_evidence_mcp.bm25_retrieval import rank_supplied_evidence
+from literature_evidence_mcp.citation_traversal import traverse_citations
 from literature_evidence_mcp.core import (
     EvidenceLedger,
     ResearchClient,
@@ -21,6 +22,7 @@ from literature_evidence_mcp.core import (
     verify_quote,
 )
 from literature_evidence_mcp.evidence_nli import assess_evidence_nli
+from literature_evidence_mcp.extended_search import search_four_providers
 from literature_evidence_mcp.go_records import go_cached_papers
 from literature_evidence_mcp.graph_audit import crossref_notice_chain, publication_alerts
 from literature_evidence_mcp.methodology import (
@@ -47,6 +49,19 @@ async def search_literature(query: str, limit_per_source: int = 10) -> dict:
     """Search OpenAlex, Europe PMC, Crossref; deduplicate DOI and report each provider error."""
     async with ResearchClient() as researcher:
         return await researcher.search(query, limit_per_source)
+
+
+@mcp.tool()
+async def search_literature_extended(query: str, limit_per_source: int = 10) -> dict:
+    """Search four sources, including optional Semantic Scholar; never claim exhaustive recall."""
+    return await search_four_providers(query, limit_per_source)
+
+
+@mcp.tool()
+async def expand_citation_chain(seed_doi: str, max_depth: int = 1,
+                                max_per_direction: int = 5, directions: str = "both") -> dict:
+    """Bounded OpenAlex citation links, forward/backward; edges remain unverified metadata."""
+    return await traverse_citations(seed_doi, max_depth, max_per_direction, directions)
 
 
 @mcp.tool()
