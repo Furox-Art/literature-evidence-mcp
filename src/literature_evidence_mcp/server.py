@@ -9,8 +9,17 @@ import os
 from mcp.server import MCPServer
 
 from literature_evidence_mcp.core import (
-    EvidenceLedger, ResearchClient, compare_metadata, evidence_graph,
-    normalize_doi, screen_methodology, verify_quote,
+    EvidenceLedger,
+    ResearchClient,
+    compare_metadata,
+    evidence_graph,
+    normalize_doi,
+    screen_methodology,
+    verify_quote,
+)
+from literature_evidence_mcp.methodology import (
+    audit_methodology_evidence,
+    audit_statistical_fields,
 )
 
 mcp = MCPServer("Literature Evidence MCP")
@@ -76,6 +85,27 @@ def verify_claim(quote: str, source_text: str, source_id: str) -> dict:
 def assess_methodology(source_text: str, source_id: str) -> dict:
     """Transparent phrase screening only; NOT a RoB-2, GRADE, or statistical audit."""
     return screen_methodology(source_text, source_id)
+
+
+@mcp.tool()
+def audit_methodology(
+    study_id: str, outcome: str, study_design: str, source_text: str,
+    annotations: list[dict],
+) -> dict:
+    """Audit traceability of outcome-specific, user-annotated methods evidence.
+
+    Quotes are checked against supplied raw text. Labels are never scientifically
+    validated. Human RoB2/ROBINS-I assessment remains necessary.
+    """
+    return audit_methodology_evidence(
+        study_id, outcome, study_design, source_text, annotations,
+    )
+
+
+@mcp.tool()
+def check_statistical_reporting(records: list[dict]) -> dict:
+    """Find mechanically inconsistent p values/CIs/sample-size entries, not test results."""
+    return audit_statistical_fields(records)
 
 
 @mcp.tool()

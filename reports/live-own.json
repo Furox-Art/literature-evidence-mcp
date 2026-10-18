@@ -1,0 +1,88 @@
+{
+  "engine": "own",
+  "not_evaluated": [
+    "precision",
+    "recall",
+    "claim_accuracy",
+    "risk_of_bias_accuracy",
+    "statistical_significance",
+    "robust latency ranking"
+  ],
+  "per_provider_limit": 5,
+  "providers": [
+    "openalex",
+    "crossref",
+    "europepmc"
+  ],
+  "query_set": "non-expert-labeled shared-query smoke",
+  "results": [
+    {
+      "deduped_record_count": 13,
+      "doi_count": 11,
+      "dois": [
+        "10.1016/j.cub.2011.10.017",
+        "10.1016/j.neuron.2018.10.003",
+        "10.1017/s0140525x19003121",
+        "10.1098/rstb.2024.0467",
+        "10.1101/2025.03.05.641401",
+        "10.1523/jneurosci.1840-22.2022",
+        "10.3030/865617",
+        "10.31234/osf.io/zsw3t",
+        "10.5281/zenodo.18460665",
+        "10.64898/2026.09.23.26363817",
+        "10.64898/2026.10.01.755919"
+      ],
+      "errors": {},
+      "query": "cortical predictive processing",
+      "seconds": 1.06,
+      "status": "OK"
+    },
+    {
+      "deduped_record_count": 15,
+      "doi_count": 13,
+      "dois": [
+        "10.1007/s10578-026-02087-3",
+        "10.1007/s10578-026-02097-1",
+        "10.1037//0022-006x.64.2.333",
+        "10.1037/0022-006x.64.2.333",
+        "10.1080/00048670701689436",
+        "10.1111/adj.12492",
+        "10.1186/s40359-026-05149-2",
+        "10.1257/rct.14334-1.0",
+        "10.1257/rct.9551",
+        "10.1257/rct.9551-1.0",
+        "10.21236/ada504710",
+        "10.2196/87123",
+        "10.4135/9781473978386"
+      ],
+      "errors": {},
+      "query": "randomized controlled trial childhood anxiety",
+      "seconds": 0.856,
+      "status": "OK"
+    },
+    {
+      "deduped_record_count": 15,
+      "doi_count": 14,
+      "dois": [
+        "10.1007/11398448_1",
+        "10.1007/978-3-540-74211-1_20",
+        "10.1016/j.ppnp.2024.104134",
+        "10.1016/s0375-9601(02)00885-x",
+        "10.1038/s41467-026-74491-1",
+        "10.1088/1361-6633/ae7735",
+        "10.1093/oso/9780199683338.003.0013",
+        "10.1093/oso/9780199683338.003.0026",
+        "10.1103/physreva.85.052128",
+        "10.1103/ydch-vgmy",
+        "10.1140/epjc/s10052-022-10245-9",
+        "10.1142/9789819821761_0010",
+        "10.20944/preprints202605.1973.v1",
+        "10.3390/e28080860"
+      ],
+      "errors": {},
+      "query": "quantum entanglement bell inequalities",
+      "seconds": 0.867,
+      "status": "OK"
+    }
+  ]
+}

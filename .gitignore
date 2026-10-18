@@ -11,3 +11,6 @@ htmlcov/
 *.jsonl
 .env
 *.jsonl.lock
+
+# Competing server smoke tests can generate this local-only cache.
+.athenaeum_cache/

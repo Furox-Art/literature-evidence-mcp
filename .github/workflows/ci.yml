@@ -21,6 +21,17 @@ jobs:
         run: pytest -q
       - name: Verify protocol test was not skipped
         run: pytest -q tests/test_mcp_protocol.py -rs
+      - name: Lint v0.3 evidence audit and benchmark additions
+        run: >-
+          ruff check
+          src/literature_evidence_mcp/methodology.py
+          src/literature_evidence_mcp/server.py
+          scripts/benchmark_roboto2.py
+          scripts/compare_search_engines.py
+          tests/test_methodology.py
+          tests/test_benchmark.py
+      - name: Check benchmark fixture tests
+        run: pytest -q tests/test_methodology.py tests/test_benchmark.py
       - name: Compile
         run: python -m compileall -q src
       - name: Build wheel and sdist

@@ -1,0 +1,103 @@
+{
+  "snapshot_date_utc": "2026-10-18",
+  "queries": [
+    {
+      "query": "cortical predictive processing",
+      "engines": {
+        "own": {
+          "status": "OK",
+          "deduped_records": 13,
+          "dois_with_identifiers": 11,
+          "latency_seconds_single_run": 1.06,
+          "provider_error_or_warning": {}
+        },
+        "athenaeum": {
+          "status": "OK",
+          "deduped_records": 15,
+          "dois_with_identifiers": 13,
+          "latency_seconds_single_run": 1.099,
+          "provider_error_or_warning": {
+            "warning": "athenaeum meta_search suppresses provider exceptions"
+          }
+        },
+        "paper_search": {
+          "status": "OK",
+          "deduped_records": 14,
+          "dois_with_identifiers": 12,
+          "latency_seconds_single_run": 1.6,
+          "provider_error_or_warning": {}
+        }
+      },
+      "doi_intersection_all_three_count": 11,
+      "doi_union_all_three_count": 14
+    },
+    {
+      "query": "randomized controlled trial childhood anxiety",
+      "engines": {
+        "own": {
+          "status": "OK",
+          "deduped_records": 15,
+          "dois_with_identifiers": 13,
+          "latency_seconds_single_run": 0.856,
+          "provider_error_or_warning": {}
+        },
+        "athenaeum": {
+          "status": "OK",
+          "deduped_records": 15,
+          "dois_with_identifiers": 13,
+          "latency_seconds_single_run": 1.018,
+          "provider_error_or_warning": {
+            "warning": "athenaeum meta_search suppresses provider exceptions"
+          }
+        },
+        "paper_search": {
+          "status": "OK",
+          "deduped_records": 15,
+          "dois_with_identifiers": 13,
+          "latency_seconds_single_run": 0.641,
+          "provider_error_or_warning": {}
+        }
+      },
+      "doi_intersection_all_three_count": 8,
+      "doi_union_all_three_count": 18
+    },
+    {
+      "query": "quantum entanglement bell inequalities",
+      "engines": {
+        "own": {
+          "status": "OK",
+          "deduped_records": 15,
+          "dois_with_identifiers": 14,
+          "latency_seconds_single_run": 0.867,
+          "provider_error_or_warning": {}
+        },
+        "athenaeum": {
+          "status": "OK",
+          "deduped_records": 15,
+          "dois_with_identifiers": 15,
+          "latency_seconds_single_run": 0.471,
+          "provider_error_or_warning": {
+            "warning": "athenaeum meta_search suppresses provider exceptions"
+          }
+        },
+        "paper_search": {
+          "status": "OK",
+          "deduped_records": 15,
+          "dois_with_identifiers": 14,
+          "latency_seconds_single_run": 0.684,
+          "provider_error_or_warning": {}
+        }
+      },
+      "doi_intersection_all_three_count": 13,
+      "doi_union_all_three_count": 16
+    }
+  ],
+  "engines": [
+    "own",
+    "athenaeum",
+    "paper_search"
+  ],
+  "external_evidence_labels_available": false,
+  "conclusion": "SEARCH_SMOKE_ONLY_NO_ACCURACY_RANKING",
+  "caveats": "One live pass per engine, fixed providers OpenAlex/Crossref/EuropePMC, per-provider quota/ranking/caching vary. Relevance precision, recall, RoB correctness and superiority unknown."
+}

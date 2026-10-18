@@ -1,0 +1,13 @@
+{
+  "cross_paper_false_match_count": 0,
+  "cross_paper_false_match_fraction": 0.0,
+  "dataset": "ROBoto2 (externally annotated clinical trials)",
+  "dataset_sha256": "636eb757884a3fcbf5a2bfca40012b016d7800099aefe4655531ae2ed91de722",
+  "direct_match_count": 174,
+  "direct_match_fraction": 0.42131,
+  "evaluated_papers": 93,
+  "independent_scientific_risk_of_bias_accuracy": "NOT_EVALUATED",
+  "limitations": "Quoted expert rationales can be incomplete, modified or mixed with comments; PDF parses are noisy. Positive textual retrieval is not an accurate risk-of-bias judgment. Cross-document swap controls are constructed, not gold negatives.",
+  "metric": "verbatim excerpt retrieval against parsed PDF text",
+  "quoted_excerpts": 413
+}
