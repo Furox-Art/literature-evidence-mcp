@@ -10,6 +10,7 @@ from mcp.server import MCPServer
 
 from literature_evidence_mcp.appraisal import grade_domain_record, risk_of_bias_review
 from literature_evidence_mcp.bm25_retrieval import rank_supplied_evidence
+from literature_evidence_mcp.evidence_nli import assess_evidence_nli
 from literature_evidence_mcp.core import (
     EvidenceLedger,
     ResearchClient,
@@ -261,6 +262,13 @@ async def crossref_update_alerts(dois: list[str], edges: list[dict]) -> dict:
 def bm25_rank_evidence(query: str, documents: list[dict], top_k: int = 10) -> dict:
     """Opt-in BM25 of caller-supplied abstracts; never certifies scientific support."""
     return rank_supplied_evidence(query, documents, top_k)
+
+
+@mcp.tool()
+def nli_assess_evidence(claim: str, evidence: str, source_id: str,
+                        threshold: float = 0.70, margin: float = 0.15) -> dict:
+    """Offline pinned NLI support/refute/insufficient MODEL estimate; never verified truth."""
+    return assess_evidence_nli(claim, evidence, source_id, threshold, margin)
 
 
 def main() -> None:

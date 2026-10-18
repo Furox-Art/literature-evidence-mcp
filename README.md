@@ -226,3 +226,24 @@ python -m pip install -e '.[retrieval]'
 Without that optional extra, the tool remains discoverable but returns
 `OPTIONAL_BM25_NOT_INSTALLED`. No automatic installation or npm publication
 takes place. See [usage, input restrictions and scientific cautions](docs/bm25_evidence_ranking.md).
+
+## Experimental offline claim/evidence NLI (31st MCP tool)
+
+An explicitly optional, **not clinically validated** three-way
+`nli_assess_evidence` MCP tool evaluates whether a caller-supplied passage
+*appears to* support, refute or provide insufficient model evidence for a
+claim. The pinned, SHA-256-verified DeBERTa NLI model runs offline and never
+modifies the existing source-search/quote-verification or RoB/PRISMA/GRADE
+workflow. Without a configured model it abstains.
+
+**Independent SciFact DEV audit (338 gold rationale sets):** 39.1%
+non-abstaining coverage, **83.3% conditional accuracy on 132 decided
+examples**, and **32.5% correct over all 338** when abstentions count as not
+correct. A train-majority unconditional baseline scored **63.9%**, so no
+full-coverage superiority was demonstrated. The SciFact evaluation has
+**no independent insufficient-evidence class** and was given gold
+source rationales; neither scientific reliability nor end-to-end
+retrieval performance is established.
+
+[Full scientific protocol, reproducibility and limitations](docs/nli_scientific_validation.md).
+Optional local dependency: `pip install -e '.[nli]'`. No npm publication.
