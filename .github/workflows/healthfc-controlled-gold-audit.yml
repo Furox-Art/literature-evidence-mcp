@@ -1,6 +1,11 @@
 name: Optional HealthFC controlled NLI audit
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/healthfc-controlled-gold-audit.yml
+      - scripts/evaluation/healthfc_controlled.py
+      - scripts/evaluation/healthfc_exploratory.py
 permissions:
   contents: read
 jobs:

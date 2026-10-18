@@ -44,7 +44,7 @@ ambiguous punctuation. Exclusions are **not errors or negative examples**.
 
 ## Execution and safeguards
 
-The opt-in, manual GitHub Actions workflow is
+The GitHub Actions workflow runs on its relevant pull request changes and can also be manually dispatched after reaching the default branch. The workflow is
 `.github/workflows/healthfc-controlled-gold-audit.yml`.
 It fetches the exact source and all three pinned models into an ephemeral
 runner, checks source/model SHA-256, evaluates only retained records using
