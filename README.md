@@ -83,6 +83,18 @@ Offline deterministic tests mock every external provider and check concurrent le
 
 **Verification:** On 2026-10-18, 20 baseline v0.2 tests passed with the real MCP v2 SDK in a connected development environment, including in-process MCP tool discovery/call. The opt-in `python scripts/live_smoke.py` also passed for OpenAlex, Europe PMC and Crossref. CI does not run live provider checks. Hosted Streamable HTTP, production resilience, source accuracy, formal risk-of-bias validity, and competitive superiority have NOT been independently verified.
 
+## Two-track head-to-head scientific comparison (offline audit)
+
+The [frozen-input two-track comparison harness](docs/dual_track_head_to_head.md)
+separately examines **retrieval of known relevant papers** and **SUPPORT / REFUTE /
+INSUFFICIENT evidence decisions** on identical case IDs across two or more
+real system outputs. It requires pinned gold/prediction SHA-256 and retains
+NULL/MIXED/BLOCKED/ERROR, missing positive labels, and negative results.
+Existing historical SciFact, HealthVer, HealthFC and competitor smokes remain
+exploratory: none proves independent blinding or general superiority. The
+harness intentionally does **not** choose a primary metric, winner, or
+significance test without an approved scientific protocol.
+
 ## Extended discovery and citation chain (35 MCP tools)
 
 Two optional, provenance-conscious tools strengthen bibliographic exploration:
