@@ -1,6 +1,4 @@
 """Real BM25 integration and fail-closed optional dependency regression tests."""
-from __future__ import annotations
-
 from types import SimpleNamespace
 
 import pytest
