@@ -15,8 +15,6 @@ from pathlib import Path
 import random
 import re
 
-from rank_bm25 import BM25Okapi
-
 HASHES = {
     "corpus.jsonl": "b8d6c89624cb2ed74dee8938effc4f5d8bd2086887880af8110d64be4ceade62",
     "claims_dev.jsonl": "86f0435d08fdb65d1aa41d1472684f57e6e71930626497bdf4d7a9ec1a632217",
@@ -65,6 +63,7 @@ def paired_difference(rows: list[dict], first: str, second: str, field: str) -> 
 
 
 def evaluate(folder: Path) -> dict:
+    from rank_bm25 import BM25Okapi  # Evaluation-only, pinned in requirements.txt
     for file, wanted in HASHES.items():
         if hashlib.sha256((folder / file).read_bytes()).hexdigest() != wanted:
             raise ValueError("SciFact snapshot SHA-256 mismatch: " + file)
