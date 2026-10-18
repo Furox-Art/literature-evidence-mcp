@@ -83,6 +83,20 @@ Offline deterministic tests mock every external provider and check concurrent le
 
 **Verification:** On 2026-10-18, 20 baseline v0.2 tests passed with the real MCP v2 SDK in a connected development environment, including in-process MCP tool discovery/call. The opt-in `python scripts/live_smoke.py` also passed for OpenAlex, Europe PMC and Crossref. CI does not run live provider checks. Hosted Streamable HTTP, production resilience, source accuracy, formal risk-of-bias validity, and competitive superiority have NOT been independently verified.
 
+## Extended discovery and citation chain (35 MCP tools)
+
+Two optional, provenance-conscious tools strengthen bibliographic exploration:
+`search_literature_extended` queries **OpenAlex, Europe PMC, Crossref and
+Semantic Scholar** concurrently; each source's errors and disagreements are
+preserved, and missing/invalid DOI records are never silently merged by title.
+`expand_citation_chain` performs **bounded 1–2 hop forward/backward OpenAlex
+citation traversal** with fixed request and node caps, explicit partial states,
+and source-identified, *provider-asserted* edges. Neither tool ranks or
+scientifically validates research, and neither claims exhaustive search. The
+original three-provider `search_literature` behavior is unchanged.
+Semantic Scholar may return 429 without an optional API key.
+[Protocol, examples, hard limits and verification](docs/extended_search_citation_traversal.md).
+
 ## Bibliographic export (33rd MCP tool)
 
 The offline, opt-in `export_bibliography` MCP tool converts supplied citation metadata

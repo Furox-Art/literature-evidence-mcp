@@ -51,6 +51,9 @@ jobs:
           tests/test_bm25_retrieval.py
           src/literature_evidence_mcp/bm25_retrieval.py
           src/literature_evidence_mcp/bibliography.py
+          src/literature_evidence_mcp/extended_search.py
+          src/literature_evidence_mcp/citation_traversal.py
+          tests/test_extended_search_citations.py
           tests/test_bibliography.py
           src/literature_evidence_mcp/evidence_nli.py
           src/literature_evidence_mcp/nli_challenger.py

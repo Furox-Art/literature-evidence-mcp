@@ -66,3 +66,18 @@ expansion and scoring (method/design decision required); integrated Zotero
 actions; blind expert adjudication of evidence-quality/claim predictions;
 and head-to-head identical-dataset/time-budget statistical benchmarking.
 No scientific superiority follows from feature checklists or test coverage.
+
+## 2026-10-19: extended search and citation graph (opt-in, not a win claim)
+
+Following the historical feature matrix above, two more MCP tools were added:
+
+- `search_literature_extended`: fourth provider Semantic Scholar with explicit
+  rate-limit/HTTP errors, DOI-anchored reconciliation and conflict reporting.
+- `expand_citation_chain`: bounded (two hops maximum) forward/backward
+  OpenAlex citation exploration with explicit source IDs and truncation.
+
+This closes *basic* multi-source expansion/citation-traversal gaps. It does **not**
+close large-scale provider coverage, algorithmically ranked snowballing, Zotero
+synchronization, blind relevance benchmarking or end-to-end systematic-review
+accuracy. Live Semantic Scholar returned a rate-limit error; no dependable
+production availability of that provider was demonstrated.

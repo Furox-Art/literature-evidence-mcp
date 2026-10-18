@@ -16,12 +16,14 @@ test('TypeScript MCP stdio forwards real Python tools without changing scientifi
   try {
     await client.connect(transport);
     const { tools } = await client.listTools();
-    assert.equal(tools.length, 33);
+    assert.equal(tools.length, 35);
     const names = new Set(tools.map(tool => tool.name));
     assert(names.has('verify_claim'));
     assert(names.has('bm25_rank_evidence'));
     assert(names.has('nli_assess_challenger_evidence'));
     assert(names.has('export_bibliography'));
+    assert(names.has('search_literature_extended'));
+    assert(names.has('expand_citation_chain'));
     assert(names.has('audit_methodology'));
     const response = await client.callTool({name: 'verify_claim', arguments: {
       quote: 'null effect', source_text: 'A null effect was measured.', source_id: 'test:article',
