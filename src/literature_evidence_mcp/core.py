@@ -71,6 +71,7 @@ def _as_paper(record: dict, provider: str) -> dict:
         dates = record.get("published", {}).get("date-parts", [[]])
         year = dates[0][0] if dates and dates[0] else None
         return {"doi": (record.get("DOI") or "").lower() or None,
+                "doi_provider_value": record.get("DOI"),
                 "title": title[0] if isinstance(title, list) and title else None,
                 "year": year, "authors": _authors_crossref(record),
                 "journal": (record.get("container-title") or [None])[0],
@@ -85,6 +86,7 @@ def _as_paper(record: dict, provider: str) -> dict:
                     tokens[p] = word
         abstract = " ".join(tokens[i] for i in sorted(tokens)) if tokens else None
         return {"doi": ((record.get("doi") or "").removeprefix("https://doi.org/").lower() or None),
+                "doi_provider_value": record.get("doi"),
                 "title": record.get("display_name") or record.get("title"),
                 "year": record.get("publication_year"),
                 "authors": [x.get("author", {}).get("display_name") for x in record.get("authorships", [])[:25]],
@@ -94,6 +96,7 @@ def _as_paper(record: dict, provider: str) -> dict:
                 "abstract": abstract, "source_id": record.get("id")}
     if provider == "europepmc":
         return {"doi": (record.get("doi") or "").lower() or None,
+                "doi_provider_value": record.get("doi"),
                 "title": record.get("title"), "year": record.get("pubYear"),
                 "authors": (record.get("authorString") or "").split(", ")[:25],
                 "journal": record.get("journalTitle"), "source": provider,
@@ -113,7 +116,7 @@ class ResearchClient:
         if self._client is None:
             self._client = httpx.AsyncClient(
                 timeout=httpx.Timeout(15.0), follow_redirects=False,
-                headers={"User-Agent": "LiteratureEvidenceMCP/0.3.1 (scholarly-metadata-client)",
+                headers={"User-Agent": "LiteratureEvidenceMCP/0.3.2 (scholarly-metadata-client)",
                          "Accept": "application/json"},
                 limits=httpx.Limits(max_connections=10),
             )
@@ -199,8 +202,24 @@ class ResearchClient:
         provider_status: dict[str, dict] = {}
         for source, status, papers in collected:
             provider_status[source] = status
-            for paper in papers:
-                key = paper.get("doi") or f"{source}:{paper.get('source_id') or paper.get('title')}"
+            for ordinal, paper in enumerate(papers):
+                # Provider DOIs are untrusted metadata. Only syntactically valid
+                # normalized DOIs may identify a work across multiple providers.
+                raw_doi = paper.get("doi")
+                if raw_doi:
+                    try:
+                        paper["doi"] = normalize_doi(raw_doi)
+                    except (ValueError, TypeError, AttributeError):
+                        paper["doi"] = None
+                        paper["doi_status"] = "INVALID_PROVIDER_DOI_NOT_RESOLVED"
+                        paper["doi_raw"] = paper["doi_provider_value"]
+                    else:
+                        paper["doi_status"] = "SYNTAX_VALID_NOT_RESOLVED"
+                else:
+                    paper["doi_status"] = "MISSING"
+                # A title or provider ID is not sufficient to prove two works
+                # identical. Never collapse DOI-less records merely by title.
+                key = paper["doi"] or f"no-doi:{source}:{ordinal}"
                 if key not in dedup:
                     dedup[key] = {
                         **paper,
