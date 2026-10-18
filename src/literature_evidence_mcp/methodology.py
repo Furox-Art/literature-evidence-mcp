@@ -28,6 +28,12 @@ def _locate(text: str, quote: str) -> tuple[int, int] | None:
     if not words:
         return None
     pattern = r"\s+".join(re.escape(word) for word in words)
+    # Avoid false positives such as "significant" inside "insignificant".
+    # Preserve literal punctuation and flexible whitespace in quoted passages.
+    if re.match(r"\w", words[0], flags=re.UNICODE):
+        pattern = r"(?<!\w)" + pattern
+    if re.search(r"\w$", words[-1], flags=re.UNICODE):
+        pattern += r"(?!\w)"
     found = re.search(pattern, text, flags=re.IGNORECASE)
     return found.span() if found else None
 

@@ -19,6 +19,8 @@ from urllib.parse import quote
 import httpx
 from filelock import FileLock
 
+from literature_evidence_mcp.methodology import _locate
+
 CROSSREF = "https://api.crossref.org"
 OPENALEX = "https://api.openalex.org"
 EUROPE_PMC = "https://www.ebi.ac.uk"
@@ -111,7 +113,7 @@ class ResearchClient:
         if self._client is None:
             self._client = httpx.AsyncClient(
                 timeout=httpx.Timeout(15.0), follow_redirects=False,
-                headers={"User-Agent": "LiteratureEvidenceMCP/0.2 (scholarly-metadata-client)",
+                headers={"User-Agent": "LiteratureEvidenceMCP/0.3.1 (scholarly-metadata-client)",
                          "Accept": "application/json"},
                 limits=httpx.Limits(max_connections=10),
             )
@@ -143,7 +145,11 @@ class ResearchClient:
         for attempt in range(3):
             try:
                 # Stream and cap bytes before buffering any untrusted provider response.
-                async with self._client.stream("GET", base + path, params=params) as response:
+                # Europe PMC fullTextXML rejects the default JSON Accept header (HTTP 406).
+                headers = {"Accept": "application/xml"} if xml else None
+                async with self._client.stream(
+                    "GET", base + path, params=params, headers=headers,
+                ) as response:
                     if response.status_code in {429, 500, 502, 503, 504}:
                         if attempt < 2:
                             await asyncio.sleep(0.2 * (2**attempt))
@@ -302,21 +308,23 @@ class ResearchClient:
         if not (1 <= len(quote_text.strip()) <= 1000):
             raise ValueError("Quote length must be 1–1000 characters")
         full = await self.fulltext(pmcid)
-        matches = [{"span_id": item["span_id"], "section": item["section"],
-                    "paragraph_index": item["paragraph_index"],
-                    "sha256_text": item["sha256_text"]}
-                   for item in full["spans"] if _compact(quote_text) in _compact(item["text"])]
+        matches = []
+        for item in full["spans"]:
+            span = _locate(item["text"], quote_text)
+            if span is not None:
+                matches.append({"span_id": item["span_id"], "section": item["section"],
+                                "paragraph_index": item["paragraph_index"],
+                                "sha256_text": item["sha256_text"],
+                                "offset_start": span[0], "offset_end": span[1]})
+        status = ("TEXTUAL_MATCH_ONLY" if matches else
+                  "NOT_VERIFIED_SOURCE_TRUNCATED" if full["truncated"] else "NOT_VERIFIED")
         return {"pmcid": full["pmcid"], "quote": quote_text,
-                "status": "TEXTUAL_MATCH_ONLY" if matches else "NOT_VERIFIED",
+                "status": status,
                 "matched_spans": matches, "xml_sha256": full["sha256_xml"],
                 "retrieval_truncated": full["truncated"],
                 "scientific_claim_verified": False,
                 "notice": "Matching a direct source passage does not establish scientific validity."
                           " No match is inconclusive if retrieval was truncated."}
-
-
-def _compact(text: str) -> str:
-    return " ".join(text.casefold().split())
 
 
 def verify_quote(quote_text: str, source_text: str, source_id: str) -> dict:
@@ -327,8 +335,11 @@ def verify_quote(quote_text: str, source_text: str, source_id: str) -> dict:
         raise ValueError("Source text length must be 1–250000 characters")
     if not (1 <= len(source_id.strip()) <= 300):
         raise ValueError("Source identifier required")
-    exact = _compact(quote_text) in _compact(source_text)
+    span = _locate(source_text, quote_text)
+    exact = span is not None
     return {"source_id": source_id, "quote": quote_text, "text_match": exact,
+            "offset_start": span[0] if span else None,
+            "offset_end": span[1] if span else None,
             "status": "TEXTUAL_MATCH_ONLY" if exact else "NOT_VERIFIED",
             "scientific_claim_verified": False,
             "source_text_sha256": hashlib.sha256(source_text.encode()).hexdigest(),
