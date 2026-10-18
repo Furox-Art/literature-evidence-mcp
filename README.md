@@ -206,3 +206,7 @@ confidence intervals, and explicit absence of semantic claim predictions.
 Original raw copyrighted/licensed papers and annotations are NOT stored in
 the repository. CI recreates both published **aggregated** reports byte-for-byte.
 No npm registry publication is performed.
+
+## Open-corpus SciFact retrieval evaluation
+
+A separate [full-corpus evaluation protocol](docs/scifact_full_corpus.md) measures independent BM25 and lexical retrieval across all 5,183 SciFact abstracts. This does **not** modify the scientific MCP; the existing product has no hypothesis-conditioned open-corpus retrieval component. No unsupported science-accuracy claims are made. Aggregated results are persisted as GitHub CI artifacts and are not published to npm.

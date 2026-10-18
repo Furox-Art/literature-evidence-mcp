@@ -226,3 +226,15 @@ jobs:
           diff -u reports/evaluation/scifact_dev.json "$RUNNER_TEMP/scifact_dev.json"
           diff -u reports/evaluation/evidencebench_test.json "$RUNNER_TEMP/evidencebench_test.json"
           pytest -q tests/test_gold_evaluation_protocol.py
+      - name: Measure open-corpus SciFact retrieval without semantic-label claims
+        shell: bash
+        run: |
+          python -m scripts.evaluation.scifact_open_retrieval \
+            --data "$RUNNER_TEMP/science-gold/data" \
+            --output "$RUNNER_TEMP/scifact_open_retrieval.json"
+          pytest -q tests/test_scifact_open_retrieval.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: scifact-full-corpus-retrieval
+          path: ${{ runner.temp }}/scifact_open_retrieval.json
+          if-no-files-found: error
