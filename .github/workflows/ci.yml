@@ -50,6 +50,10 @@ jobs:
           tests/test_gold_evaluation_protocol.py
           tests/test_bm25_retrieval.py
           src/literature_evidence_mcp/bm25_retrieval.py
+          src/literature_evidence_mcp/evidence_nli.py
+          tests/test_evidence_nli.py
+          tests/test_nli_gold_report.py
+          scripts/evaluation/scifact_nli.py
           scripts/evaluation/scifact_gold.py
           scripts/evaluation/evidencebench_gold.py
       - name: Check benchmark fixture tests

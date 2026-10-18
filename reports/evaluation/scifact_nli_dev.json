@@ -1,0 +1,99 @@
+{
+  "claim_cluster_bootstrap_95pct": {
+    "coverage": [
+      0.32484,
+      0.45533
+    ],
+    "selective_accuracy": [
+      0.75652,
+      0.90244
+    ],
+    "unconditional_correct": [
+      0.26225,
+      0.39412
+    ]
+  },
+  "dataset": "SciFact publicly annotated DEV rationale sets",
+  "gold_dev_rationales": 338,
+  "gold_is_given_not_retrieved": true,
+  "gold_train_rationales": 957,
+  "limitations": [
+    "Oracle SciFact gold evidence premises were handed to the model; no evidence retrieval was evaluated.",
+    "SciFact train/dev rationale annotations are SUPPORT/CONTRADICT only: the NEI class is unassessed.",
+    "NLIs trained on SNLI/MNLI, not scientific-domain entailment, may be overconfident.",
+    "Model softmax is not calibrated scientific truth probability.",
+    "No source authenticity, full-paper context, risk of bias or study quality verification.",
+    "The dev partition was used only to report results, not to fit thresholds or model parameters.",
+    "Any result needs human scientific adjudication before use."
+  ],
+  "model": "cross-encoder/nli-deberta-v3-small",
+  "model_revision": "fa2804872c3b4bd748f38c0185cc85775361e735",
+  "model_safetensors_sha256": "ebc79588dd73ccfb6a3f6078519cfbf512c5305384c5ea1845bc71cd32216e86",
+  "model_trained_on_scifact": false,
+  "nli_zero_shot_gold_rationale_results": {
+    "abstained": 206,
+    "confusion_matrix": {
+      "CONTRADICT": {
+        "INSUFFICIENT_MODEL_EVIDENCE": 59,
+        "PREDICTED_REFUTE": 61,
+        "PREDICTED_SUPPORT": 2
+      },
+      "SUPPORT": {
+        "INSUFFICIENT_MODEL_EVIDENCE": 147,
+        "PREDICTED_REFUTE": 20,
+        "PREDICTED_SUPPORT": 49
+      }
+    },
+    "count": 338,
+    "coverage": 0.3905325443786982,
+    "gold_label_counts": {
+      "CONTRADICT": 122,
+      "SUPPORT": 216
+    },
+    "predicted_refute": 81,
+    "predicted_support": 51,
+    "selective_accuracy_given_prediction": 0.8333333333333334,
+    "unconditional_correct_over_all_gold_rationales": 0.3254437869822485
+  },
+  "no_independent_gold_for_insufficient_class": true,
+  "no_semantic_claims_for_empty_evidence": true,
+  "not_validated_scientific_truth": true,
+  "selection": {
+    "margin": 0.15,
+    "threshold": 0.7,
+    "uses_dev_for_threshold_selection": false
+  },
+  "source_dataset_file_sha256": {
+    "claims_dev.jsonl": "86f0435d08fdb65d1aa41d1472684f57e6e71930626497bdf4d7a9ec1a632217",
+    "claims_train.jsonl": "f4c8fa82d8bd0653a9cc8d61a6ea48c25eacea64e90af5dbf390ebb1b74372f0",
+    "corpus.jsonl": "b8d6c89624cb2ed74dee8938effc4f5d8bd2086887880af8110d64be4ceade62"
+  },
+  "status": "SCIFACT_EXTERNAL_NLI_GOLD_EVALUATED_WITH_ABSTENTION",
+  "support_contradict_gold_only": true,
+  "train_majority_class": "SUPPORT",
+  "train_only_majority_baseline_results": {
+    "abstained": 0,
+    "confusion_matrix": {
+      "CONTRADICT": {
+        "INSUFFICIENT_MODEL_EVIDENCE": 0,
+        "PREDICTED_REFUTE": 0,
+        "PREDICTED_SUPPORT": 122
+      },
+      "SUPPORT": {
+        "INSUFFICIENT_MODEL_EVIDENCE": 0,
+        "PREDICTED_REFUTE": 0,
+        "PREDICTED_SUPPORT": 216
+      }
+    },
+    "count": 338,
+    "coverage": 1.0,
+    "gold_label_counts": {
+      "CONTRADICT": 122,
+      "SUPPORT": 216
+    },
+    "predicted_refute": 0,
+    "predicted_support": 338,
+    "selective_accuracy_given_prediction": 0.6390532544378699,
+    "unconditional_correct_over_all_gold_rationales": 0.6390532544378699
+  }
+}
