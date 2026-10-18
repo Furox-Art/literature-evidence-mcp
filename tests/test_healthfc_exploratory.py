@@ -78,3 +78,27 @@ def test_aggregate_never_contains_licensed_rows(monkeypatch, tmp_path):
     assert all("predictions" not in row and "raw_predictions" not in row
                for row in result["candidate_results"].values())
     assert len(result["paired_differences_vs_original"]) == 2
+
+
+def test_committed_report_contains_only_aggregate_exploratory_metrics():
+    import json
+    from pathlib import Path
+
+    report = json.loads(
+        (Path(__file__).resolve().parents[1] /
+         'reports/evaluation/healthfc_controlled_syntax_exploratory.json').read_text()
+    )
+    assert report['status'] == 'EXPLORATORY_SYNTAX_ONLY_TRANSFORMATION_NOT_EXPERT_ADJUDICATED'
+    assert report['cohort_audit']['selected_rows'] == 511
+    assert report['cohort_audit']['excluded_rows'] == 239
+    assert report['cohort_audit']['selected_label_distribution'] == {
+        'SUPPORT': 136, 'REFUTE': 89, 'NEUTRAL': 286
+    }
+    assert set(report['candidate_results']) == set(evaluation.CANDIDATES)
+    for row in report['candidate_results'].values():
+        assert row['metrics']['count'] == 511
+        assert row['weights_sha256'] == row['candidate']['weights_sha256']
+        assert 'predictions' not in row and 'raw_predictions' not in row
+        assert 0 <= row['metrics']['accuracy'] <= 1
+    assert report['selection_policy'] == 'NO_PRODUCTION_SELECTION_BASED_ON_EXPLORATORY_METRICS'
+    assert len(report['paired_differences_vs_original']) == 2

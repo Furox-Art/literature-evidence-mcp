@@ -58,6 +58,30 @@ accuracy, macro-F1, per-class recall, decision coverage, and paired
 differences on the **same 511-question subset**. The previous HealthVer/SciFact
 metrics **must not** be compared as if cohorts were interchangeable.
 
+## Reproduced opt-in CPU results (exploratory)
+
+GitHub Actions run [39167872854](https://github.com/Furox-Art/literature-evidence-mcp/actions/runs/39167872854)
+finished SUCCESS with source/checkpoint SHA-256 checks and an aggregate-only
+artifact. The identical selected 511 examples were compared using the frozen
+model versions and unchanged 0.70/0.15 decision rule.
+
+| Model | Accuracy | Macro-F1 | SUPPORT recall | REFUTE recall |
+|---|---:|---:|---:|---:|
+| Original DeBERTa-small | 59.30% | 42.47% | 15.44% | 21.35% |
+| FEVER/ANLI DeBERTa-base | **70.25%** | **64.65%** | **41.91%** | **56.18%** |
+| General DeBERTa-base | 60.47% | 48.94% | 18.38% | 40.45% |
+
+FEVER/ANLI vs original: **+10.96 accuracy percentage points**, with a
+*post-hoc, exploratory* claim-cluster paired bootstrap interval (500 seeded
+resamples) of **+6.85 to +14.87 pp**. General base vs original: **+1.17 pp**,
+interval **-2.15 to +4.31 pp**. These are **not confirmatory superiority
+claims**. Gold INSUFFICIENT and low-confidence abstentions are distinguished
+conceptually, but the frozen deployment verdict groups them as NEUTRAL.
+
+Full aggregate counts, confusion matrices and selective metrics are in
+`reports/evaluation/healthfc_controlled_syntax_exploratory.json`; neither
+raw nor converted licensed claim text is included.
+
 ## What this cannot establish
 
 1. Expert verdicts about *clinical evidence sufficiency* are not the
