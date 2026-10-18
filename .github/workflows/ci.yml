@@ -53,6 +53,8 @@ jobs:
           src/literature_evidence_mcp/evidence_nli.py
           tests/test_evidence_nli.py
           tests/test_nli_gold_report.py
+          tests/test_healthver_nli_protocol.py
+          scripts/evaluation/healthver_nli.py
           scripts/evaluation/scifact_nli.py
           scripts/evaluation/scifact_gold.py
           scripts/evaluation/evidencebench_gold.py

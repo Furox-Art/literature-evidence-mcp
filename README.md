@@ -247,3 +247,20 @@ retrieval performance is established.
 
 [Full scientific protocol, reproducibility and limitations](docs/nli_scientific_validation.md).
 Optional local dependency: `pip install -e '.[nli]'`. No npm publication.
+
+
+## HealthVer three-class scientific validation (external held-out labels)
+
+The opt-in NLI tool was evaluated **without HealthVer fine-tuning or test
+threshold selection** on the 1,823 human-labeled HealthVer TEST pairs:
+**46.57% three-way accuracy; macro-F1 38.42%; neutral F1 58.83%**.
+SUPPORT recall was only **8.20%**. On 1,694 unique claim–evidence pairs,
+accuracy dropped to **43.09%**. An always-majority baseline selected using
+TRAIN scored **39.88%**, so the test does **not** establish clinically
+reliable fact verification or scientific superiority. Both neutral
+predictions and low-confidence abstentions count as NEUTRAL for this
+limited benchmarking task; they are **not proof of insufficient evidence**.
+
+[Full HealthVer test methodology, class confusion and repeat-sensitivity
+analysis](docs/healthver_three_way_validation.md). The raw HealthVer
+data and large model weights are never published to the repository.

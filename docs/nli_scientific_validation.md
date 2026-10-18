@@ -114,3 +114,16 @@ insufficient-evidence class in this SciFact split. A separate,
 independently adjudicated balanced **SUPPORT / REFUTE / NEI** dataset
 and external clinical evaluation are mandatory before claiming robust
 three-way factual reliability.
+
+
+## Follow-up: independent HealthVer NEUTRAL-class audit
+
+The original SciFact task above contains no independent NEUTRAL gold
+examples. A subsequent unchanged, zero-shot model test used **1,823
+human-labeled HealthVer TEST pairs** (SUPPORT/REFUTE/NEUTRAL) and found
+**46.57% three-class accuracy**, **38.42% macro-F1** and **58.83% NEUTRAL
+F1** (SUPPORT recall only **8.20%**). Deduplication reduced accuracy
+to **43.09%**. Neutral classification is conflated with abstention;
+a clinician-ready 'insufficient evidence' mechanism is **not validated**.
+
+See the [full external HealthVer audit](healthver_three_way_validation.md).
