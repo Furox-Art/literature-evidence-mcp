@@ -1,0 +1,49 @@
+{
+  "name": "@furox-scientific/literature-evidence-mcp",
+  "version": "0.3.2",
+  "description": "TypeScript MCP stdio adapter for the open-source Literature Evidence Python engine",
+  "type": "module",
+  "bin": {
+    "literature-evidence-mcp-ts": "./dist/cli.js"
+  },
+  "main": "./dist/cli.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test --experimental-test-coverage --test-coverage-include=dist/*.js --test-coverage-lines=100 --test-coverage-branches=100 --test-coverage-functions=100 test/*.test.mjs",
+    "pack:check": "npm pack --dry-run --json",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/client": "^2.3.1",
+    "@modelcontextprotocol/server": "^2.3.1",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.0",
+    "@types/node": "^22.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Furox-Art/literature-evidence-mcp.git",
+    "directory": "packages/npm"
+  },
+  "keywords": [
+    "mcp",
+    "scientific-literature",
+    "evidence",
+    "typescript",
+    "provenance"
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
+}
