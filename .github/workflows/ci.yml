@@ -40,6 +40,7 @@ jobs:
           tests/test_quote_token_integrity.py
           tests/test_metadata_disagreements.py
           tests/test_doi_identity_guard.py
+          tests/test_native_adapters.py
       - name: Check benchmark fixture tests
         run: pytest -q tests/test_methodology.py tests/test_source_audit.py tests/test_benchmark.py
       - name: Compile
@@ -70,3 +71,80 @@ jobs:
       - name: Audit distributable npm package contents
         working-directory: packages/npm
         run: npm pack --dry-run --json
+
+  native-rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: llvm-tools-preview
+      - name: Install core and native builder
+        run: python -m pip install -e '.[dev]' maturin
+      - name: Run Rust tests
+        run: cargo test --manifest-path native/rust_text/Cargo.toml --no-default-features --locked
+      - name: Install Rust line coverage collector
+        run: cargo install cargo-llvm-cov --locked
+      - name: Require 100 percent executable Rust lines
+        run: cargo llvm-cov --manifest-path native/rust_text/Cargo.toml --no-default-features --lib --fail-under-lines 100
+      - name: Build PyO3 extension wheel
+        run: maturin build --manifest-path native/rust_text/Cargo.toml --release --out "$RUNNER_TEMP/rust-wheels"
+      - name: Install wheel and verify real Python/Rust parity
+        run: |
+          python -m pip install "$RUNNER_TEMP"/rust-wheels/literature_evidence_rust-*.whl
+          pytest -q native/tests/test_rust_real.py native/rust_text/tests/test_rust_python_parity.py
+
+  native-go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-go@v6
+        with:
+          go-version: '1.25.3'
+          cache-dependency-path: native/go_sources/go.mod
+      - name: Install Python core and tests
+        run: python -m pip install -e '.[dev]'
+      - name: Go tests and race detection
+        working-directory: native/go_sources
+        run: go test -race -count=1 ./...
+      - name: Require complete Go statement coverage including real CLI
+        working-directory: native/go_sources
+        run: |
+          mkdir -p "$RUNNER_TEMP/go-unit" "$RUNNER_TEMP/go-cli" "$RUNNER_TEMP/go-all"
+          go test -cover -args -test.gocoverdir="$RUNNER_TEMP/go-unit"
+          go build -cover -o "$RUNNER_TEMP/go-probe" .
+          printf '{invalid}' | GOCOVERDIR="$RUNNER_TEMP/go-cli" "$RUNNER_TEMP/go-probe" || true
+          go tool covdata merge -i="$RUNNER_TEMP/go-unit,$RUNNER_TEMP/go-cli" -o="$RUNNER_TEMP/go-all"
+          go tool covdata percent -i="$RUNNER_TEMP/go-all" | tee "$RUNNER_TEMP/go-coverage.txt"
+          grep -q 'coverage: 100.0% of statements' "$RUNNER_TEMP/go-coverage.txt"
+      - name: Real Go worker invoked by Python MCP tool
+        run: pytest -q native/tests/test_go_real.py
+        env:
+          LITERATURE_EVIDENCE_GO_BIN: ${{ runner.temp }}/go-probe
+
+  native-cpp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Python core, pybind11, numeric test tools
+        run: python -m pip install -e '.[dev]' pybind11 gcovr
+      - name: Compile C++17 extension with source coverage
+        run: |
+          cmake -S native/cpp_meta -B "$RUNNER_TEMP/cpp-build"             -Dpybind11_DIR="$(python -m pybind11 --cmakedir)"             -DPython_EXECUTABLE="$(command -v python)"             -DCMAKE_CXX_FLAGS='-O0 -g --coverage'             -DCMAKE_SHARED_LINKER_FLAGS='--coverage'
+          cmake --build "$RUNNER_TEMP/cpp-build" --parallel 4
+      - name: Execute independent C++ known-value and integration tests
+        run: pytest -q native/cpp_meta/tests native/tests/test_cpp_real.py
+        env:
+          PYTHONPATH: ${{ runner.temp }}/cpp-build
+      - name: Require 100 percent executable C++ source lines
+        run: |
+          gcovr --root .             --filter 'native/cpp_meta/src/.*'             --exclude-noncode-lines --fail-under-line 100             "$RUNNER_TEMP/cpp-build" --txt

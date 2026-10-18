@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.18)
+project(literature_evidence_cpp LANGUAGES CXX)
+find_package(pybind11 CONFIG REQUIRED)
+pybind11_add_module(literature_evidence_cpp src/meta.cpp)
+target_compile_features(literature_evidence_cpp PRIVATE cxx_std_17)
+target_compile_options(literature_evidence_cpp PRIVATE -Wall -Wextra -Wpedantic)

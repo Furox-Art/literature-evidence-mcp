@@ -16,7 +16,7 @@ test('TypeScript MCP stdio forwards real Python tools without changing scientifi
   try {
     await client.connect(transport);
     const { tools } = await client.listTools();
-    assert.equal(tools.length, 17);
+    assert.equal(tools.length, 20);
     const names = new Set(tools.map(tool => tool.name));
     assert(names.has('verify_claim'));
     assert(names.has('audit_methodology'));

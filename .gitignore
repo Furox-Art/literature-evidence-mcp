@@ -18,3 +18,10 @@ htmlcov/
 # Node.js MCP adapter build and dependency artifacts
 node_modules/
 *.tgz
+
+# Native extension and local build output
+native/**/target/
+native/**/build/
+*.so
+*.gcda
+*.gcno

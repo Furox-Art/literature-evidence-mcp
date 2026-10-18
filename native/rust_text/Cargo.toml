@@ -1,0 +1,15 @@
+[package]
+name = "literature-evidence-rust"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+description = "Optional Unicode-aware literal citation matcher for Literature Evidence MCP"
+[lib]
+name = "literature_evidence_rust"
+crate-type = ["cdylib", "rlib"]
+[features]
+default = ["extension-module"]
+extension-module = ["pyo3/extension-module"]
+[dependencies]
+pyo3 = {version = "0.25"}
+regex = "1.11"
