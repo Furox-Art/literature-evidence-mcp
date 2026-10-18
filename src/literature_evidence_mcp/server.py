@@ -8,6 +8,7 @@ import os
 
 from mcp.server import MCPServer
 
+from literature_evidence_mcp.appraisal import grade_domain_record, risk_of_bias_review
 from literature_evidence_mcp.core import (
     EvidenceLedger,
     ResearchClient,
@@ -17,15 +18,21 @@ from literature_evidence_mcp.core import (
     screen_methodology,
     verify_quote,
 )
+from literature_evidence_mcp.go_records import go_cached_papers
+from literature_evidence_mcp.graph_audit import crossref_notice_chain, publication_alerts
 from literature_evidence_mcp.methodology import (
     audit_methodology_evidence,
     audit_statistical_fields,
 )
 from literature_evidence_mcp.native import (
     cpp_fixed_effect_meta_analysis,
+    cpp_random_effects_meta,
     go_probe_sources,
     rust_locate,
 )
+from literature_evidence_mcp.pdf_audit import audit_pdf_page
+from literature_evidence_mcp.prisma import dual_screen
+from literature_evidence_mcp.prisma_flow import review_flow
 from literature_evidence_mcp.source_audit import audit_pmc_paragraph_evidence
 
 mcp = MCPServer("Literature Evidence MCP")
@@ -185,6 +192,68 @@ async def go_parallel_provider_status(query: str, limit: int = 5) -> dict:
 def cpp_fixed_effect_meta(studies: list[dict]) -> dict:
     """Opt-in C++ fixed-effect numerical pooling; heterogeneity/bias not assessed."""
     return cpp_fixed_effect_meta_analysis(studies)
+
+
+@mcp.tool()
+def record_risk_of_bias(framework: str, study_id: str, outcome: str, reviewers: list[dict],
+                        effect_of_interest: str = "") -> dict:
+    """Record two human RoB2/ROBINS-I V2 Nov-2025 appraisals, flag disagreements."""
+    return risk_of_bias_review(framework, study_id, outcome, reviewers, effect_of_interest)
+
+
+@mcp.tool()
+def record_grade(outcome: str, design: str, down: dict, up: dict, reviewer_id: str, rationale: str) -> dict:
+    """Record human GRADE reasoning without inferring a validated certainty score."""
+    return grade_domain_record(outcome, design, down, up, reviewer_id, rationale)
+
+
+@mcp.tool()
+def prisma_dual_screen(records: list[dict]) -> dict:
+    """Two independent reviewer screening decisions and one-stage PRISMA flow counts."""
+    return dual_screen(records)
+
+
+@mcp.tool()
+def pdf_page_provenance(pdf_base64: str, page_number: int, quote: str) -> dict:
+    """User-supplied PDF: page hash, quote offsets, table and image bounding boxes."""
+    return audit_pdf_page(pdf_base64, page_number, quote)
+
+
+@mcp.tool()
+def propagation_alerts(nodes: list[dict], edges: list[dict], notices: list[dict]) -> dict:
+    """Source-linked correction/retraction alerts without treating citations as retractions."""
+    return publication_alerts(nodes, edges, notices)
+
+
+@mcp.tool()
+def cpp_random_effects(studies: list[dict], leave_one_out: bool = False) -> dict:
+    """DerSimonian-Laird, Q, I², tau², approximate interval and leave-one-out."""
+    return cpp_random_effects_meta(studies, leave_one_out)
+
+
+
+
+@mcp.tool()
+async def go_literature_records(query: str, limit: int = 5, ttl_seconds: int = 3600) -> dict:
+    """Opt-in Go metadata retrieval, local cache and five-second request gate."""
+    return await go_cached_papers(query, limit, ttl_seconds)
+
+
+
+
+@mcp.tool()
+def prisma_review_flow(identified: dict, records: list[dict], checklist: dict) -> dict:
+    """Auditable PRISMA identification/screening and explicit missing full-text stages."""
+    return review_flow(identified, records, checklist)
+
+
+
+
+@mcp.tool()
+async def crossref_update_alerts(dois: list[str], edges: list[dict]) -> dict:
+    """Fetch Crossref publication notices and flag citation descendants for review."""
+    return await crossref_notice_chain(dois, edges)
+
 
 
 def main() -> None:

@@ -20,12 +20,20 @@ import (
 type Request struct {
 	Query string `json:"query"`
 	Limit int    `json:"limit"`
+	Mode  string `json:"mode,omitempty"`
+}
+type Paper struct {
+	Source string `json:"source"`
+	DOI    string `json:"doi,omitempty"`
+	Title  string `json:"title,omitempty"`
+	Year   string `json:"year,omitempty"`
 }
 type Status struct {
-	Source     string `json:"source"`
-	HTTPStatus int    `json:"http_status"`
-	Bytes      int    `json:"bytes"`
-	Error      string `json:"error,omitempty"`
+	Records    []Paper `json:"records,omitempty"`
+	Source     string  `json:"source"`
+	HTTPStatus int     `json:"http_status"`
+	Bytes      int     `json:"bytes"`
+	Error      string  `json:"error,omitempty"`
 }
 type Response struct {
 	Status  string   `json:"status"`
@@ -102,11 +110,104 @@ func single(ctx context.Context, client *http.Client, source, endpoint string, r
 		result.Error = "provider body is not JSON"
 		return result
 	}
+	if request.Mode == "records" {
+		records, parseErr := parsePapers(source, payload, request.Limit)
+		if parseErr != nil {
+			result.Error = "provider response schema invalid"
+			return result
+		}
+		result.Records = records
+	}
 	return result
 }
 
+// Parse only limited provider metadata. Never trust provider text as
+// scientific evidence; no PDF retrieval or arbitrary URL following.
+func parsePapers(source string, payload []byte, limit int) ([]Paper, error) {
+	// Separate wire structs prevent provider fields from being mistaken for evidence.
+	type crItem struct {
+		DOI       string   `json:"DOI"`
+		Title     []string `json:"title"`
+		Published struct {
+			DateParts [][]int `json:"date-parts"`
+		} `json:"published"`
+	}
+	var raw struct {
+		Message struct {
+			Items []crItem `json:"items"`
+		} `json:"message"`
+		Results []struct {
+			DOI             string `json:"doi"`
+			DisplayName     string `json:"display_name"`
+			PublicationYear int    `json:"publication_year"`
+		} `json:"results"`
+		ResultList struct {
+			Result []struct {
+				DOI     string `json:"doi"`
+				Title   string `json:"title"`
+				PubYear string `json:"pubYear"`
+			} `json:"result"`
+		} `json:"resultList"`
+	}
+	if err := json.Unmarshal(payload, &raw); err != nil {
+		return nil, err
+	}
+	out := make([]Paper, 0, limit)
+	add := func(doi, title, year string) {
+		if len(out) >= limit {
+			return
+		}
+		if len(title) > 700 {
+			title = title[:700]
+		}
+		if len(doi) > 300 {
+			doi = ""
+		}
+		if len(year) > 8 {
+			year = ""
+		}
+		if title == "" && doi == "" {
+			return
+		}
+		out = append(out, Paper{Source: source, DOI: doi, Title: title, Year: year})
+	}
+	switch source {
+	case "crossref":
+		for _, paper := range raw.Message.Items {
+			title := ""
+			if len(paper.Title) > 0 {
+				title = paper.Title[0]
+			}
+			year := ""
+			if len(paper.Published.DateParts) > 0 && len(paper.Published.DateParts[0]) > 0 {
+				year = fmt.Sprint(paper.Published.DateParts[0][0])
+			}
+			add(paper.DOI, title, year)
+		}
+	case "openalex":
+		for _, paper := range raw.Results {
+			year := ""
+			if paper.PublicationYear > 0 {
+				year = fmt.Sprint(paper.PublicationYear)
+			}
+			add(paper.DOI, paper.DisplayName, year)
+		}
+	case "europepmc":
+		for _, paper := range raw.ResultList.Result {
+			add(paper.DOI, paper.Title, paper.PubYear)
+		}
+	default:
+		return nil, errors.New("unknown source")
+	}
+	return out, nil
+}
+
 func execute(ctx context.Context, client *http.Client, request Request, providers []struct{ name, endpoint string }) Response {
-	result := Response{Status: "PROVIDER_STATUS_ONLY", Results: make([]Status, len(providers)), Notice: "Reachability is not relevance, bibliographic accuracy or scientific validity."}
+	status := "PROVIDER_STATUS_ONLY"
+	if request.Mode == "records" {
+		status = "PROVIDER_RECORDS_ONLY_UNVERIFIED"
+	}
+	result := Response{Status: status, Results: make([]Status, len(providers)), Notice: "Reachability is not relevance, bibliographic accuracy or scientific validity."}
 	var wg sync.WaitGroup
 	for i, p := range providers {
 		wg.Add(1)
@@ -122,6 +223,9 @@ func execute(ctx context.Context, client *http.Client, request Request, provider
 func validate(request Request) error {
 	if len(strings.TrimSpace(request.Query)) < 2 || len(request.Query) > 500 {
 		return errors.New("query length must be 2-500")
+	}
+	if request.Mode != "" && request.Mode != "status" && request.Mode != "records" {
+		return errors.New("invalid probe mode")
 	}
 	if request.Limit < 1 || request.Limit > 20 {
 		return errors.New("limit must be 1-20")
