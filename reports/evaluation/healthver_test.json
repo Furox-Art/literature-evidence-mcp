@@ -1,0 +1,269 @@
+{
+  "always_neutral_baseline": {
+    "accuracy": 0.3987931980252331,
+    "balanced_accuracy": 0.3333333333333333,
+    "confusion": {
+      "NEUTRAL": {
+        "NEUTRAL": 727,
+        "REFUTE": 0,
+        "SUPPORT": 0
+      },
+      "REFUTE": {
+        "NEUTRAL": 425,
+        "REFUTE": 0,
+        "SUPPORT": 0
+      },
+      "SUPPORT": {
+        "NEUTRAL": 671,
+        "REFUTE": 0,
+        "SUPPORT": 0
+      }
+    },
+    "count": 1823,
+    "label_distribution": {
+      "NEUTRAL": 727,
+      "REFUTE": 425,
+      "SUPPORT": 671
+    },
+    "macro_f1": 0.1900653594771242,
+    "per_class": {
+      "NEUTRAL": {
+        "f1": 0.5701960784313725,
+        "precision": 0.3987931980252331,
+        "recall": 1.0
+      },
+      "REFUTE": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      },
+      "SUPPORT": {
+        "f1": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    },
+    "prediction_distribution": {
+      "NEUTRAL": 1823
+    }
+  },
+  "dataset": "HealthVer (Sarrouti et al., Findings EMNLP 2021)",
+  "deduplicated_test_metrics": {
+    "accuracy": 0.4309327036599764,
+    "balanced_accuracy": 0.43603194718232735,
+    "confusion": {
+      "NEUTRAL": {
+        "NEUTRAL": 529,
+        "REFUTE": 62,
+        "SUPPORT": 9
+      },
+      "REFUTE": {
+        "NEUTRAL": 272,
+        "REFUTE": 146,
+        "SUPPORT": 6
+      },
+      "SUPPORT": {
+        "NEUTRAL": 555,
+        "REFUTE": 60,
+        "SUPPORT": 55
+      }
+    },
+    "count": 1694,
+    "label_distribution": {
+      "NEUTRAL": 600,
+      "REFUTE": 424,
+      "SUPPORT": 670
+    },
+    "macro_f1": 0.37050458735624875,
+    "per_class": {
+      "NEUTRAL": {
+        "f1": 0.5408997955010225,
+        "precision": 0.39011799410029496,
+        "recall": 0.8816666666666667
+      },
+      "REFUTE": {
+        "f1": 0.42196531791907516,
+        "precision": 0.5447761194029851,
+        "recall": 0.3443396226415094
+      },
+      "SUPPORT": {
+        "f1": 0.14864864864864866,
+        "precision": 0.7857142857142857,
+        "recall": 0.08208955223880597
+      }
+    },
+    "prediction_distribution": {
+      "NEUTRAL": 1356,
+      "REFUTE": 268,
+      "SUPPORT": 70
+    }
+  },
+  "frozen_margin": 0.15,
+  "frozen_threshold": 0.7,
+  "label_mapping": {
+    "Neutral": "NEUTRAL",
+    "Refutes": "REFUTE",
+    "Supports": "SUPPORT"
+  },
+  "limitations": [
+    "This is a separate real human-annotated three-way TEST set, not expert clinical validation.",
+    "The same pre-existing SciFact frozen NLI model and 0.70/0.15 thresholds were used.",
+    "Neutral classifier predictions and low-confidence abstentions both map to NEUTRAL.",
+    "Provided evidence passages, not retrieved or publisher-authenticated articles.",
+    "Contains 129 repeated identical claim-evidence pairs; deduplicated sensitivity shown.",
+    "One exact test claim also exists in HealthVer train, but this model never trains on HealthVer.",
+    "No RoB/GRADE, causal inference, medical safety, or full scientific truth claims.",
+    "Published HealthVer leaderboard systems used HealthVer training; direct performance superiority comparison is invalid."
+  ],
+  "model": "cross-encoder/nli-deberta-v3-small",
+  "model_fitted_on_healthver": false,
+  "model_revision": "fa2804872c3b4bd748f38c0185cc85775361e735",
+  "model_weights_sha256": "ebc79588dd73ccfb6a3f6078519cfbf512c5305384c5ea1845bc71cd32216e86",
+  "original_license": "No explicit repository LICENSE detected; do not redistribute source CSV.",
+  "predicted_mapping": {
+    "INSUFFICIENT_MODEL_EVIDENCE": "NEUTRAL",
+    "PREDICTED_REFUTE": "REFUTE",
+    "PREDICTED_SUPPORT": "SUPPORT"
+  },
+  "revision": "b20ac99ceed62f5264a319fa25a854df1668d85b",
+  "source_sha256": {
+    "dev": "6f8ea31cbcf2ea5a2d3c82d65587d66e96de4f70e72642bbf7f61fec6ef8a93a",
+    "test": "cf457d2dcddd7a736408082d0037527884f7ca3bda06729e1da5ec9e3b135819",
+    "train": "57668949f79d0f46e66d74df4b0bc9812cad4d5ad7c5dd03dfba008a608b3f2a"
+  },
+  "split": {
+    "dev_rows": 1917,
+    "dev_test_exact_claim_overlaps": 0,
+    "repeated_test_rows": 129,
+    "test_rows": 1823,
+    "train_rows": 10590,
+    "train_test_exact_claim_overlaps": 1,
+    "unique_test_claims": 230,
+    "unique_test_pairs": 1694
+  },
+  "status": "EXTERNAL_THREE_CLASS_HEALTHVER_TEST_COMPLETE_WITH_LIMITATIONS",
+  "test_claim_cluster_bootstrap_95pct": {
+    "accuracy": [
+      0.41404,
+      0.52695
+    ],
+    "balanced_accuracy": [
+      0.41214,
+      0.46845
+    ],
+    "macro_f1": [
+      0.345,
+      0.42323
+    ]
+  },
+  "test_label_based_threshold_selection": false,
+  "test_metrics_all_rows": {
+    "accuracy": 0.46571585298957763,
+    "balanced_accuracy": 0.4389436250744463,
+    "confusion": {
+      "NEUTRAL": {
+        "NEUTRAL": 648,
+        "REFUTE": 70,
+        "SUPPORT": 9
+      },
+      "REFUTE": {
+        "NEUTRAL": 273,
+        "REFUTE": 146,
+        "SUPPORT": 6
+      },
+      "SUPPORT": {
+        "NEUTRAL": 555,
+        "REFUTE": 61,
+        "SUPPORT": 55
+      }
+    },
+    "count": 1823,
+    "label_distribution": {
+      "NEUTRAL": 727,
+      "REFUTE": 425,
+      "SUPPORT": 671
+    },
+    "macro_f1": 0.3842303854567833,
+    "per_class": {
+      "NEUTRAL": {
+        "f1": 0.5882886972310486,
+        "precision": 0.43902439024390244,
+        "recall": 0.8913342503438789
+      },
+      "REFUTE": {
+        "f1": 0.41595441595441596,
+        "precision": 0.5270758122743683,
+        "recall": 0.34352941176470586
+      },
+      "SUPPORT": {
+        "f1": 0.1484480431848853,
+        "precision": 0.7857142857142857,
+        "recall": 0.08196721311475409
+      }
+    },
+    "prediction_distribution": {
+      "NEUTRAL": 1476,
+      "REFUTE": 277,
+      "SUPPORT": 70
+    }
+  },
+  "test_selective_metrics": {
+    "accuracy_given_non_neutral_prediction": 0.579250720461095,
+    "neutral_class_correct_out_of_all": 0.35545803620405925,
+    "non_neutral_correct_out_of_all": 0.11025781678551838,
+    "non_neutral_coverage": 0.19034558420186506,
+    "warning": "NEUTRAL blends model neutral softmax and low-confidence abstention; it cannot be assumed to mean evidence is truly insufficient."
+  },
+  "train_majority_label_baseline": {
+    "label": "NEUTRAL",
+    "test": {
+      "accuracy": 0.3987931980252331,
+      "balanced_accuracy": 0.3333333333333333,
+      "confusion": {
+        "NEUTRAL": {
+          "NEUTRAL": 727,
+          "REFUTE": 0,
+          "SUPPORT": 0
+        },
+        "REFUTE": {
+          "NEUTRAL": 425,
+          "REFUTE": 0,
+          "SUPPORT": 0
+        },
+        "SUPPORT": {
+          "NEUTRAL": 671,
+          "REFUTE": 0,
+          "SUPPORT": 0
+        }
+      },
+      "count": 1823,
+      "label_distribution": {
+        "NEUTRAL": 727,
+        "REFUTE": 425,
+        "SUPPORT": 671
+      },
+      "macro_f1": 0.1900653594771242,
+      "per_class": {
+        "NEUTRAL": {
+          "f1": 0.5701960784313725,
+          "precision": 0.3987931980252331,
+          "recall": 1.0
+        },
+        "REFUTE": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0
+        },
+        "SUPPORT": {
+          "f1": 0.0,
+          "precision": 0.0,
+          "recall": 0.0
+        }
+      },
+      "prediction_distribution": {
+        "NEUTRAL": 1823
+      }
+    }
+  },
+  "url": "https://github.com/sarrouti/HealthVer"
+}
