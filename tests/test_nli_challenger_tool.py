@@ -88,17 +88,38 @@ def test_configured_but_model_files_or_dependencies_absent(monkeypatch):
         challenger.assess_candidate("claim", "evidence", "source", FIRST)
 
 
-def test_files_all_require_exact_sha(monkeypatch, tmp_path):
-    payload = b"frozen model artifact"
-    manifest = {"model.safetensors": hashlib.sha256(payload).hexdigest()}
-    monkeypatch.setitem(challenger.CANDIDATES[FIRST], "files", manifest)
+@pytest.mark.parametrize("candidate", [FIRST, SECOND])
+def test_files_all_require_exact_sha(monkeypatch, tmp_path, candidate):
+    """Missing or corrupted weights, config and tokenizers must all fail closed."""
+    payloads = {
+        "model.safetensors": b"frozen model artifact",
+        "config.json": b"frozen config",
+        "tokenizer.json": b"frozen tokenizer",
+        "tokenizer_config.json": b"frozen tokenizer config",
+        "spm.model": b"frozen sentencepiece model",
+        "special_tokens_map.json": b"frozen special tokens",
+        "added_tokens.json": b"frozen added tokens",
+    }
+    expected = challenger.CANDIDATES[candidate]["files"]
+    assert set(payloads) == set(expected)
+    hashes = {name: hashlib.sha256(data).hexdigest()
+              for name, data in payloads.items()}
+    monkeypatch.setitem(challenger.CANDIDATES[candidate], "files", hashes)
     with pytest.raises(FileNotFoundError):
-        challenger.verify_candidate_files(FIRST, tmp_path)
-    (tmp_path / "model.safetensors").write_bytes(b"tampered")
-    with pytest.raises(ValueError, match="checksum"):
-        challenger.verify_candidate_files(FIRST, tmp_path)
-    (tmp_path / "model.safetensors").write_bytes(payload)
-    challenger.verify_candidate_files(FIRST, tmp_path)
+        challenger.verify_candidate_files(candidate, tmp_path)
+    for name, payload in payloads.items():
+        (tmp_path / name).write_bytes(payload)
+    challenger.verify_candidate_files(candidate, tmp_path)
+    for name, payload in payloads.items():
+        (tmp_path / name).write_bytes(b"tampered")
+        with pytest.raises(ValueError, match="checksum"):
+            challenger.verify_candidate_files(candidate, tmp_path)
+        (tmp_path / name).write_bytes(payload)
+        (tmp_path / name).unlink()
+        with pytest.raises(FileNotFoundError, match="missing"):
+            challenger.verify_candidate_files(candidate, tmp_path)
+        (tmp_path / name).write_bytes(payload)
+    challenger.verify_candidate_files(candidate, tmp_path)
 
 
 def test_model_loads_offline_only_and_rejects_unknown_mapping(monkeypatch, tmp_path):
