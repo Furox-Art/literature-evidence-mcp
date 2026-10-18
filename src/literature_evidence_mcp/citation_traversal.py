@@ -85,6 +85,20 @@ async def traverse_citations(
                 "checked_at": _utcnow(), "coverage": "NON_EXHAUSTIVE",
                 "scientific_content_verified": False,
             }
+        # A DOI lookup returning an unrelated or DOI-less record is not a
+        # verified seed identity. Do not traverse a potentially different paper.
+        if root_node["doi"] != doi:
+            return {
+                "seed_doi": doi, "status": "BLOCKED_SEED_IDENTITY_NOT_VERIFIED",
+                "nodes": [], "edges": [],
+                "provider_errors": [{
+                    "provider": "openalex", "reason": "SEED_DOI_MISSING_OR_MISMATCH",
+                    "requested_doi": doi, "provider_doi": root_node["doi"],
+                    "source_id": root_node["source_id"],
+                }],
+                "checked_at": _utcnow(), "coverage": "NON_EXHAUSTIVE",
+                "scientific_content_verified": False,
+            }
         root_id = root_node["id"]
         nodes[root_id] = root_node
         cache: dict[str, dict] = {root_id: root}

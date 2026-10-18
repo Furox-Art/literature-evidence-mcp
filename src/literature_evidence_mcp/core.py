@@ -147,6 +147,7 @@ class ResearchClient:
             raise ValueError("Unapproved API route")
         if self._client is None:
             raise RuntimeError("Use ResearchClient with async with")
+        last_retry_status: int | None = None
         for attempt in range(3):
             try:
                 # Stream and cap bytes before buffering any untrusted provider response.
@@ -158,6 +159,7 @@ class ResearchClient:
                     "GET", base + path, params=params, headers=headers,
                 ) as response:
                     if response.status_code in {429, 500, 502, 503, 504}:
+                        last_retry_status = response.status_code
                         if attempt < 2:
                             await asyncio.sleep(0.2 * (2**attempt))
                         continue  # After the third attempt the loop reports retry exhaustion.
@@ -175,7 +177,7 @@ class ResearchClient:
                 if isinstance(exc, httpx.HTTPStatusError) and exc.response.status_code == 404:
                     raise ProviderError("Provider did not find this record") from exc
                 raise ProviderError(f"Provider request failed: {type(exc).__name__}") from exc
-        raise ProviderError("Provider retry limit reached")
+        raise ProviderError(f"Provider retry limit reached (HTTP {last_retry_status})")
 
     async def search(self, query: str, limit: int = 10,
                      sources: tuple[str, ...] = ("openalex", "europepmc", "crossref")) -> dict:

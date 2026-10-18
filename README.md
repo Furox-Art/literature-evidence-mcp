@@ -94,7 +94,9 @@ citation traversal** with fixed request and node caps, explicit partial states,
 and source-identified, *provider-asserted* edges. Neither tool ranks or
 scientifically validates research, and neither claims exhaustive search. The
 original three-provider `search_literature` behavior is unchanged.
-Semantic Scholar may return 429 without an optional API key.
+Semantic Scholar may return HTTP 429 without an optional API key; the
+optional tool explicitly reports `RATE_LIMITED` and the HTTP code. Citation
+traversal now fails closed on an OpenAlex seed DOI mismatch or missing DOI.
 [Protocol, examples, hard limits and verification](docs/extended_search_citation_traversal.md).
 
 ## Bibliographic export (33rd MCP tool)
