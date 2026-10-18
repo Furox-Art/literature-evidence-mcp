@@ -57,7 +57,7 @@ OpenAlex basic queries can be keyless but have a restrictive daily budget. Obtai
 - No unrestricted URL retrieval: fixed trusted origins and API paths, DOI and PMCID validation, request timeouts, streaming response-size limits, bounded retries.
 - Raw bibliographic responses are not persisted unless explicitly passed into `export_evidence` or through `log_review_search`.
 - Full-text reuse and redistribution are controlled by source/publisher licenses; this server does not download arbitrary PDFs or bypass access controls.
-- Hash-chain is not independently authenticated; keep external checkpoints if you need tamper-evidence against complete log replacement. v0.2 serializes writers across processes using a local lock file; it cannot guarantee atomic behavior on all network filesystems.
+- Hash-chain is not independently authenticated; keep external checkpoints if you need tamper-evidence against complete log replacement. v0.3 serializes writers across processes using a local lock file; it cannot guarantee atomic behavior on all network filesystems.
 
 ## Current limitations and roadmap (NOT YET IMPLEMENTED)
 
