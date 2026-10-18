@@ -38,6 +38,7 @@ jobs:
           tests/test_full_coverage_methodology.py
           tests/test_full_coverage_final.py
           tests/test_quote_token_integrity.py
+          tests/test_metadata_disagreements.py
       - name: Check benchmark fixture tests
         run: pytest -q tests/test_methodology.py tests/test_source_audit.py tests/test_benchmark.py
       - name: Compile
