@@ -32,6 +32,7 @@ from literature_evidence_mcp.native import (
     go_probe_sources,
     rust_locate,
 )
+from literature_evidence_mcp.nli_challenger import assess_candidate
 from literature_evidence_mcp.pdf_audit import audit_pdf_page
 from literature_evidence_mcp.prisma import dual_screen
 from literature_evidence_mcp.prisma_flow import review_flow
@@ -269,6 +270,14 @@ def nli_assess_evidence(claim: str, evidence: str, source_id: str,
                         threshold: float = 0.70, margin: float = 0.15) -> dict:
     """Offline pinned NLI support/refute/insufficient MODEL estimate; never verified truth."""
     return assess_evidence_nli(claim, evidence, source_id, threshold, margin)
+
+
+@mcp.tool()
+def nli_assess_challenger_evidence(
+    claim: str, evidence: str, source_id: str, candidate: str,
+) -> dict:
+    """Explicitly selected, locally pinned experimental NLI; never scientific proof."""
+    return assess_candidate(claim, evidence, source_id, candidate)
 
 
 def main() -> None:

@@ -1,0 +1,99 @@
+name: Optional paired NLI challenger gold audit
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  pinned-paired-nli:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install explicit optional NLI evaluation dependencies
+        run: python -m pip install -e '.[nli]'
+      - name: Download and hash-check independent public dataset snapshots
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/healthver" "$RUNNER_TEMP/scifact"
+          rev=b20ac99ceed62f5264a319fa25a854df1668d85b
+          for split in train dev test; do
+            curl -fsSL --retry 2 "https://raw.githubusercontent.com/sarrouti/HealthVer/$rev/data/healthver_$split.csv" -o "$RUNNER_TEMP/healthver/healthver_$split.csv"
+          done
+          echo "57668949f79d0f46e66d74df4b0bc9812cad4d5ad7c5dd03dfba008a608b3f2a  $RUNNER_TEMP/healthver/healthver_train.csv" | sha256sum -c -
+          echo "6f8ea31cbcf2ea5a2d3c82d65587d66e96de4f70e72642bbf7f61fec6ef8a93a  $RUNNER_TEMP/healthver/healthver_dev.csv" | sha256sum -c -
+          echo "cf457d2dcddd7a736408082d0037527884f7ca3bda06729e1da5ec9e3b135819  $RUNNER_TEMP/healthver/healthver_test.csv" | sha256sum -c -
+          curl -fsSL --retry 2 https://scifact.s3-us-west-2.amazonaws.com/release/latest/data.tar.gz -o "$RUNNER_TEMP/scifact/data.tar.gz"
+          echo "11c621288d41ac144d29b13b0f8503b3820b7d6e8b1f6ff24dff335c196d76be  $RUNNER_TEMP/scifact/data.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/scifact/data.tar.gz" -C "$RUNNER_TEMP/scifact"
+      - name: Fetch fixed revision NLI model snapshots (never executable remote code)
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          from huggingface_hub import snapshot_download
+          models = [
+              ("cross-encoder/nli-deberta-v3-small", "fa2804872c3b4bd748f38c0185cc85775361e735", "small"),
+              ("MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli", "6f5cf0a2b59cabb106aca4c287eed12e357e90eb", "fever"),
+              ("cross-encoder/nli-deberta-v3-base", "6c749ce3425cd33b46d187e45b92bbf96ee12ec7", "general"),
+          ]
+          for repo, revision, folder in models:
+              snapshot_download(
+                  repo, revision=revision,
+                  local_dir=os.path.join(os.environ["RUNNER_TEMP"], folder),
+                  allow_patterns=["*.json", "*.safetensors", "*.model", "*.txt"],
+                  max_workers=3,
+              )
+          PY
+          echo "ebc79588dd73ccfb6a3f6078519cfbf512c5305384c5ea1845bc71cd32216e86  $RUNNER_TEMP/small/model.safetensors" | sha256sum -c -
+          echo "06d6fd89edd4f97816831626daafbdb0b029cf63bae8edc0bccab1d64e2e7707  $RUNNER_TEMP/fever/model.safetensors" | sha256sum -c -
+          echo "d8148c6d49e0a7925134294c56326c71fe0ab1dc390e37355e00c7efbb488afa  $RUNNER_TEMP/general/model.safetensors" | sha256sum -c -
+      - name: Recompute full HealthVer and SciFact comparisons on CPU
+        shell: bash
+        env:
+          LITERATURE_EVIDENCE_NLI_DEVICE: cpu
+          OMP_NUM_THREADS: '4'
+          MKL_NUM_THREADS: '4'
+        run: |
+          python -m scripts.evaluation.nli_challenger_benchmark --data "$RUNNER_TEMP/healthver" --original "$RUNNER_TEMP/small" --fever-model "$RUNNER_TEMP/fever" --general-model "$RUNNER_TEMP/general" --output "$RUNNER_TEMP/healthver_paired_cpu.json"
+          python -m scripts.evaluation.nli_scifact_challengers --data "$RUNNER_TEMP/scifact/data" --original "$RUNNER_TEMP/small" --fever-model "$RUNNER_TEMP/fever" --general-model "$RUNNER_TEMP/general" --output "$RUNNER_TEMP/scifact_paired_cpu.json"
+      - name: Fail if independent model labels or aggregate metrics diverge
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          for key, outfile, prior in (
+              ("healthver", "healthver_paired_cpu.json", "reports/evaluation/healthver_nli_paired_challengers.json"),
+              ("scifact", "scifact_paired_cpu.json", "reports/evaluation/scifact_nli_paired_challengers.json"),
+          ):
+              actual = json.loads((Path(os.environ["RUNNER_TEMP"]) / outfile).read_text())
+              expected = json.loads(Path(prior).read_text())
+              assert actual["dataset_sha256" if key == "healthver" else "source_sha256"] == expected[
+                  "dataset_sha256" if key == "healthver" else "source_sha256"
+              ]
+              assert actual["candidate_results"].keys() == expected["candidate_results"].keys()
+              for model_name, row in actual["candidate_results"].items():
+                  previous = expected["candidate_results"][model_name]
+                  assert row["weights_sha256"] == previous["weights_sha256"]
+                  assert row["label_mapping"] == previous["label_mapping"]
+                  for metric in ("accuracy", "macro_f1"):
+                      assert abs(row["metrics"][metric] - previous["metrics"][metric]) <= 0.003, (key, model_name, metric)
+                  if key == "healthver":
+                      assert abs(row["support_recall"] - previous["support_recall"]) <= 0.006
+                  else:
+                      subset = row["scifact_gold_rationale_conditional"]
+                      prior_subset = previous["scifact_gold_rationale_conditional"]
+                      assert abs(subset["unconditional_correct"] - prior_subset["unconditional_correct"]) <= 0.006
+              print("Independent CPU reference comparison OK:", key)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paired-science-nli-cpu-results
+          path: |
+            ${{ runner.temp }}/healthver_paired_cpu.json
+            ${{ runner.temp }}/scifact_paired_cpu.json
+          if-no-files-found: error

@@ -1,0 +1,420 @@
+{
+  "candidate_results": {
+    "fever_anli_deberta_base": {
+      "label_mapping": {
+        "0": "entailment",
+        "1": "neutral",
+        "2": "contradiction"
+      },
+      "mean_multiclass_brier_score": 0.9270535394509414,
+      "mean_top_softmax": 0.8994076505038865,
+      "metrics": {
+        "accuracy": 0.41420118343195267,
+        "balanced_accuracy": 0.3076047358834244,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 0,
+            "REFUTE": 0,
+            "SUPPORT": 0
+          },
+          "REFUTE": {
+            "NEUTRAL": 43,
+            "REFUTE": 77,
+            "SUPPORT": 2
+          },
+          "SUPPORT": {
+            "NEUTRAL": 142,
+            "REFUTE": 11,
+            "SUPPORT": 63
+          }
+        },
+        "count": 338,
+        "label_distribution": {
+          "REFUTE": 122,
+          "SUPPORT": 216
+        },
+        "macro_f1": 0.39391063661526293,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "REFUTE": {
+            "f1": 0.7333333333333333,
+            "precision": 0.875,
+            "recall": 0.6311475409836066
+          },
+          "SUPPORT": {
+            "f1": 0.4483985765124555,
+            "precision": 0.9692307692307692,
+            "recall": 0.2916666666666667
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 185,
+          "REFUTE": 88,
+          "SUPPORT": 65
+        }
+      },
+      "model": {
+        "id": "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
+        "license": "mit",
+        "revision": "6f5cf0a2b59cabb106aca4c287eed12e357e90eb",
+        "weights_sha256": "06d6fd89edd4f97816831626daafbdb0b029cf63bae8edc0bccab1d64e2e7707"
+      },
+      "raw_argmax_metrics": {
+        "accuracy": 0.46449704142011833,
+        "balanced_accuracy": 0.33740639546650475,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 0,
+            "REFUTE": 0,
+            "SUPPORT": 0
+          },
+          "REFUTE": {
+            "NEUTRAL": 38,
+            "REFUTE": 80,
+            "SUPPORT": 4
+          },
+          "SUPPORT": {
+            "NEUTRAL": 127,
+            "REFUTE": 12,
+            "SUPPORT": 77
+          }
+        },
+        "count": 338,
+        "label_distribution": {
+          "REFUTE": 122,
+          "SUPPORT": 216
+        },
+        "macro_f1": 0.4220606899734625,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "REFUTE": {
+            "f1": 0.7476635514018691,
+            "precision": 0.8695652173913043,
+            "recall": 0.6557377049180327
+          },
+          "SUPPORT": {
+            "f1": 0.5185185185185185,
+            "precision": 0.9506172839506173,
+            "recall": 0.35648148148148145
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 165,
+          "REFUTE": 92,
+          "SUPPORT": 81
+        }
+      },
+      "scifact_gold_rationale_conditional": {
+        "correct_decided": 140,
+        "coverage": 0.4526627218934911,
+        "decided": 153,
+        "gold_rationales": 338,
+        "selective_accuracy": 0.9150326797385621,
+        "unconditional_correct": 0.41420118343195267
+      },
+      "selective": {
+        "accuracy_given_non_neutral_prediction": 0.9150326797385621,
+        "neutral_class_correct_out_of_all": 0.0,
+        "non_neutral_correct_out_of_all": 0.41420118343195267,
+        "non_neutral_coverage": 0.4526627218934911,
+        "warning": "NEUTRAL blends model neutral softmax and low-confidence abstention; it cannot be assumed to mean evidence is truly insufficient."
+      },
+      "weights_sha256": "06d6fd89edd4f97816831626daafbdb0b029cf63bae8edc0bccab1d64e2e7707"
+    },
+    "frozen_original_deberta_small": {
+      "label_mapping": {
+        "0": "contradiction",
+        "1": "entailment",
+        "2": "neutral"
+      },
+      "mean_multiclass_brier_score": 1.1938231561327362,
+      "mean_top_softmax": 0.9352143732224696,
+      "metrics": {
+        "accuracy": 0.3254437869822485,
+        "balanced_accuracy": 0.24228395061728394,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 0,
+            "REFUTE": 0,
+            "SUPPORT": 0
+          },
+          "REFUTE": {
+            "NEUTRAL": 59,
+            "REFUTE": 61,
+            "SUPPORT": 2
+          },
+          "SUPPORT": {
+            "NEUTRAL": 147,
+            "REFUTE": 20,
+            "SUPPORT": 49
+          }
+        },
+        "count": 338,
+        "label_distribution": {
+          "REFUTE": 122,
+          "SUPPORT": 216
+        },
+        "macro_f1": 0.32267547339224983,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "REFUTE": {
+            "f1": 0.6009852216748769,
+            "precision": 0.7530864197530864,
+            "recall": 0.5
+          },
+          "SUPPORT": {
+            "f1": 0.36704119850187267,
+            "precision": 0.9607843137254902,
+            "recall": 0.22685185185185186
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 206,
+          "REFUTE": 81,
+          "SUPPORT": 51
+        }
+      },
+      "model": {
+        "id": "cross-encoder/nli-deberta-v3-small",
+        "license": "apache-2.0",
+        "revision": "fa2804872c3b4bd748f38c0185cc85775361e735",
+        "weights_sha256": "ebc79588dd73ccfb6a3f6078519cfbf512c5305384c5ea1845bc71cd32216e86"
+      },
+      "raw_argmax_metrics": {
+        "accuracy": 0.35798816568047337,
+        "balanced_accuracy": 0.2652044120623356,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 0,
+            "REFUTE": 0,
+            "SUPPORT": 0
+          },
+          "REFUTE": {
+            "NEUTRAL": 52,
+            "REFUTE": 66,
+            "SUPPORT": 4
+          },
+          "SUPPORT": {
+            "NEUTRAL": 139,
+            "REFUTE": 22,
+            "SUPPORT": 55
+          }
+        },
+        "count": 338,
+        "label_distribution": {
+          "REFUTE": 122,
+          "SUPPORT": 216
+        },
+        "macro_f1": 0.3428571428571428,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "REFUTE": {
+            "f1": 0.6285714285714286,
+            "precision": 0.75,
+            "recall": 0.5409836065573771
+          },
+          "SUPPORT": {
+            "f1": 0.4,
+            "precision": 0.9322033898305084,
+            "recall": 0.25462962962962965
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 191,
+          "REFUTE": 88,
+          "SUPPORT": 59
+        }
+      },
+      "scifact_gold_rationale_conditional": {
+        "correct_decided": 110,
+        "coverage": 0.3905325443786982,
+        "decided": 132,
+        "gold_rationales": 338,
+        "selective_accuracy": 0.8333333333333334,
+        "unconditional_correct": 0.3254437869822485
+      },
+      "selective": {
+        "accuracy_given_non_neutral_prediction": 0.8333333333333334,
+        "neutral_class_correct_out_of_all": 0.0,
+        "non_neutral_correct_out_of_all": 0.3254437869822485,
+        "non_neutral_coverage": 0.3905325443786982,
+        "warning": "NEUTRAL blends model neutral softmax and low-confidence abstention; it cannot be assumed to mean evidence is truly insufficient."
+      },
+      "weights_sha256": "ebc79588dd73ccfb6a3f6078519cfbf512c5305384c5ea1845bc71cd32216e86"
+    },
+    "general_deberta_base": {
+      "label_mapping": {
+        "0": "contradiction",
+        "1": "entailment",
+        "2": "neutral"
+      },
+      "mean_multiclass_brier_score": 1.0302377535293339,
+      "mean_top_softmax": 0.9570252131780929,
+      "metrics": {
+        "accuracy": 0.4289940828402367,
+        "balanced_accuracy": 0.317698846387371,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 0,
+            "REFUTE": 0,
+            "SUPPORT": 0
+          },
+          "REFUTE": {
+            "NEUTRAL": 41,
+            "REFUTE": 79,
+            "SUPPORT": 2
+          },
+          "SUPPORT": {
+            "NEUTRAL": 138,
+            "REFUTE": 12,
+            "SUPPORT": 66
+          }
+        },
+        "count": 338,
+        "label_distribution": {
+          "REFUTE": 122,
+          "SUPPORT": 216
+        },
+        "macro_f1": 0.4021909233176839,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "REFUTE": {
+            "f1": 0.7417840375586855,
+            "precision": 0.8681318681318682,
+            "recall": 0.6475409836065574
+          },
+          "SUPPORT": {
+            "f1": 0.4647887323943662,
+            "precision": 0.9705882352941176,
+            "recall": 0.3055555555555556
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 179,
+          "REFUTE": 91,
+          "SUPPORT": 68
+        }
+      },
+      "model": {
+        "id": "cross-encoder/nli-deberta-v3-base",
+        "license": "apache-2.0",
+        "revision": "6c749ce3425cd33b46d187e45b92bbf96ee12ec7",
+        "weights_sha256": "d8148c6d49e0a7925134294c56326c71fe0ab1dc390e37355e00c7efbb488afa"
+      },
+      "raw_argmax_metrics": {
+        "accuracy": 0.4556213017751479,
+        "balanced_accuracy": 0.3339657963974904,
+        "confusion": {
+          "NEUTRAL": {
+            "NEUTRAL": 0,
+            "REFUTE": 0,
+            "SUPPORT": 0
+          },
+          "REFUTE": {
+            "NEUTRAL": 38,
+            "REFUTE": 81,
+            "SUPPORT": 3
+          },
+          "SUPPORT": {
+            "NEUTRAL": 130,
+            "REFUTE": 13,
+            "SUPPORT": 73
+          }
+        },
+        "count": 338,
+        "label_distribution": {
+          "REFUTE": 122,
+          "SUPPORT": 216
+        },
+        "macro_f1": 0.4166666666666667,
+        "per_class": {
+          "NEUTRAL": {
+            "f1": 0.0,
+            "precision": 0.0,
+            "recall": 0.0
+          },
+          "REFUTE": {
+            "f1": 0.75,
+            "precision": 0.8617021276595744,
+            "recall": 0.6639344262295082
+          },
+          "SUPPORT": {
+            "f1": 0.5,
+            "precision": 0.9605263157894737,
+            "recall": 0.33796296296296297
+          }
+        },
+        "prediction_distribution": {
+          "NEUTRAL": 168,
+          "REFUTE": 94,
+          "SUPPORT": 76
+        }
+      },
+      "scifact_gold_rationale_conditional": {
+        "correct_decided": 145,
+        "coverage": 0.47041420118343197,
+        "decided": 159,
+        "gold_rationales": 338,
+        "selective_accuracy": 0.9119496855345912,
+        "unconditional_correct": 0.4289940828402367
+      },
+      "selective": {
+        "accuracy_given_non_neutral_prediction": 0.9119496855345912,
+        "neutral_class_correct_out_of_all": 0.0,
+        "non_neutral_correct_out_of_all": 0.4289940828402367,
+        "non_neutral_coverage": 0.47041420118343197,
+        "warning": "NEUTRAL blends model neutral softmax and low-confidence abstention; it cannot be assumed to mean evidence is truly insufficient."
+      },
+      "weights_sha256": "d8148c6d49e0a7925134294c56326c71fe0ab1dc390e37355e00c7efbb488afa"
+    }
+  },
+  "gold_rationales": 338,
+  "limitations": [
+    "Gold evidence snippets are given, not independently searched or selected.",
+    "This dataset has only SUPPORT and CONTRADICT gold evidence, NO gold NEI.",
+    "Models are not fine-tuned on SciFact by the evaluation process; third-party training provenance cannot be fully independently audited.",
+    "Compared datasets are historically visible; no blinded confirmatory selection."
+  ],
+  "paired_differences_vs_frozen_original": {
+    "fever_anli_deberta_base": {
+      "accuracy_difference": 0.08875739644970415,
+      "paired_claim_cluster_bootstrap_95pct": [
+        0.04638,
+        0.1392
+      ]
+    },
+    "general_deberta_base": {
+      "accuracy_difference": 0.1035502958579882,
+      "paired_claim_cluster_bootstrap_95pct": [
+        0.0463,
+        0.15698
+      ]
+    }
+  },
+  "source_sha256": {
+    "claims_dev.jsonl": "86f0435d08fdb65d1aa41d1472684f57e6e71930626497bdf4d7a9ec1a632217",
+    "claims_train.jsonl": "f4c8fa82d8bd0653a9cc8d61a6ea48c25eacea64e90af5dbf390ebb1b74372f0",
+    "corpus.jsonl": "b8d6c89624cb2ed74dee8938effc4f5d8bd2086887880af8110d64be4ceade62"
+  },
+  "status": "EXPLORATORY_SCIFACT_GOLD_RATIONALE_NLI_COMPARISON"
+}
