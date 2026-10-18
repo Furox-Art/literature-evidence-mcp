@@ -1,0 +1,110 @@
+name: Optional HealthFC controlled NLI audit
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/healthfc-controlled-gold-audit.yml
+      - scripts/evaluation/healthfc_controlled.py
+      - scripts/evaluation/healthfc_exploratory.py
+permissions:
+  contents: read
+jobs:
+  healthfc-frozen-protocol:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install opt-in NLI CPU dependencies
+        run: python -m pip install -e '.[nli]'
+      - name: Fetch exact original HealthFC corpus into ephemeral runner
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 2 \
+            https://raw.githubusercontent.com/jvladika/HealthFC/9f31d765e5d4a99bd9fff667e82de503bc5684f5/Datensatz.csv \
+            -o "$RUNNER_TEMP/healthfc-original.csv"
+          echo "6b832bd2a73af47f7a8d9dcd3c307defa962cff3746c26b33866170a406721c8  $RUNNER_TEMP/healthfc-original.csv" | sha256sum -c -
+      - name: Pin 3 original pretrained model snapshots
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          from huggingface_hub import snapshot_download
+          models = [
+              ("cross-encoder/nli-deberta-v3-small",
+               "fa2804872c3b4bd748f38c0185cc85775361e735", "small"),
+              ("MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
+               "6f5cf0a2b59cabb106aca4c287eed12e357e90eb", "fever"),
+              ("cross-encoder/nli-deberta-v3-base",
+               "6c749ce3425cd33b46d187e45b92bbf96ee12ec7", "general"),
+          ]
+          for model_id, revision, folder in models:
+              snapshot_download(
+                  model_id, revision=revision,
+                  local_dir=os.path.join(os.environ["RUNNER_TEMP"], folder),
+                  allow_patterns=["*.json", "*.safetensors", "*.model", "*.txt"],
+                  max_workers=3,
+              )
+          PY
+      - name: Verify frozen weights, tokenizer and config SHA-256
+        shell: bash
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+          from literature_evidence_mcp.evidence_nli import WEIGHTS_SHA256
+          from literature_evidence_mcp.nli_challenger import verify_candidate_files
+          root = Path(os.environ["RUNNER_TEMP"])
+          import hashlib
+          with (root / "small" / "model.safetensors").open("rb") as stream:
+              assert hashlib.file_digest(stream, "sha256").hexdigest() == WEIGHTS_SHA256
+          verify_candidate_files("fever_anli_deberta_base", root / "fever")
+          verify_candidate_files("general_deberta_base", root / "general")
+          print("Three model revisions and checkpoint SHA-256 verified")
+          PY
+      - name: Evaluate syntax-only transformed cohort without human equivalence claims
+        shell: bash
+        env:
+          LITERATURE_EVIDENCE_NLI_DEVICE: cpu
+          OMP_NUM_THREADS: '4'
+          MKL_NUM_THREADS: '4'
+        run: |
+          python -m scripts.evaluation.healthfc_exploratory \
+            --source "$RUNNER_TEMP/healthfc-original.csv" \
+            --original "$RUNNER_TEMP/small" \
+            --fever-model "$RUNNER_TEMP/fever" \
+            --general-model "$RUNNER_TEMP/general" \
+            --output "$RUNNER_TEMP/healthfc-aggregate-only.json"
+      - name: Enforce no raw or transformed licensed text in artifacts
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          from scripts.evaluation.healthfc_controlled import read_source, prepare
+          root = Path(os.environ["RUNNER_TEMP"])
+          report = json.loads((root / "healthfc-aggregate-only.json").read_text())
+          assert report["status"] == "EXPLORATORY_SYNTAX_ONLY_TRANSFORMATION_NOT_EXPERT_ADJUDICATED"
+          assert report["cohort_audit"]["selected_rows"] == 511
+          assert report["cohort_audit"]["excluded_rows"] == 239
+          assert len(report["candidate_results"]) == 3
+          audit_text = json.dumps(report)
+          rows = read_source(root / "healthfc-original.csv")
+          data, _ = prepare(rows)
+          for row in rows:
+              for key in ("en_claim", "en_top_sentences", "en_explanation"):
+                  snippet = row.get(key, "")
+                  if snippet and len(snippet) >= 30:
+                      assert snippet not in audit_text, "Original copyrighted text in artifact"
+          for row in data:
+              assert row["claim"] not in audit_text, "Transformed copyrighted text in artifact"
+          print("PASS: Aggregate-only artifact excludes original and transformed corpus text")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: healthfc-aggregate-only-exploratory
+          path: ${{ runner.temp }}/healthfc-aggregate-only.json
+          if-no-files-found: error

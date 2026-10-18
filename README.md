@@ -286,4 +286,6 @@ sufficient to select a production winner**. Neither alternative is
 clinically reliable or a scientific truth verifier.
 
 [Two-dataset protocol, test artifacts, and opt-in usage](docs/nli_challenger_comparison.md).
+
+A third, explicitly exploratory [HealthFC syntax-only question normalization audit](docs/healthfc_syntax_only_audit.md) uses only 511 conservatively transformed questions; 239 are excluded and meaning equivalence is **not expert-verified**. On this unreviewed subset, FEVER/ANLI accuracy was **70.25%** versus original **59.30%**; this is **not confirmatory superiority**. Original/transformed CC BY-NC-ND texts are not published.
 No npm registry publication.
