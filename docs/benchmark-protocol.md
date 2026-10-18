@@ -2,7 +2,7 @@
 
 ## Scientific interpretation
 
-The structured `audit_methodology` MCP tool checks **traceability of user-provided
+The structured `audit_methodology` and directly sourced `audit_pmc_methodology` MCP tools check **traceability of user-provided
 annotations**, not scientific truth or the Cochrane RoB 2/ROBINS-I/GRADE classifications.
 Caller supplies a study design, outcome, source text and quoted annotations. The tool
 records source offsets and SHA-256, flags contradictory or untraceable annotations,
@@ -70,3 +70,7 @@ remain unimplemented. Future head-to-head searches also require a shared
 held-out relevance gold set; comparison of provider numbers is not accuracy.
 
 Competitor feature evidence: `docs/competitor-audit.md`.
+
+## Direct-source paragraph bound audit
+
+`audit_pmc_methodology(pmcid, outcome, study_design, annotations)` retrieves Europe PMC full-text XML, records the XML SHA-256, and matches annotated quotations to individual JATS paragraphs. Match offsets are local to the paragraph; any quote spanning paragraphs or found only in a heading is unverified. Incomplete source retrieval yields `NOT_VERIFIED_SOURCE_TRUNCATED`, not a false negative. Findings still require human semantic and outcome-specific assessment.

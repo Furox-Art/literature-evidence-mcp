@@ -21,6 +21,7 @@ from literature_evidence_mcp.methodology import (
     audit_methodology_evidence,
     audit_statistical_fields,
 )
+from literature_evidence_mcp.source_audit import audit_pmc_paragraph_evidence
 
 mcp = MCPServer("Literature Evidence MCP")
 
@@ -100,6 +101,20 @@ def audit_methodology(
     return audit_methodology_evidence(
         study_id, outcome, study_design, source_text, annotations,
     )
+
+
+@mcp.tool()
+async def audit_pmc_methodology(
+    pmcid: str, outcome: str, study_design: str,
+    annotations: list[dict],
+) -> dict:
+    """Fetch Europe PMC XML and validate user annotations against direct JATS paragraphs.
+
+    No scientific conclusion, risk-of-bias judgement or absence claim is inferred.
+    """
+    async with ResearchClient() as researcher:
+        fulltext = await researcher.fulltext(pmcid)
+    return audit_pmc_paragraph_evidence(fulltext, outcome, study_design, annotations)
 
 
 @mcp.tool()
