@@ -175,3 +175,22 @@ combines instrumented unit tests and the real CLI for 100% statements, and
 C++ enforces 100% executable-source-line coverage while excluding only
 noncode-only braces from GCC's mapping (explicitly reported). All native
 modules have distinct integration CI jobs; no scientific superiority is claimed.
+
+
+## v0.5 Review-workflow and analytical additions
+
+29 MCP tools include new two-reviewer human RoB 2 / ROBINS-I V2 judgment
+records, GRADE domain recordkeeping, two-reviewer screening, PRISMA 2020
+checklist (42 reporting rows)/identification accounting, bounded supplied
+PDF page text and table/image object provenance, Crossref notice propagation
+without mislabeling citing papers, and C++ DerSimonian-Laird random-effects
+and leave-one-out numerical calculations. Go now retrieves bounded real
+metadata with a local TTL cache and five-second batch request gate.
+
+These tools are workflow and numeric helpers: clinical methodological
+accuracy, full PRISMA compliance, image/table contents and scientific truth
+are NOT automatically established. See docs/review-science-coverage.md.
+
+The CI enforces 100% Python statement/branch coverage, 100% TypeScript
+line/branch/function coverage, strict Rust/Go/C++ native gates, plus
+Windows and macOS native build checks. No npm registry publication.
