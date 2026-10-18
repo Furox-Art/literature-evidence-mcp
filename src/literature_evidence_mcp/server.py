@@ -9,6 +9,7 @@ import os
 from mcp.server import MCPServer
 
 from literature_evidence_mcp.appraisal import grade_domain_record, risk_of_bias_review
+from literature_evidence_mcp.bibliography import export_bibliography_records
 from literature_evidence_mcp.bm25_retrieval import rank_supplied_evidence
 from literature_evidence_mcp.core import (
     EvidenceLedger,
@@ -136,6 +137,12 @@ async def audit_pmc_methodology(
 def check_statistical_reporting(records: list[dict]) -> dict:
     """Find mechanically inconsistent p values/CIs/sample-size entries, not test results."""
     return audit_statistical_fields(records)
+
+
+@mcp.tool()
+def export_bibliography(papers: list[dict], output_format: str = "bibtex") -> dict:
+    """Export supplied metadata as BibTeX/RIS/CSL-JSON; NOT scientific verification."""
+    return export_bibliography_records(papers, output_format)
 
 
 @mcp.tool()
