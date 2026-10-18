@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "literature-evidence-mcp"
+version = "0.2.0"
+description = "Open-source, evidence-provenance-first scientific literature MCP server"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+keywords = ["mcp", "scientific-literature", "research", "doi", "provenance"]
+authors = [{name = "Furox Scientific Toolkit"}]
+dependencies = ["mcp>=2,<3", "httpx>=0.27,<1", "defusedxml>=0.7.1,<1", "filelock>=3.12,<4"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "pytest-asyncio>=0.24,<2", "pytest-cov>=6,<8", "ruff>=0.9,<1", "build>=1,<2"]
+
+[project.scripts]
+literature-evidence-mcp = "literature_evidence_mcp.server:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/literature_evidence_mcp"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
