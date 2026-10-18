@@ -21,8 +21,11 @@ or credentials are stored in Git.
   provenance rather than silently overwritten.
 - OpenAlex, Europe PMC and Crossref use the existing bounded HTTP client,
   streaming limits, retries, approved host/path restrictions and timeout.
-- Semantic Scholar 429/rate-limit, 403, 404 or schema errors return an explicit
-  provider `ERROR` status, not an empty-paper claim.
+- Semantic Scholar HTTP **429** after bounded retries returns explicit
+  `RATE_LIMITED` with the observed `HTTP 429` code; HTTP 5xx retry
+  exhaustion reports the actual final HTTP code as provider `ERROR`.
+  403/404 or schema failures also remain explicit `ERROR` records,
+  **not** an empty-paper claim. No silent fallback or fabricated results.
 - Results are **non-exhaustive**; provider ranking has not been tested against
   expert-judged retrieval relevance.
 
@@ -45,6 +48,11 @@ directions="both")` traverses OpenAlex *provider-asserted* citation edges:
   traversal is deterministic relative to the provider's returned order.
 - Hard ceilings: at most **12 OpenAlex HTTP calls**, **30 graph nodes**,
   and **10 returned entries per direction** at any frontier work.
+- **Seed DOI identity gate:** the DOI returned by OpenAlex must normalize
+  to the DOI requested by the caller. Missing, invalid or mismatched returned
+  DOI leads to `BLOCKED_SEED_IDENTITY_NOT_VERIFIED` with no invented
+  nodes or edges. This is a metadata identity check, not verification of
+  publisher authorship or the scientific conclusion.
 - Nodes retain OpenAlex source identifiers, source year, DOI status and
   provider-reported citation counts. Edges retain `evidence_source`,
   `observed_at_depth` and `CITES_PROVIDER_ASSERTED` status.
@@ -82,9 +90,10 @@ Example:
 WSL live smoke on 2026-10-19: OpenAlex successfully returned **5 nodes and
 4 citation edges** for the example DOI, explicitly **PARTIAL** due to
 bounded retrieval. All three original search providers returned 2 results
-each for a small exploratory query; Semantic Scholar returned an explicit
-rate-limit-related provider error, so its production availability was **not
-verified**. This smoke is not a scored benchmark.
+each for a small exploratory query; Semantic Scholar returned explicit `RATE_LIMITED` with `HTTP 429`,
+so its production availability was **not verified**. The seed identity gate
+preserved the 5-node/4-edge `PARTIAL` OpenAlex result after hardening.
+This smoke is not a scored benchmark.
 
 Reference API contracts: [OpenAlex API recipes](https://help.openalex.org/how-to/api-recipes/)
 and [Semantic Scholar Graph API](https://api.semanticscholar.org/api-docs/).

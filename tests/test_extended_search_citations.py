@@ -15,7 +15,9 @@ from literature_evidence_mcp.core import (
 def work(i, *, refs=None, doi=None):
     return {
         "id": f"https://openalex.org/W{i}", "display_name": f"Synthetic {i}",
-        "doi": doi, "referenced_works": refs or [],
+        "doi": doi if doi is not None else (
+            "https://doi.org/10.1000/seed" if i == 1 else None
+        ), "referenced_works": refs or [],
         "publication_year": 2022, "cited_by_count": 7,
     }
 
@@ -97,7 +99,8 @@ async def test_extended_source_rate_limits_fail_closed_without_erasing_other_sou
         monkeypatch.setattr(es, "ResearchClient", lambda: ResearchClient(http))
         out = await es.search_four_providers("cohort")
     assert len(out["provider_status"]) == 4
-    assert out["provider_status"]["semantic_scholar"]["status"] == "ERROR"
+    assert out["provider_status"]["semantic_scholar"]["status"] == "RATE_LIMITED"
+    assert "HTTP 429" in out["provider_status"]["semantic_scholar"]["error"]
     assert out["provider_status"]["openalex"]["status"] == "OK"
     assert out["papers"] == [] and out["coverage"] == "NON_EXHAUSTIVE"
 
@@ -234,7 +237,7 @@ async def test_forward_only_handles_malformed_citations_without_crash(monkeypatc
                                          "meta": {"count": 3}})
     async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http:
         monkeypatch.setattr(ct, "ResearchClient", lambda: ResearchClient(http))
-        out = await ct.traverse_citations("10.1000/test", directions="forward")
+        out = await ct.traverse_citations("10.1000/seed", directions="forward")
     assert out["status"] == "PARTIAL"
     assert len(out["edges"]) == 1 and out["edges"][0]["source"] == "W2"
 
@@ -463,3 +466,88 @@ async def test_forward_page_stops_exactly_at_node_cap(monkeypatch):
     assert len(out["nodes"]) == 30
     assert not any(n["id"] == "W31" for n in out["nodes"])
     assert out["requests_used"] <= 12
+
+
+
+@pytest.mark.parametrize("source_doi,expected_provider_doi", [
+    (None, None),
+    ("https://doi.org/10.1000/other", "10.1000/other"),
+    ("malformed-not-a-doi", None),
+])
+@pytest.mark.asyncio
+async def test_seed_identity_missing_mismatch_or_invalid_never_builds_graph(
+    monkeypatch, source_doi, expected_provider_doi,
+):
+    requests = []
+    def handler(req):
+        requests.append(req)
+        root = work(1)
+        root["doi"] = source_doi
+        return httpx.Response(200, json=root)
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http:
+        monkeypatch.setattr(ct, "ResearchClient", lambda: ResearchClient(http))
+        result = await ct.traverse_citations("10.1000/seed", 2, 3)
+    assert len(requests) == 1
+    assert result["status"] == "BLOCKED_SEED_IDENTITY_NOT_VERIFIED"
+    assert result["nodes"] == [] and result["edges"] == []
+    assert result["scientific_content_verified"] is False
+    failure = result["provider_errors"][0]
+    assert failure["reason"] == "SEED_DOI_MISSING_OR_MISMATCH"
+    assert failure["provider_doi"] == expected_provider_doi
+    assert failure["requested_doi"] == "10.1000/seed"
+
+
+@pytest.mark.parametrize("status_code", [429, 500, 502, 503, 504])
+@pytest.mark.asyncio
+async def test_retry_exhaustion_preserves_exact_http_failure_class(
+    monkeypatch, status_code,
+):
+    from literature_evidence_mcp.core import ProviderError
+    async def no_wait(_):
+        return None
+    monkeypatch.setattr("literature_evidence_mcp.core.asyncio.sleep", no_wait)
+    calls = []
+    def handler(req):
+        calls.append(req)
+        return httpx.Response(status_code)
+    async with (httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http,
+                ResearchClient(http) as client):
+        with pytest.raises(ProviderError, match=f"HTTP {status_code}"):
+            await client._get(SEMANTIC_SCHOLAR, "/graph/v1/paper/search")
+    assert len(calls) == 3
+
+
+@pytest.mark.asyncio
+async def test_retry_mixed_error_codes_keep_last_observed(monkeypatch):
+    from literature_evidence_mcp.core import ProviderError
+    async def no_wait(_):
+        return None
+    monkeypatch.setattr("literature_evidence_mcp.core.asyncio.sleep", no_wait)
+    codes = iter((429, 502, 503))
+    async with httpx.AsyncClient(transport=httpx.MockTransport(
+        lambda _: httpx.Response(next(codes))
+    )) as http, ResearchClient(http) as client:
+        with pytest.raises(ProviderError, match=r"HTTP 503"):
+            await client._get(SEMANTIC_SCHOLAR, "/graph/v1/paper/search")
+
+
+@pytest.mark.asyncio
+async def test_retry_non_429_provider_is_error_not_rate_limited(monkeypatch):
+    async def no_wait(_):
+        return None
+    monkeypatch.setattr("literature_evidence_mcp.core.asyncio.sleep", no_wait)
+    def handler(req):
+        if req.url.host == "api.semanticscholar.org":
+            return httpx.Response(503)
+        if req.url.host == "api.openalex.org":
+            return httpx.Response(200, json={"results": []})
+        if req.url.host == "www.ebi.ac.uk":
+            return httpx.Response(200, json={"resultList": {"result": []}})
+        return httpx.Response(200, json={"message": {"items": []}})
+    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http:
+        monkeypatch.setattr(es, "ResearchClient", lambda: ResearchClient(http))
+        result = await es.search_four_providers("cohort")
+    assert result["provider_status"]["semantic_scholar"]["status"] == "ERROR"
+    assert "HTTP 503" in result["provider_status"]["semantic_scholar"]["error"]
+    assert all(result["provider_status"][name]["status"] == "OK"
+               for name in ("openalex", "europepmc", "crossref"))

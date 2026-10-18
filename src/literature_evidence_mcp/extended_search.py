@@ -71,7 +71,9 @@ async def search_four_providers(query: str, limit_per_source: int = 10) -> dict:
                 records = [_s2_paper(row) for row in rows]
                 return {"status": "OK", "count": len(records)}, records
             except (ProviderError, ValueError, KeyError, TypeError, AttributeError) as exc:
-                return {"status": "ERROR", "error": str(exc)}, []
+                rate_limited = isinstance(exc, ProviderError) and "(HTTP 429)" in str(exc)
+                return {"status": "RATE_LIMITED" if rate_limited else "ERROR",
+                        "error": str(exc)}, []
 
         original, (status, additional) = await asyncio.gather(
             client.search(query, limit_per_source), s2()
