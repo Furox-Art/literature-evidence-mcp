@@ -1,0 +1,103 @@
+{
+  "archive_sha256": "11c621288d41ac144d29b13b0f8503b3820b7d6e8b1f6ff24dff335c196d76be",
+  "baselines": {
+    "claim_word_coverage": {
+      "dev": {
+        "claim_cluster_bootstrap_f1_95pct": [
+          0.74797,
+          0.83034
+        ],
+        "f1": 0.7900207900207901,
+        "fn": 19,
+        "fp": 82,
+        "precision": 0.6985294117647058,
+        "recall": 0.9090909090909091,
+        "specificity": 0.36923076923076925,
+        "tn": 48,
+        "tp": 190
+      },
+      "train_f1": 0.809487375669472,
+      "train_only_cutoff": 0.38
+    },
+    "existing_mcp_literal_claim_proxy": {
+      "dev": {
+        "claim_cluster_bootstrap_f1_95pct": [
+          0.0,
+          0.0
+        ],
+        "f1": 0.0,
+        "fn": 209,
+        "fp": 0,
+        "precision": null,
+        "recall": 0.0,
+        "specificity": 1.0,
+        "tn": 130,
+        "tp": 0
+      },
+      "scientific_label_accuracy": null,
+      "scientific_support_contradict_predictions": 0
+    },
+    "jaccard": {
+      "dev": {
+        "claim_cluster_bootstrap_f1_95pct": [
+          0.72137,
+          0.80844
+        ],
+        "f1": 0.7689463955637708,
+        "fn": 1,
+        "fp": 124,
+        "precision": 0.6265060240963856,
+        "recall": 0.9952153110047847,
+        "specificity": 0.046153846153846156,
+        "tn": 6,
+        "tp": 208
+      },
+      "train_f1": 0.7679671457905544,
+      "train_only_cutoff": 0.01
+    }
+  },
+  "caveats": [
+    "Gold labels independent of this project.",
+    "No DEV tuning; lexical cutoff selected on TRAIN.",
+    "Cited candidate pool is easier than open retrieval.",
+    "Comparator baselines are not competitor products.",
+    "No public official test gold; no test accuracy claim.",
+    "No RoB2/ROBINS-I/GRADE expert label accuracy measured.",
+    "Literal text matching cannot decide SUPPORT vs CONTRADICT."
+  ],
+  "data_file_sha256": {
+    "claims_dev.jsonl": "86f0435d08fdb65d1aa41d1472684f57e6e71930626497bdf4d7a9ec1a632217",
+    "claims_train.jsonl": "f4c8fa82d8bd0653a9cc8d61a6ea48c25eacea64e90af5dbf390ebb1b74372f0",
+    "corpus.jsonl": "b8d6c89624cb2ed74dee8938effc4f5d8bd2086887880af8110d64be4ceade62"
+  },
+  "dataset": "SciFact (Wadden et al., 2020)",
+  "dataset_url": "https://scifact.s3-us-west-2.amazonaws.com/release/latest/data.tar.gz",
+  "dev_cited_doc_pairs": 339,
+  "dev_claims": 300,
+  "dev_negative_pairs": 130,
+  "dev_positive_pairs": 209,
+  "dev_rationale_labels": {
+    "CONTRADICT": 122,
+    "SUPPORT": 216
+  },
+  "gold_rationale_sentence_locating": {
+    "case_whitespace_stress_found": 366,
+    "direct_quote_found": 366,
+    "evaluated": 366,
+    "not_scientific_entailment_accuracy": true,
+    "unrelated_document_false_hits": 0
+  },
+  "gold_split": "train thresholds, untouched dev evaluation",
+  "license": "CC-BY-4.0 evidence annotations; ODC-By-1.0 abstracts",
+  "source_commit": "68b98a56d93e0f9da0d2aab4e6c3294699a0f72e",
+  "status": "EVALUATED_LIMITED_SCOPE",
+  "support_contradict_semantic_task": {
+    "accuracy": null,
+    "existing_mcp_abstention_rate": 1.0,
+    "gold_label_predictions": 0,
+    "official_leaderboard_comparable": false
+  },
+  "task": "cited-candidate evidence-document flag, not open retrieval",
+  "train_cited_doc_pairs": 919,
+  "train_claims": 809
+}
