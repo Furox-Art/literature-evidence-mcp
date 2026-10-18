@@ -68,4 +68,5 @@ jobs:
         env:
           LITERATURE_EVIDENCE_PYTHON: python
       - name: Audit distributable npm package contents
-        run: npm pack --prefix packages/npm --dry-run --json
+        working-directory: packages/npm
+        run: npm pack --dry-run --json
