@@ -202,12 +202,37 @@ class ResearchClient:
             for paper in papers:
                 key = paper.get("doi") or f"{source}:{paper.get('source_id') or paper.get('title')}"
                 if key not in dedup:
-                    dedup[key] = {**paper, "sources": [source]}
+                    dedup[key] = {
+                        **paper,
+                        "sources": [source],
+                        "metadata_field_sources": {
+                            field: source for field in ("title", "year", "journal")
+                            if paper.get(field)
+                        },
+                        "metadata_disagreements": [],
+                    }
                 else:
-                    dedup[key]["sources"].append(source)
+                    chosen = dedup[key]
+                    chosen["sources"].append(source)
                     for field in ("title", "abstract", "year", "journal"):
-                        if not dedup[key].get(field) and paper.get(field):
-                            dedup[key][field] = paper[field]
+                        previous, incoming = chosen.get(field), paper.get(field)
+                        if not previous and incoming:
+                            chosen[field] = incoming
+                            if field != "abstract":
+                                chosen["metadata_field_sources"][field] = source
+                        elif (
+                            field != "abstract" and previous and incoming
+                            and str(previous).strip().casefold()
+                            != str(incoming).strip().casefold()
+                        ):
+                            chosen["metadata_disagreements"].append({
+                                "field": field,
+                                "chosen_source": chosen["metadata_field_sources"][field],
+                                "chosen_value": previous,
+                                "other_source": source,
+                                "other_value": incoming,
+                                "status": "REVIEW_REQUIRED_NOT_RESOLVED",
+                            })
         return {"query": query, "checked_at": _utcnow(), "provider_status": provider_status,
                 "papers": list(dedup.values()), "coverage": "NON_EXHAUSTIVE",
                 "notice": "Search coverage and record freshness vary; absence is not proof of nonexistence."}
