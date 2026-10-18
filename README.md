@@ -129,3 +129,11 @@ pytest -q --cov=literature_evidence_mcp --cov-branch --cov-report=term-missing -
 - Aligned quoted-text checks across `verify_claim`, `verify_source_quote` and methodology audits. Case-insensitive and whitespace-flexible comparison now requires intact Unicode word boundaries where a quoted token begins or ends with a word character. The word `significant` can no longer be verified from `insignificant`, nor `effective` from `ineffective`. Punctuation in quoted snippets remains literal.
 - Both direct-text and Europe PMC JATS quote lookups return start/end character offsets (direct text or local paragraph) and source hashes; absence from truncated XML is explicitly marked `NOT_VERIFIED_SOURCE_TRUNCATED`. No claim of scientific validity or inferred method quality is introduced.
 - The GitHub CI gate remains **100% statement AND branch coverage** on Python 3.11, 3.12 and 3.13; no coverage exclusions.
+
+## v0.3.2: strict work identity guards for literature search
+
+- Search results now normalize DOI text using the same validated canonical syntax as direct DOI lookups. DOI URL prefixes and case variants are normalized before merging provider records. `SYNTAX_VALID_NOT_RESOLVED` explicitly means the DOI *shape* passed validation, **not** that the DOI or scientific claim was independently resolved.
+- Untrusted provider DOI values that fail validation are preserved as `doi_raw` with `doi_status=INVALID_PROVIDER_DOI_NOT_RESOLVED`, while the normalized `doi` value is `null`. No cross-provider aggregation is performed on invalid DOI strings.
+- Work records with no DOI are kept separate, even when providers report identical titles or the same provider returns repeated titles. Their `doi_status=MISSING` denotes missing evidence of work identity, not evidence that no DOI exists.
+- Provider disagreements and source provenance from v0.3.1 remain visible. No metadata consistency check or DOI format validation is a scientific truth verdict.
+- **Quality gate unchanged:** 100% statement and branch coverage across Python 3.11, 3.12 and 3.13, including DOI normalization and all error paths.
