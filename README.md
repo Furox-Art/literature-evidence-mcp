@@ -71,7 +71,7 @@ OpenAlex basic queries can be keyless but have a restrictive daily budget. Obtai
 
 Offline deterministic tests mock every external provider and check concurrent ledger writers, covering DOI validation, error handling, failure isolation, ambiguous status reporting, ledger corruption, method-screening caveats and evidence graph validation.
 
-**Note:** These are unit tests, not successful live integrations. Real API and MCP transport tests must pass in an online CI environment before a release is claimed operational end-to-end. Optional `python scripts/live_smoke.py` exercises real providers and does not run in CI by default.
+**Verification:** On 2026-10-18, 20 tests passed with the real MCP v2 SDK in a connected development environment, including in-process MCP tool discovery/call. The opt-in `python scripts/live_smoke.py` also passed for OpenAlex, Europe PMC and Crossref. CI does not run live provider checks. Hosted Streamable HTTP, production resilience, source accuracy, formal risk-of-bias validity, and competitive superiority have NOT been independently verified.
 
 ## License and contributions
 
