@@ -195,9 +195,10 @@ def cpp_fixed_effect_meta(studies: list[dict]) -> dict:
 
 
 @mcp.tool()
-def record_risk_of_bias(framework: str, study_id: str, outcome: str, reviewers: list[dict]) -> dict:
-    """Record two human domain appraisals for RoB2 or ROBINS-I V2, flag disagreements."""
-    return risk_of_bias_review(framework, study_id, outcome, reviewers)
+def record_risk_of_bias(framework: str, study_id: str, outcome: str, reviewers: list[dict],
+                        effect_of_interest: str = "") -> dict:
+    """Record two human RoB2/ROBINS-I V2 Nov-2025 appraisals, flag disagreements."""
+    return risk_of_bias_review(framework, study_id, outcome, reviewers, effect_of_interest)
 
 
 @mcp.tool()

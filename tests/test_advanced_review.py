@@ -22,14 +22,15 @@ def humans(framework):
 
 @pytest.mark.parametrize("framework", ["ROB2", "ROBINS_I_V2"])
 def test_complete_human_risk_assessment(framework):
-    result = server.record_risk_of_bias(framework, "S1", "survival", humans(framework))
+    mode = "assignment" if framework == "ROBINS_I_V2" else ""
+    result = server.record_risk_of_bias(framework, "S1", "survival", humans(framework), mode)
     assert result["status"] == "TWO_REVIEWERS_AGREE_NOT_CERTIFIED"
     assert len(result["agreed_domain_judgments"]) == len(DOMAINS[framework])
     assert result["automated_bias_judgment"] is False
     reviewers = humans(framework)
     reviewers[1]["domains"][DOMAINS[framework][0]]["judgment"] = (
         "high" if framework == "ROB2" else "serious")
-    out = risk_of_bias_review(framework, "S1", "survival", reviewers)
+    out = risk_of_bias_review(framework, "S1", "survival", reviewers, mode)
     assert out["status"] == "NEEDS_ADJUDICATION"
     assert len(out["disagreement_domains"]) == 1
 
@@ -167,3 +168,22 @@ def test_graph_validation_strict():
 def test_propagation_graph_size_bound():
     with pytest.raises(ValueError, match="Graph too large"):
         publication_alerts([{"id": str(i)} for i in range(10001)], [], [])
+
+
+
+def test_robins_v2_nov2025_six_domains_and_effect():
+    assert DOMAINS["ROBINS_I_V2"] == (
+        "confounding", "intervention_classification", "participant_selection",
+        "missing_data", "outcome_measurement", "selective_reporting",
+    )
+    reviewers = humans("ROBINS_I_V2")
+    with pytest.raises(ValueError, match="effect_of_interest"):
+        server.record_risk_of_bias("ROBINS_I_V2", "study", "outcome", reviewers)
+    out = server.record_risk_of_bias(
+        "ROBINS_I_V2", "study", "outcome", reviewers, "per_protocol")
+    assert out["effect_of_interest"] == "per_protocol"
+    assert out["framework_revision"] == "ROBINS-I_V2_2025-11_DRAFT"
+    reviewers[0]["domains"]["confounding"]["judgment"] = "no_information"
+    out = server.record_risk_of_bias(
+        "ROBINS_I_V2", "study", "outcome", reviewers, "assignment")
+    assert out["status"] == "NEEDS_ADJUDICATION"

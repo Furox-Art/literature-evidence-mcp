@@ -8,8 +8,11 @@ as an automated Cochrane RoB 2 / ROBINS-I V2 / GRADE rating engine.
 
 - record_risk_of_bias: two independent identified human reviewers, all domains,
   attributed evidence identifiers and rationale; conflicting domains require
-  adjudication. No official signaling-question algorithm or independently
-  calibrated assessment is implemented.
+  adjudication. ROBINS-I V2 uses the six-domain November 2025 draft (NOT
+  the historical seven-domain 2016 version), and explicitly requires the
+  assignment/per-protocol effect of interest. No official signaling-question
+  algorithm or independently calibrated assessment is implemented.
+  Official V2 reference: https://www.riskofbias.info/welcome/robins-i-v2
 - record_grade: human-entered downgrade and upgrade domain considerations,
   an identified reviewer and rationale. No automatic final certainty category;
   threshold selection and the ROBINS-I initial-certainty conventions need experts.

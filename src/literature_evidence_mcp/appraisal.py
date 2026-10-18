@@ -3,20 +3,24 @@ from __future__ import annotations
 
 DOMAINS = {
     "ROB2": ("randomization_process", "deviations", "missing_data", "outcome_measurement", "selective_reporting"),
-    "ROBINS_I_V2": ("confounding", "participant_selection", "intervention_classification", "deviations",
+    # ROBINS-I V2 draft (20 November 2025) has SIX domains, unlike v1 (2016).
+    "ROBINS_I_V2": ("confounding", "intervention_classification", "participant_selection",
                     "missing_data", "outcome_measurement", "selective_reporting"),
 }
 RATINGS = {"ROB2": {"low", "some_concerns", "high"},
-           "ROBINS_I_V2": {"low", "moderate", "serious", "critical"}}
+           "ROBINS_I_V2": {"low", "moderate", "serious", "critical", "no_information"}}
 DOWN = ("risk_of_bias", "inconsistency", "indirectness", "imprecision", "publication_bias")
 UP = ("large_effect", "dose_response", "opposing_residual_confounding")
 
 
-def risk_of_bias_review(framework: str, study_id: str, outcome: str, reviewers: list[dict]) -> dict:
+def risk_of_bias_review(framework: str, study_id: str, outcome: str, reviewers: list[dict],
+                        effect_of_interest: str = "") -> dict:
     if framework not in DOMAINS:
         raise ValueError("Unsupported framework")
     if not isinstance(study_id, str) or not study_id.strip() or not isinstance(outcome, str) or not outcome.strip():
         raise ValueError("Study ID and outcome required")
+    if framework == "ROBINS_I_V2" and effect_of_interest not in {"assignment", "per_protocol"}:
+        raise ValueError("ROBINS-I V2 effect_of_interest must be assignment or per_protocol")
     if not isinstance(reviewers, list) or len(reviewers) != 2:
         raise ValueError("Two reviewer records required")
     ids = []
@@ -42,6 +46,9 @@ def risk_of_bias_review(framework: str, study_id: str, outcome: str, reviewers: 
     return {
         "status": "NEEDS_ADJUDICATION" if disagreements else "TWO_REVIEWERS_AGREE_NOT_CERTIFIED",
         "framework": framework, "study_id": study_id, "outcome": outcome,
+        "framework_revision": "ROBINS-I_V2_2025-11_DRAFT" if framework == "ROBINS_I_V2"
+                              else "ROB2",
+        "effect_of_interest": effect_of_interest or None,
         "disagreement_domains": disagreements,
         "agreed_domain_judgments": {d: reviewers[0]["domains"][d]["judgment"]
                                    for d in DOMAINS[framework] if d not in disagreements},
