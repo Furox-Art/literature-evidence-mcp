@@ -47,6 +47,9 @@ jobs:
           tests/test_crossref_alerts.py
           tests/test_go_cache.py
           tests/test_cpp_random_wrapper.py
+          tests/test_gold_evaluation_protocol.py
+          scripts/evaluation/scifact_gold.py
+          scripts/evaluation/evidencebench_gold.py
       - name: Check benchmark fixture tests
         run: pytest -q tests/test_methodology.py tests/test_source_audit.py tests/test_benchmark.py
       - name: Compile
@@ -186,3 +189,40 @@ jobs:
             -Dpybind11_DIR="$(python -m pybind11 --cmakedir)" \
             -DPython_EXECUTABLE="$(python -c 'import sys; print(sys.executable)')"
           cmake --build native/cpp_meta/build --config Release --parallel 2
+
+  external-gold-evaluation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install scientific core and pinned third-party retrieval baseline
+        run: |
+          python -m pip install -e '.[dev]'
+          python -m pip install -r scripts/evaluation/requirements.txt
+      - name: Download exact licensed public benchmark snapshots
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/science-gold"
+          curl --fail --silent --show-error --location --retry 2 --connect-timeout 15 \
+            https://scifact.s3-us-west-2.amazonaws.com/release/latest/data.tar.gz \
+            -o "$RUNNER_TEMP/science-gold/scifact.tar.gz"
+          echo "11c621288d41ac144d29b13b0f8503b3820b7d6e8b1f6ff24dff335c196d76be  $RUNNER_TEMP/science-gold/scifact.tar.gz" | sha256sum -c -
+          tar -xzf "$RUNNER_TEMP/science-gold/scifact.tar.gz" -C "$RUNNER_TEMP/science-gold"
+          curl --fail --silent --show-error --location --retry 2 --connect-timeout 15 \
+            https://raw.githubusercontent.com/EvidenceBench/EvidenceBench/bf1d9633c694381c7b016fd56ee9f95f48593cc3/datasets/evidencebench_test_set.json \
+            -o "$RUNNER_TEMP/science-gold/evidencebench_test.json"
+          echo "771cc068e3e79764c2eb523e7d0d9fb276d00254a99212c73c1137674b49d18b  $RUNNER_TEMP/science-gold/evidencebench_test.json" | sha256sum -c -
+      - name: Evaluate and require reproducible gold-labeled aggregate metrics
+        shell: bash
+        run: |
+          python -m scripts.evaluation.scifact_gold \
+            --data "$RUNNER_TEMP/science-gold/data" \
+            --output "$RUNNER_TEMP/scifact_dev.json"
+          python -m scripts.evaluation.evidencebench_gold \
+            --data "$RUNNER_TEMP/science-gold/evidencebench_test.json" \
+            --output "$RUNNER_TEMP/evidencebench_test.json"
+          diff -u reports/evaluation/scifact_dev.json "$RUNNER_TEMP/scifact_dev.json"
+          diff -u reports/evaluation/evidencebench_test.json "$RUNNER_TEMP/evidencebench_test.json"
+          pytest -q tests/test_gold_evaluation_protocol.py

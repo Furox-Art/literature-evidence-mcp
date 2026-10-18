@@ -1,0 +1,161 @@
+{
+  "candidate_sentences_total": 49246,
+  "dataset": "EvidenceBench (Wang et al., COLM 2025)",
+  "external_baseline": {
+    "algorithm": "BM25Okapi local sentence ranking",
+    "label_access": false,
+    "name": "rank-bm25",
+    "same_hypothesis_and_candidates": true,
+    "version": "0.2.2"
+  },
+  "gold_label_provenance": "LLM-assisted annotation with separate human expert quality checks",
+  "license": "CC BY (original test subset); train/dev are CC-BY-NC-SA",
+  "limitations": [
+    "EvidenceBench gold aspects are LLM-assisted, not entirely manually labeled.",
+    "Quote auditor does not rank or retrieve from a hypothesis; abstention is expected.",
+    "Exact hypothesis matching is a proxy; not scientific claim classification.",
+    "rank-bm25 is an independent retrieval library, NOT a full scientific verification competitor.",
+    "Additional BM25 comparator added after preliminary test inspection: exploratory, not preregistered.",
+    "First-k and random are controls; oracle selections use gold labels, NOT a comparator.",
+    "Aspect recall is NOT scientific factual entailment or risk-of-bias accuracy."
+  ],
+  "oracle_sentence_literal_trace": {
+    "found": 1348,
+    "tested": 1348
+  },
+  "papers": 293,
+  "rankers": {
+    "claim_word_coverage": {
+      "all_aspect_at_10": {
+        "evaluated_papers": 293,
+        "macro_recall": 0.42031275641709626,
+        "paper_bootstrap_95pct": [
+          0.3882704060682648,
+          0.4527615961787319
+        ]
+      },
+      "results_aspect_at_5": {
+        "evaluated_papers": 288,
+        "macro_recall": 0.2613111833700069,
+        "paper_bootstrap_95pct": [
+          0.2206691479363048,
+          0.30392027181242864
+        ]
+      }
+    },
+    "existing_mcp_literal_claim_proxy": {
+      "all_aspect_at_10": {
+        "evaluated_papers": 293,
+        "macro_recall": 0.0,
+        "paper_bootstrap_95pct": [
+          0.0,
+          0.0
+        ]
+      },
+      "results_aspect_at_5": {
+        "evaluated_papers": 288,
+        "macro_recall": 0.0,
+        "paper_bootstrap_95pct": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "first_k": {
+      "all_aspect_at_10": {
+        "evaluated_papers": 293,
+        "macro_recall": 0.4950270550098918,
+        "paper_bootstrap_95pct": [
+          0.4592152923513819,
+          0.5327154291225803
+        ]
+      },
+      "results_aspect_at_5": {
+        "evaluated_papers": 288,
+        "macro_recall": 0.09396814605147938,
+        "paper_bootstrap_95pct": [
+          0.0659518914727248,
+          0.1220849463036963
+        ]
+      }
+    },
+    "gold_oracle_reference_not_a_competitor": {
+      "all_aspect_at_10": {
+        "evaluated_papers": 293,
+        "macro_recall": 1.0,
+        "paper_bootstrap_95pct": [
+          1.0,
+          1.0
+        ]
+      },
+      "results_aspect_at_5": {
+        "evaluated_papers": 288,
+        "macro_recall": 0.997965667627126,
+        "paper_bootstrap_95pct": [
+          0.9961554649054649,
+          0.9994673295454546
+        ]
+      }
+    },
+    "jaccard": {
+      "all_aspect_at_10": {
+        "evaluated_papers": 293,
+        "macro_recall": 0.33264704003835294,
+        "paper_bootstrap_95pct": [
+          0.30290688652980335,
+          0.365627923496481
+        ]
+      },
+      "results_aspect_at_5": {
+        "evaluated_papers": 288,
+        "macro_recall": 0.21875625905956786,
+        "paper_bootstrap_95pct": [
+          0.18429971444677326,
+          0.25805734355060334
+        ]
+      }
+    },
+    "third_party_rank_bm25": {
+      "all_aspect_at_10": {
+        "evaluated_papers": 293,
+        "macro_recall": 0.35253575639864504,
+        "paper_bootstrap_95pct": [
+          0.322830996344317,
+          0.38650131119935616
+        ]
+      },
+      "results_aspect_at_5": {
+        "evaluated_papers": 288,
+        "macro_recall": 0.23829115805218745,
+        "paper_bootstrap_95pct": [
+          0.20062899382752325,
+          0.27741445759215366
+        ]
+      }
+    },
+    "uniform_random": {
+      "all_aspect_at_10": {
+        "evaluated_papers": 293,
+        "macro_recall": 0.22069021054562757,
+        "paper_bootstrap_95pct": [
+          0.1948928274450613,
+          0.24841574120414292
+        ]
+      },
+      "results_aspect_at_5": {
+        "evaluated_papers": 288,
+        "macro_recall": 0.11337658772554605,
+        "paper_bootstrap_95pct": [
+          0.08762104022520689,
+          0.14128160612535612
+        ]
+      }
+    }
+  },
+  "source_commit": "bf1d9633c694381c7b016fd56ee9f95f48593cc3",
+  "split": "original EvidenceBench TEST; no parameter tuning or training",
+  "status": "EVIDENCEBENCH_EXTERNAL_ANNOTATION_TEST_COMPLETED",
+  "task": "macro aspect recall at 10 and results-aspect recall at 5",
+  "test_sha256": "771cc068e3e79764c2eb523e7d0d9fb276d00254a99212c73c1137674b49d18b",
+  "url": "https://raw.githubusercontent.com/EvidenceBench/EvidenceBench/bf1d9633c694381c7b016fd56ee9f95f48593cc3/datasets/evidencebench_test_set.json"
+}

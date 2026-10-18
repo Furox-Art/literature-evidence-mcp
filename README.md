@@ -194,3 +194,15 @@ are NOT automatically established. See docs/review-science-coverage.md.
 The CI enforces 100% Python statement/branch coverage, 100% TypeScript
 line/branch/function coverage, strict Rust/Go/C++ native gates, plus
 Windows and macOS native build checks. No npm registry publication.
+
+## External independent labeled benchmark (SciFact + EvidenceBench)
+
+**Scientific superiority was not demonstrated.** The new pinned, reproducible
+[external gold evaluation](docs/external_gold_evaluation.md) runs SciFact's
+labeled dev claims and EvidenceBench's 293-paper original test set, with
+source SHA-256 hashes, training-only lexical threshold selection, documented
+independent rank-bm25 and lexical baselines, paper/claim-cluster bootstrap
+confidence intervals, and explicit absence of semantic claim predictions.
+Original raw copyrighted/licensed papers and annotations are NOT stored in
+the repository. CI recreates both published **aggregated** reports byte-for-byte.
+No npm registry publication is performed.
