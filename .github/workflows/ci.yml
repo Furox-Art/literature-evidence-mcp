@@ -53,6 +53,9 @@ jobs:
           src/literature_evidence_mcp/bibliography.py
           src/literature_evidence_mcp/extended_search.py
           src/literature_evidence_mcp/citation_traversal.py
+          src/literature_evidence_mcp/dual_track_audit.py
+          scripts/evaluation/dual_track_head_to_head.py
+          tests/test_dual_track_audit.py
           tests/test_extended_search_citations.py
           tests/test_bibliography.py
           src/literature_evidence_mcp/evidence_nli.py

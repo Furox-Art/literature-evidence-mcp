@@ -81,3 +81,14 @@ close large-scale provider coverage, algorithmically ranked snowballing, Zotero
 synchronization, blind relevance benchmarking or end-to-end systematic-review
 accuracy. Live Semantic Scholar returned a rate-limit error; no dependable
 production availability of that provider was demonstrated.
+
+## Two-track head-to-head audit harness (2026-10-19)
+
+A reusable offline protocol now separately scores retrieval of known positives
+and expert evidence verdicts on exactly matched cases across >=2 systems;
+see [dual-track protocol](dual_track_head_to_head.md). Immutable input-byte
+checks, error/abstention preservation, and descriptive paired deltas are
+implemented. **This is evaluation infrastructure only.** No independent
+blind gold set, authenticated competitor execution, or preregistered primary
+outcome has been supplied for these two tracks. Therefore no new measured
+competitive superiority or public benchmark win is claimed.
