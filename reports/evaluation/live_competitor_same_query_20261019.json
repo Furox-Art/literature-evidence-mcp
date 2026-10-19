@@ -1,0 +1,192 @@
+{
+  "doi_overlap_not_relevance": {
+    "athenaeum__paper_search": {
+      "cortical predictive processing": {
+        "doi_jaccard": 0.7857142857142857,
+        "doi_overlap_count": 11,
+        "doi_union_count": 14
+      },
+      "quantum entanglement bell inequalities": {
+        "doi_jaccard": 0.8125,
+        "doi_overlap_count": 13,
+        "doi_union_count": 16
+      },
+      "randomized controlled trial childhood anxiety": {
+        "doi_jaccard": 0.5294117647058824,
+        "doi_overlap_count": 9,
+        "doi_union_count": 17
+      }
+    },
+    "own__athenaeum": {
+      "cortical predictive processing": {
+        "doi_jaccard": 0.8461538461538461,
+        "doi_overlap_count": 11,
+        "doi_union_count": 13
+      },
+      "quantum entanglement bell inequalities": {
+        "doi_jaccard": 0.8125,
+        "doi_overlap_count": 13,
+        "doi_union_count": 16
+      },
+      "randomized controlled trial childhood anxiety": {
+        "doi_jaccard": 0.8571428571428571,
+        "doi_overlap_count": 12,
+        "doi_union_count": 14
+      }
+    },
+    "own__paper_search": {
+      "cortical predictive processing": {
+        "doi_jaccard": 0.9166666666666666,
+        "doi_overlap_count": 11,
+        "doi_union_count": 12
+      },
+      "quantum entanglement bell inequalities": {
+        "doi_jaccard": 1.0,
+        "doi_overlap_count": 14,
+        "doi_union_count": 14
+      },
+      "randomized controlled trial childhood anxiety": {
+        "doi_jaccard": 0.4444444444444444,
+        "doi_overlap_count": 8,
+        "doi_union_count": 18
+      }
+    }
+  },
+  "execution_artifact_sha256": {
+    "athenaeum": "52f98b2dd4d8e0724d4e65ae94abd6742f7440b2bc6c0561d3bbeda51e8676e1",
+    "own": "2e7f81d1fd0469987c58d183587d9838d64cbeee220d166c2370666239938ba9",
+    "paper_search": "5d91ce2e08833e8b12da849c9f957a87385c018ffa261cddd81f6b1dab9648cc"
+  },
+  "independent_blind_validation_completed": false,
+  "limitations": [
+    "No independent per-query article relevance labels or publication-level ground truth.",
+    "Record counts, DOI agreement, and observed latency are NOT search precision/recall.",
+    "Provider caching, quota and errors can differ between engines.",
+    "Athenaeum can suppress upstream provider errors even if top-level status is OK.",
+    "These three fixed historical queries are convenience smokes, not a blinded sample.",
+    "No conclusion about clinical validity, evidence classification, or systematic review completeness.",
+    "Athenaeum meta-search may suppress per-provider failures; errors cannot be audited equivalently."
+  ],
+  "max_results_per_provider": 5,
+  "query_set": [
+    "cortical predictive processing",
+    "randomized controlled trial childhood anxiety",
+    "quantum entanglement bell inequalities"
+  ],
+  "results": {
+    "athenaeum": {
+      "per_query": {
+        "cortical predictive processing": {
+          "doi_count": 13,
+          "provider_errors_present": true,
+          "records": 15,
+          "seconds_observed": 2.148,
+          "status": "OK"
+        },
+        "quantum entanglement bell inequalities": {
+          "doi_count": 15,
+          "provider_errors_present": true,
+          "records": 15,
+          "seconds_observed": 0.507,
+          "status": "OK"
+        },
+        "randomized controlled trial childhood anxiety": {
+          "doi_count": 13,
+          "provider_errors_present": true,
+          "records": 15,
+          "seconds_observed": 0.913,
+          "status": "OK"
+        }
+      },
+      "summary": {
+        "queries": 3,
+        "seconds_sum_observed": 3.568,
+        "status_counts": {
+          "OK": 3
+        },
+        "total_dois": 41,
+        "total_records": 45
+      }
+    },
+    "own": {
+      "per_query": {
+        "cortical predictive processing": {
+          "doi_count": 11,
+          "provider_errors_present": false,
+          "records": 13,
+          "seconds_observed": 1.724,
+          "status": "OK"
+        },
+        "quantum entanglement bell inequalities": {
+          "doi_count": 14,
+          "provider_errors_present": false,
+          "records": 15,
+          "seconds_observed": 0.943,
+          "status": "OK"
+        },
+        "randomized controlled trial childhood anxiety": {
+          "doi_count": 13,
+          "provider_errors_present": false,
+          "records": 15,
+          "seconds_observed": 2.203,
+          "status": "OK"
+        }
+      },
+      "summary": {
+        "queries": 3,
+        "seconds_sum_observed": 4.869999999999999,
+        "status_counts": {
+          "OK": 3
+        },
+        "total_dois": 38,
+        "total_records": 43
+      }
+    },
+    "paper_search": {
+      "per_query": {
+        "cortical predictive processing": {
+          "doi_count": 12,
+          "provider_errors_present": false,
+          "records": 14,
+          "seconds_observed": 2.167,
+          "status": "OK"
+        },
+        "quantum entanglement bell inequalities": {
+          "doi_count": 14,
+          "provider_errors_present": false,
+          "records": 15,
+          "seconds_observed": 0.683,
+          "status": "OK"
+        },
+        "randomized controlled trial childhood anxiety": {
+          "doi_count": 13,
+          "provider_errors_present": false,
+          "records": 15,
+          "seconds_observed": 0.638,
+          "status": "OK"
+        }
+      },
+      "summary": {
+        "queries": 3,
+        "seconds_sum_observed": 3.4879999999999995,
+        "status_counts": {
+          "OK": 3
+        },
+        "total_dois": 39,
+        "total_records": 44
+      }
+    }
+  },
+  "revisions": {
+    "athenaeum": "7977804753b2854b5144ec4865fd7b6f76d23d2a",
+    "own": "3dd8735f262a73678be6e477c098cf7cb569b3bc",
+    "paper_search": "cab1b5cc276a0cd004a0044003926a6440088049"
+  },
+  "scientific_competitor_superiority_demonstrated": false,
+  "shared_provider_set": [
+    "openalex",
+    "crossref",
+    "europepmc"
+  ],
+  "status": "LIVE_SAME_QUERY_DESCRIPTIVE_SMOKE_NOT_GOLD_BENCHMARK"
+}
