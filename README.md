@@ -269,7 +269,7 @@ modules have distinct integration CI jobs; no scientific superiority is claimed.
 
 ## v0.5 Review-workflow and analytical additions
 
-29 MCP tools include new two-reviewer human RoB 2 / ROBINS-I V2 judgment
+35 MCP tools include new two-reviewer human RoB 2 / ROBINS-I V2 judgment
 records, GRADE domain recordkeeping, two-reviewer screening, PRISMA 2020
 checklist (42 reporting rows)/identification accounting, bounded supplied
 PDF page text and table/image object provenance, Crossref notice propagation
