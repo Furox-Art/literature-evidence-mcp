@@ -105,6 +105,16 @@ significance. The report intentionally leaves `primary_metric_selected=false`,
 `blinded_evaluation_verified=false` and
 `competitor_executions_verified=false`.
 
+## Public exploratory runs (not blind independent comparisons)
+
+A controlled public NFCorpus fixed-corpus BM25 baseline is recorded at
+[the two-dataset report](two_public_dataset_exploratory.md). It reports
+known-positive Recall@1/5/10 and MRR@10 without misclassifying unjudged
+results as negatives. Three **historically pinned** NLI models are also
+evaluated against the complete public VitaminC 55,197-pair test with
+unchanged confidence/margin rules. These are separate exploratory tasks,
+**not** the independent blinded same-task competitor protocol outlined above.
+
 ## Confirmed candidate sources (not executed)
 
 See [candidate audit](dual_track_candidate_sources.md): official BEIR
