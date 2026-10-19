@@ -83,6 +83,17 @@ Offline deterministic tests mock every external provider and check concurrent le
 
 **Verification:** On 2026-10-18, 20 baseline v0.2 tests passed with the real MCP v2 SDK in a connected development environment, including in-process MCP tool discovery/call. The opt-in `python scripts/live_smoke.py` also passed for OpenAlex, Europe PMC and Crossref. CI does not run live provider checks. Hosted Streamable HTTP, production resilience, source accuracy, formal risk-of-bias validity, and competitive superiority have NOT been independently verified.
 
+## Pinned independent-test candidates (no gold unblinding)
+
+The [candidate source and license audit](docs/dual_track_candidate_sources.md)
+records immutable integrity checks for **BEIR NFCorpus** biomedical retrieval
+and **VitaminC** three-way Wikipedia fact-checking. Both files were verified
+byte-for-byte in private WSL memory without reading public test labels;
+only aggregate provenance metadata is committed. They are **not yet
+prospectively blinded**, and public benchmark leakage cannot be ruled out.
+The two tasks still require separately approved fair comparator protocols,
+so **no new head-to-head scientific scores or superiority claims** are made.
+
 ## Two-track head-to-head scientific comparison (offline audit)
 
 The [frozen-input two-track comparison harness](docs/dual_track_head_to_head.md)
