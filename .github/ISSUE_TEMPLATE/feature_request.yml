@@ -1,0 +1,84 @@
+name: Feature request
+description: Propose a new capability, provider, workflow, or documentation improvement
+title: "[feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Read CONTRIBUTING.md first. Changes to scientific verdict logic require
+        an evaluation protocol, expert review, and explicit reporting of false
+        positives. This project prefers conservative UNKNOWN and NOT_VERIFIED
+        states over confident unsupported answers.
+
+        Describe the problem before the solution, and say what evidence would
+        show that the change is correct and where it fails.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What cannot be done today
+      description: Describe the situation, not the solution. What decision or workflow is blocked?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed change
+      description: The interface you have in mind, such as a new MCP tool, input field, provider, or output status.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Area
+      options:
+        - New MCP tool
+        - Change to an existing tool
+        - New or changed provider integration
+        - Evidence ledger, provenance, or export
+        - Native component
+        - npm / Node.js adapter
+        - Scientific evaluation protocol
+        - Documentation
+        - Packaging, CI, or performance
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: How would this be evaluated?
+      description: Name the test, benchmark, or protocol that would show the change works, including a case where it fails.
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: integrity
+    attributes:
+      label: How this keeps the evidence claims honest
+      description: Tick what applies. If none apply, explain why in the proposal or evidence section.
+      options:
+        - label: The change preserves UNKNOWN and NOT_VERIFIED for unsupported conclusions.
+        - label: The change does not treat metadata, text matching, or keyword screening as scientific validation.
+        - label: Provider failures, missing results, and truncation remain explicit.
+        - label: New or changed verdict logic includes an evaluation protocol and false-positive reporting.
+        - label: Expert review is planned or completed for changes to scientific judgement.
+        - label: Not applicable; this is documentation or tooling only.
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+    validations:
+      required: false
+
+  - type: textarea
+    id: contribution
+    attributes:
+      label: Willing to implement it
+      description: Say what part you can take on. A focused pull request is welcome.
+    validations:
+      required: false
