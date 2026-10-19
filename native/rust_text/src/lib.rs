@@ -47,8 +47,8 @@ mod tests {
     }
     #[test]
     fn python_module_registers_callable() {
-        pyo3::prepare_freethreaded_python();
-        Python::with_gil(|py| {
+        Python::initialize();
+        Python::attach(|py| {
             let module = PyModule::new(py, "literature_evidence_rust").unwrap();
             literature_evidence_rust(&module).unwrap();
             let outcome: Option<(usize,usize)> = module.getattr("find_quote").unwrap()
