@@ -1,0 +1,40 @@
+{
+  "datasets": {
+    "classification": {
+      "blinding_confirmed": false,
+      "data_redistributed": false,
+      "gold_labels_inspected": false,
+      "integrity_status": "BYTE_PIN_VERIFIED",
+      "license_notice": "CC-BY-SA-3.0 and per-page Wikipedia copyright terms",
+      "name": "VitaminC test",
+      "scientific_independence_confirmed": false,
+      "scope_warning": "55197 public test pairs, Wikipedia-edit domain, not biomedical expert validation",
+      "sha256": "7ad1808dbc30c62e0a1427a53022d0dfaff668a1fde3c4b612a2d266edd753ad",
+      "structural_count": 55197,
+      "url": "https://huggingface.co/datasets/tals/vitaminc/resolve/be6febb761b0b2807687e61e0b5282e459df2fa0/test.jsonl"
+    },
+    "retrieval": {
+      "blinding_confirmed": false,
+      "data_redistributed": false,
+      "gold_labels_inspected": false,
+      "integrity_status": "BYTE_PIN_VERIFIED",
+      "license_notice": "CC-BY-SA-4.0 (upstream BEIR card; verify original article rights)",
+      "name": "BEIR NFCorpus",
+      "scientific_independence_confirmed": false,
+      "scope_warning": "fixed 3633-document biomedical corpus, 323 published test queries",
+      "sha256": "efe5be03f8c5b86a5870102d0599d227c8c6e2484328e68c6522560385671b0b",
+      "structural_count": 5,
+      "url": "https://public.ukp.informatik.tu-darmstadt.de/thakur/BEIR/datasets/nfcorpus.zip"
+    }
+  },
+  "outstanding": [
+    "Select primary metrics and gold mapping before inspecting test labels",
+    "Compare actual versions of named competitors on matched cases",
+    "Check data license and public pretraining leakage risk",
+    "NFCorpus evaluates fixed-corpus ranking, not live provider search",
+    "VitaminC tests Wikipedia claim-evidence pairs, not clinical fact checking",
+    "Independent blinded expert assessment requires new prospective cases"
+  ],
+  "scientific_superiority_demonstrated": false,
+  "status": "SOURCE_INTEGRITY_VERIFIED_SCIENTIFIC_EVALUATION_NOT_RUN"
+}

@@ -105,6 +105,15 @@ significance. The report intentionally leaves `primary_metric_selected=false`,
 `blinded_evaluation_verified=false` and
 `competitor_executions_verified=false`.
 
+## Confirmed candidate sources (not executed)
+
+See [candidate audit](dual_track_candidate_sources.md): official BEIR
+NFCorpus retrieval archive and pinned VitaminC test file have passed
+byte-level checks. Their published retrospective labels are intentionally
+not opened here. NFCorpus requires a fixed-corpus ranking comparator;
+VitaminC is a Wikipedia, not biomedical, evidence-label benchmark.
+These **do not constitute a blinded head-to-head study**.
+
 ## Required scientific steps before any superiority claim
 
 1. Select the **independent labeled dataset(s)**, make licensing and
