@@ -11,5 +11,5 @@ crate-type = ["cdylib", "rlib"]
 default = ["extension-module"]
 extension-module = ["pyo3/extension-module"]
 [dependencies]
-pyo3 = {version = "0.25"}
+pyo3 = {version = "0.29"}
 regex = "1.11"
