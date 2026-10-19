@@ -1,4 +1,4 @@
-"""Prepare label-blinded biomedical evidence packets for *future* human review.
+"""Prepare label-blinded general-science evidence packets for future review.
 
 Does not recruit expert reviewers or claim independence, prospective blinding,
 accuracy, consensus, study eligibility, or scientific gold annotation.
@@ -16,9 +16,11 @@ from pathlib import Path
 
 FIELDS = frozenset({
     "candidate_id", "claim", "evidence", "source_doi", "source_locator",
-    "publication_type", "collection_date",
+    "publication_type", "collection_date", "source_id", "source_url",
+    "discipline",
 })
-REQUIRED = frozenset({"candidate_id", "claim", "evidence", "source_doi", "source_locator"})
+REQUIRED = frozenset({"candidate_id", "claim", "evidence", "source_locator"})
+SOURCE_IDENTIFIERS = frozenset({"source_doi", "source_id", "source_url"})
 FORBIDDEN = frozenset({
     "label", "gold", "prediction", "predicted_label", "model", "model_output",
     "reference_answer", "reviewer_answer", "consensus", "quality_score",
@@ -36,12 +38,14 @@ def validate_cases(cases: object) -> list[dict]:
         keys = set(row)
         if keys & FORBIDDEN or keys - FIELDS or not REQUIRED <= keys:
             raise ValueError("Unapproved input, missing source, or possible answer leakage")
+        if not keys & SOURCE_IDENTIFIERS:
+            raise ValueError("At least one source identifier (DOI, ID, URL) required")
         clean = {}
         for field in sorted(keys):
             value = row[field]
             if not isinstance(value, str) or not value.strip() or len(value) > 24000:
                 raise ValueError("Candidate fields require nonempty bounded text")
-            if field in {"candidate_id", "source_doi", "collection_date"} and len(value) > 260:
+            if field in {"candidate_id", "source_doi", "source_id", "collection_date"} and len(value) > 260:
                 raise ValueError("Overlong identifier")
             clean[field] = value.strip()
         candidate_id = clean["candidate_id"]
@@ -84,6 +88,7 @@ def create_packet(cases: list[dict], secret: bytes) -> tuple[bytes, bytes, dict]
         "notes": [
             "Packets do not contain source candidate IDs or any model decisions.",
             "Source metadata can reveal provenance or study identity; full blinding not guaranteed.",
+            "Any science discipline is permitted; expert subject competence must be verified separately.",
             "Private mapping and reviewer packet require separately controlled destinations.",
             "The user must approve eligibility, sampling, adjudication, and primary outcomes.",
             "External qualified experts must actually label records before blind validation.",

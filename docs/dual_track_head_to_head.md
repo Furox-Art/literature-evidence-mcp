@@ -2,6 +2,10 @@
 
 **Status: EVALUATION HARNESS READY — NO INDEPENDENT COMPETITOR RESULT YET.**
 
+The research comparison is designed for **all scientific disciplines**,
+not only biomedical science. The subject-specific gold criteria and expert
+competence must be preregistered before scoring or cross-discipline averaging.
+
 The research comparison has two distinct, equal-status tracks:
 **(A) literature discovery** and **(B) evidence verdict classification**.
 No composite score, primary metric, statistical superiority or clinical
@@ -115,14 +119,15 @@ evaluated against the complete public VitaminC 55,197-pair test with
 unchanged confidence/margin rules. These are separate exploratory tasks,
 **not** the independent blinded same-task competitor protocol outlined above.
 
-## Confirmed candidate sources (not executed)
+## Previously pinned public test sources (exploratory runs completed)
 
 See [candidate audit](dual_track_candidate_sources.md): official BEIR
-NFCorpus retrieval archive and pinned VitaminC test file have passed
-byte-level checks. Their published retrospective labels are intentionally
-not opened here. NFCorpus requires a fixed-corpus ranking comparator;
-VitaminC is a Wikipedia, not biomedical, evidence-label benchmark.
-These **do not constitute a blinded head-to-head study**.
+NFCorpus retrieval archive and pinned VitaminC test file passed initial
+byte-level checks, then both were **evaluated exploratorily** as reported in
+[two-public-dataset results](two_public_dataset_exploratory.md). NFCorpus
+requires a fixed-corpus ranking comparator; VitaminC is a Wikipedia-based
+semantic task, not expert-labeled evidence validity across all sciences.
+These results **do not constitute a new blinded head-to-head study**.
 
 ## Follow-up after public exploratory experiments (19 October 2026)
 
@@ -130,7 +135,7 @@ These **do not constitute a blinded head-to-head study**.
 were executed with shared providers, limits and queries. Since no qualified
 expert judged DOI relevancy, they are **not** the gold-labeled same-task
 comparisons required here. A separate
-[new prospective biomedical expert-label packet protocol](new_expert_blind_validation_protocol.md)
+[new cross-disciplinary science expert-label packet protocol](general_science_expert_blind_validation_protocol.md)
 was implemented with opaque IDs, frozen byte hashes and no source text
 committed to Git. **Independent expert labels and approved primary outcomes
 are still missing.** Do not mistake packet generation for scientific truth.

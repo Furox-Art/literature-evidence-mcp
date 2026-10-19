@@ -106,6 +106,6 @@ Across three queries, the observed record/DOI-bearing counts were 43/38,
 suppression prevents exact status comparability. This **does not rank scientific
 relevance, completeness, or evidence accuracy**.
 
-A [prospective expert-review operational protocol](new_expert_blind_validation_protocol.md)
+A [prospective expert-review operational protocol](general_science_expert_blind_validation_protocol.md)
 was also added. It does **not** mean a new expert dataset has been sourced or
 that independent blind evaluation was executed.
