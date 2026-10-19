@@ -99,5 +99,5 @@ fabricated for unexecuted Clojure or commercial research platforms.
 A **new independently collected and expert-labeled biomedical test** is
 required to compare retrieved article relevance and scientific claim
 classification on prospective cases. See
-[expert-review intake protocol](new_expert_blind_validation_protocol.md).
+[expert-review intake protocol](general_science_expert_blind_validation_protocol.md).
 No actual expert gold annotations exist from this work.

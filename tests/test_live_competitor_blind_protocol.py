@@ -301,3 +301,43 @@ def test_aggregate_script_main_guard_on_only_synthetic_data(tmp_path, monkeypatc
     monkeypatch.setattr(sys, "argv", arg)
     runpy.run_path(str(Path(live.__file__)), run_name="__main__")
     assert json.loads(final.read_text())["scientific_competitor_superiority_demonstrated"] is False
+
+
+@pytest.mark.parametrize("discipline,source_field,source_value", [
+    ("physics", "source_id", "arXiv:2610.00001"),
+    ("mathematics", "source_url", "https://arxiv.org/abs/2610.00002"),
+    ("chemistry", "source_doi", "10.5555/synthetic-chem"),
+    ("computer science", "source_id", "conference:synthetic-2026"),
+    ("earth science", "source_url", "https://example.org/earth-data"),
+    ("biology", "source_doi", "10.5555/synthetic-bio"),
+])
+def test_all_science_domains_and_non_doi_sources_supported(
+    discipline, source_field, source_value,
+):
+    candidate = fake_case()
+    candidate.pop("source_doi")
+    candidate[source_field] = source_value
+    candidate["discipline"] = discipline
+    packet, private, meta = blind.create_packet([candidate], b"z" * 32)
+    emitted = json.loads(packet.decode().strip())
+    assert emitted["discipline"] == discipline
+    assert emitted[source_field] == source_value
+    assert emitted["source_locator"] == "hypothetical:paragraph-1"
+    assert "candidate_id" not in emitted
+    assert json.loads(private)["mapping"][0]["candidate_id"] == "case1"
+    assert not meta["independent_expert_annotation_verified"]
+    assert not meta["classification_or_relevance_gold_generated"]
+
+
+@pytest.mark.parametrize("invalid", [
+    {k: v for k, v in fake_case().items() if k != "source_doi"},
+    fake_case() | {"source_id": ""},
+    fake_case() | {"source_id": 10},
+    fake_case() | {"source_url": []},
+    fake_case() | {"source_id": "A" * 261},
+    fake_case() | {"discipline": ""},
+    fake_case() | {"discipline": None},
+])
+def test_general_science_source_validation_remains_fail_closed(invalid):
+    with pytest.raises((TypeError, ValueError)):
+        blind.create_packet([invalid], b"z" * 32)

@@ -92,7 +92,13 @@ Returned counts were respectively **43/45/44** (DOI-bearing **38/41/39**).
 **Counts and overlap are not relevance, retrieval precision, or verified
 scientific superiority**, and an opponent can suppress provider failures.
 
-The [new biomedical expert-blind protocol](docs/new_expert_blind_validation_protocol.md)
+**Scope: both scientific literature retrieval and scientific evidence
+assessment across all research disciplines**, not neuroscience or biomedicine
+alone. Mathematics, physics, chemistry, biology, astronomy, computer science
+and other fields are eligible; their independent domain-specific expert
+review and scientific criteria remain to be specified.
+
+The [new general-science expert-blind protocol](docs/general_science_expert_blind_validation_protocol.md)
 adds an operational, label-free packet writer with separate HMAC-keyed private
 identity mapping and fail-closed synthetic tests. **No new human gold,
 independent reviewers, adjudication or prospective blind test occurred.**
@@ -120,13 +126,14 @@ no production/default change or statistically confirmed scientific win.
 ## Pinned independent-test candidates (no gold unblinding)
 
 The [candidate source and license audit](docs/dual_track_candidate_sources.md)
-records immutable integrity checks for **BEIR NFCorpus** biomedical retrieval
-and **VitaminC** three-way Wikipedia fact-checking. Both files were verified
-byte-for-byte in private WSL memory without reading public test labels;
-only aggregate provenance metadata is committed. They are **not yet
-prospectively blinded**, and public benchmark leakage cannot be ruled out.
-The two tasks still require separately approved fair comparator protocols,
-so **no new head-to-head scientific scores or superiority claims** are made.
+records initial immutable integrity checks for **BEIR NFCorpus** biomedical
+retrieval and **VitaminC** three-way Wikipedia fact-checking. The source-pin
+stage verified bytes before opening test labels; **subsequent exploratory
+runs did evaluate the public test labels** and are documented separately.
+These public benchmarks are **not prospectively blinded**, and possible
+pretraining/test leakage is unresolved. This historical biomedical and
+Wikipedia evaluation does **not limit the general-science project scope**.
+No independent expert-labeled head-to-head superiority is claimed.
 
 ## Two-track head-to-head scientific comparison (offline audit)
 
