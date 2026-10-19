@@ -71,6 +71,9 @@ jobs:
           scripts/evaluation/evidencebench_gold.py
           scripts/evaluation/pin_dual_track_candidate_sources.py
           tests/test_candidate_source_pins.py
+          scripts/evaluation/nfcorpus_fixed_bm25_exploratory.py
+          scripts/evaluation/vitaminc_three_pinned_exploratory.py
+          tests/test_two_dataset_exploratory.py
       - name: Check benchmark fixture tests
         run: pytest -q tests/test_methodology.py tests/test_source_audit.py tests/test_benchmark.py
       - name: Compile

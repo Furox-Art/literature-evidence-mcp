@@ -1,0 +1,207 @@
+{
+  "case_id_groups": 16487,
+  "dataset": "VitaminC pinned public test",
+  "dataset_sha256": "7ad1808dbc30c62e0a1427a53022d0dfaff668a1fde3c4b612a2d266edd753ad",
+  "decision_predictions_count": {
+    "NEUTRAL": 22963,
+    "REFUTE": 15931,
+    "SUPPORT": 16303
+  },
+  "duplicate_exact_pairs": 537,
+  "gold_label_mapping": {
+    "NOT ENOUGH INFO": "NEUTRAL (exploratory semantic proxy)",
+    "REFUTES": "REFUTE",
+    "SUPPORTS": "SUPPORT"
+  },
+  "label_mapping": {
+    "0": "contradiction",
+    "1": "entailment",
+    "2": "neutral"
+  },
+  "limitations": [
+    "Public retrospective VitaminC can overlap unseen model pretraining datasets.",
+    "Wikipedia edit claim-evidence pairs are not biomedical or clinical evidence.",
+    "Gold NOT ENOUGH INFO is not automatically equivalent to semantic NLI neutral.",
+    "Frozen 0.70/0.15 rule mixes semantic neutral and low-confidence abstention.",
+    "All three historical models and hyperparameters were pinned before this run.",
+    "No comparison to commercial competitors or independent blind expert review.",
+    "Per-case text/predictions remain in the ephemeral execution environment only.",
+    "No causal, patient-facing, superiority, calibration, or deployment claim."
+  ],
+  "mean_multiclass_brier_score": 0.798112451451271,
+  "mean_top_softmax": 0.9418905268506425,
+  "metrics": {
+    "accuracy": 0.5468594307661648,
+    "balanced_accuracy": 0.5801183437442489,
+    "confusion": {
+      "NEUTRAL": {
+        "NEUTRAL": 4874,
+        "REFUTE": 1851,
+        "SUPPORT": 543
+      },
+      "REFUTE": {
+        "NEUTRAL": 6358,
+        "REFUTE": 11729,
+        "SUPPORT": 2178
+      },
+      "SUPPORT": {
+        "NEUTRAL": 11731,
+        "REFUTE": 2351,
+        "SUPPORT": 13582
+      }
+    },
+    "count": 55197,
+    "label_distribution": {
+      "NEUTRAL": 7268,
+      "REFUTE": 20265,
+      "SUPPORT": 27664
+    },
+    "macro_f1": 0.5294533774802812,
+    "per_class": {
+      "NEUTRAL": {
+        "f1": 0.322450464754722,
+        "precision": 0.21225449636371554,
+        "recall": 0.6706108970831041
+      },
+      "REFUTE": {
+        "f1": 0.6480826610675213,
+        "precision": 0.7362375243236458,
+        "recall": 0.5787811497656057
+      },
+      "SUPPORT": {
+        "f1": 0.6178270066186003,
+        "precision": 0.8330982027847635,
+        "recall": 0.490962984384037
+      }
+    },
+    "prediction_distribution": {
+      "NEUTRAL": 22963,
+      "REFUTE": 15931,
+      "SUPPORT": 16303
+    }
+  },
+  "model": {
+    "id": "cross-encoder/nli-deberta-v3-small",
+    "license": "apache-2.0",
+    "revision": "fa2804872c3b4bd748f38c0185cc85775361e735",
+    "weights_sha256": "ebc79588dd73ccfb6a3f6078519cfbf512c5305384c5ea1845bc71cd32216e86"
+  },
+  "model_key": "frozen_original_deberta_small",
+  "production_model_modified": false,
+  "raw_argmax_metrics": {
+    "accuracy": 0.5641973295650126,
+    "balanced_accuracy": 0.5850909756199336,
+    "confusion": {
+      "NEUTRAL": {
+        "NEUTRAL": 4609,
+        "REFUTE": 2021,
+        "SUPPORT": 638
+      },
+      "REFUTE": {
+        "NEUTRAL": 5461,
+        "REFUTE": 12275,
+        "SUPPORT": 2529
+      },
+      "SUPPORT": {
+        "NEUTRAL": 10658,
+        "REFUTE": 2748,
+        "SUPPORT": 14258
+      }
+    },
+    "count": 55197,
+    "label_distribution": {
+      "NEUTRAL": 7268,
+      "REFUTE": 20265,
+      "SUPPORT": 27664
+    },
+    "macro_f1": 0.5399058541797783,
+    "per_class": {
+      "NEUTRAL": {
+        "f1": 0.32926132304614947,
+        "precision": 0.22235623311462754,
+        "recall": 0.6341496973032471
+      },
+      "REFUTE": {
+        "f1": 0.6580181725589,
+        "precision": 0.7201947899554095,
+        "recall": 0.6057241549469529
+      },
+      "SUPPORT": {
+        "f1": 0.6324380669342855,
+        "precision": 0.8182496413199426,
+        "recall": 0.5153990746096009
+      }
+    },
+    "prediction_distribution": {
+      "NEUTRAL": 20728,
+      "REFUTE": 17044,
+      "SUPPORT": 17425
+    }
+  },
+  "raw_argmax_predictions_count": {
+    "NEUTRAL": 20728,
+    "REFUTE": 17044,
+    "SUPPORT": 17425
+  },
+  "scientific_superiority_demonstrated": false,
+  "selective": {
+    "accuracy_given_non_neutral_prediction": 0.7852267791772662,
+    "neutral_class_correct_out_of_all": 0.08830190046560502,
+    "non_neutral_correct_out_of_all": 0.4585575303005598,
+    "non_neutral_coverage": 0.5839810134608765,
+    "warning": "NEUTRAL blends model neutral softmax and low-confidence abstention; it cannot be assumed to mean evidence is truly insufficient."
+  },
+  "status": "EXPLORATORY_RETROSPECTIVE_CROSS_DOMAIN_NOT_CLINICAL_VALIDATION",
+  "test_rows": 55197,
+  "unique_pair_metrics": {
+    "accuracy": 0.5454079765825101,
+    "balanced_accuracy": 0.578847375067938,
+    "confusion": {
+      "NEUTRAL": {
+        "NEUTRAL": 4867,
+        "REFUTE": 1848,
+        "SUPPORT": 542
+      },
+      "REFUTE": {
+        "NEUTRAL": 6346,
+        "REFUTE": 11654,
+        "SUPPORT": 2166
+      },
+      "SUPPORT": {
+        "NEUTRAL": 11615,
+        "REFUTE": 2331,
+        "SUPPORT": 13291
+      }
+    },
+    "count": 54660,
+    "label_distribution": {
+      "NEUTRAL": 7257,
+      "REFUTE": 20166,
+      "SUPPORT": 27237
+    },
+    "macro_f1": 0.5286080341027817,
+    "per_class": {
+      "NEUTRAL": {
+        "f1": 0.3235499418314775,
+        "precision": 0.21320308393201332,
+        "recall": 0.6706628083229985
+      },
+      "REFUTE": {
+        "f1": 0.6474624295119309,
+        "precision": 0.7360576012126571,
+        "recall": 0.5779034017653476
+      },
+      "SUPPORT": {
+        "f1": 0.6148117309649366,
+        "precision": 0.8307394212138258,
+        "recall": 0.48797591511546795
+      }
+    },
+    "prediction_distribution": {
+      "NEUTRAL": 22828,
+      "REFUTE": 15833,
+      "SUPPORT": 15999
+    }
+  },
+  "weights_sha256": "ebc79588dd73ccfb6a3f6078519cfbf512c5305384c5ea1845bc71cd32216e86"
+}

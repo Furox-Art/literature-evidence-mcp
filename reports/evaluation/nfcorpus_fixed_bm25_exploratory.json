@@ -1,0 +1,32 @@
+{
+  "archive_sha256": "efe5be03f8c5b86a5870102d0599d227c8c6e2484328e68c6522560385671b0b",
+  "backend": "rank-bm25 0.2.2 BM25Okapi (production default tokenization)",
+  "candidate_filter": "At least one exact query-token overlap",
+  "comparison": "single pre-existing project implementation; no external system executed",
+  "dataset": "BEIR NFCorpus public test",
+  "document_title_body_concat": true,
+  "fixed_corpus_documents": 3633,
+  "known_positive_recall_at_k": {
+    "1": 0.05692309312902698,
+    "10": 0.14491042035920018,
+    "5": 0.11196505112436454
+  },
+  "limitations": [
+    "Public retrospective qrels, not independent prospective gold.",
+    "Fixed-corpus ranking is not live literature-provider search.",
+    "Only positive relevance scores counted as known positives.",
+    "MRR uses top-10 returned lexical matches; absent hit is zero.",
+    "No competitor executed on the same documents and queries.",
+    "No patient-facing or medical evidence truth is assessed."
+  ],
+  "mrr_at_10": 0.5116590495847462,
+  "no_known_positive_queries": 0,
+  "no_lexical_match_queries": 25,
+  "precision_at_k": null,
+  "precision_unavailable_reason": "Incomplete corpus-level negative relevance judgments",
+  "qrels_rows_inspected": 12334,
+  "scientific_superiority_demonstrated": false,
+  "scored_queries": 323,
+  "status": "EXPLORATORY_FIXED_CORPUS_RETRIEVAL_NOT_COMPETITOR_COMPARISON",
+  "test_queries": 323
+}

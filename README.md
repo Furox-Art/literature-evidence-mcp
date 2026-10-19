@@ -83,6 +83,24 @@ Offline deterministic tests mock every external provider and check concurrent le
 
 **Verification:** On 2026-10-18, 20 baseline v0.2 tests passed with the real MCP v2 SDK in a connected development environment, including in-process MCP tool discovery/call. The opt-in `python scripts/live_smoke.py` also passed for OpenAlex, Europe PMC and Crossref. CI does not run live provider checks. Hosted Streamable HTTP, production resilience, source accuracy, formal risk-of-bias validity, and competitive superiority have NOT been independently verified.
 
+## Completed fixed-corpus NFCorpus exploratory retrieval evaluation
+
+The [two-public-dataset exploratory report](docs/two_public_dataset_exploratory.md)
+contains NFCorpus **323-query** fixed-corpus BM25 measurements, using the
+pre-existing `BM25Okapi` implementation without changing default MCP behavior.
+Known-positive Recall@10 was **14.49%**, first-known-positive MRR@10 was
+**0.512**, and 25/323 queries had no lexical overlap. These measure different
+properties, and **no external competitor was compared**. Other public tests
+remain retrospective, not independent prospective validation.
+
+
+The full public VitaminC evaluation used 55,197 source pairs on the existing
+three pinned NLI checkpoints: original DeBERTa-small **54.69%** accuracy,
+FEVER/ANLI-base **60.18%**, and general DeBERTa-base **58.20%**.
+**Important negative result:** FEVER/ANLI-base REFUTE recall **41.95%** is
+below the original small model's **57.88%**. All results remain exploratory;
+no production/default change or statistically confirmed scientific win.
+
 ## Pinned independent-test candidates (no gold unblinding)
 
 The [candidate source and license audit](docs/dual_track_candidate_sources.md)
