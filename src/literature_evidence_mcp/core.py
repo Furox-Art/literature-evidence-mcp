@@ -19,12 +19,14 @@ from urllib.parse import quote
 import httpx
 from filelock import FileLock
 
+from literature_evidence_mcp import __version__
 from literature_evidence_mcp.methodology import _locate
 
 CROSSREF = "https://api.crossref.org"
 OPENALEX = "https://api.openalex.org"
 EUROPE_PMC = "https://www.ebi.ac.uk"
 SEMANTIC_SCHOLAR = "https://api.semanticscholar.org"
+USER_AGENT = f"LiteratureEvidenceMCP/{__version__} (scholarly-metadata-client)"
 DOI_RE = re.compile(r"^10\.\d{4,9}/\S{1,240}$", re.IGNORECASE)
 PMCID_RE = re.compile(r"^PMC[0-9]{1,15}$", re.IGNORECASE)
 RETR_TYPES = {"retraction", "withdrawal", "removed"}
@@ -117,7 +119,7 @@ class ResearchClient:
         if self._client is None:
             self._client = httpx.AsyncClient(
                 timeout=httpx.Timeout(15.0), follow_redirects=False,
-                headers={"User-Agent": "LiteratureEvidenceMCP/0.3.2 (scholarly-metadata-client)",
+                headers={"User-Agent": USER_AGENT,
                          "Accept": "application/json"},
                 limits=httpx.Limits(max_connections=10),
             )
