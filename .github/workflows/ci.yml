@@ -74,6 +74,9 @@ jobs:
           scripts/evaluation/nfcorpus_fixed_bm25_exploratory.py
           scripts/evaluation/vitaminc_three_pinned_exploratory.py
           tests/test_two_dataset_exploratory.py
+          scripts/evaluation/aggregate_live_doi_smoke.py
+          scripts/evaluation/prepare_blinded_expert_packets.py
+          tests/test_live_competitor_blind_protocol.py
       - name: Check benchmark fixture tests
         run: pytest -q tests/test_methodology.py tests/test_source_audit.py tests/test_benchmark.py
       - name: Compile

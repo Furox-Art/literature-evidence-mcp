@@ -92,3 +92,20 @@ implemented. **This is evaluation infrastructure only.** No independent
 blind gold set, authenticated competitor execution, or preregistered primary
 outcome has been supplied for these two tracks. Therefore no new measured
 competitive superiority or public benchmark win is claimed.
+
+## 2026-10-19 actual live three-engine execution (no relevance gold)
+
+The three pinned open-source systems Literature Evidence MCP, Athenaeum
+and Paper Search MCP were actually installed/executed in isolated Python
+environments on **the identical three historical free-text queries and the
+same OpenAlex/Crossref/Europe PMC provider selection** (max five/provider).
+See [documented live execution and its scientific limits](live_doi_competitor_smoke_20261019.md)
+and `reports/evaluation/live_competitor_same_query_20261019.json`.
+Across three queries, the observed record/DOI-bearing counts were 43/38,
+45/41, and 44/39 respectively. Athenaeum's possible provider-error
+suppression prevents exact status comparability. This **does not rank scientific
+relevance, completeness, or evidence accuracy**.
+
+A [prospective expert-review operational protocol](new_expert_blind_validation_protocol.md)
+was also added. It does **not** mean a new expert dataset has been sourced or
+that independent blind evaluation was executed.

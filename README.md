@@ -83,6 +83,22 @@ Offline deterministic tests mock every external provider and check concurrent le
 
 **Verification:** On 2026-10-18, 20 baseline v0.2 tests passed with the real MCP v2 SDK in a connected development environment, including in-process MCP tool discovery/call. The opt-in `python scripts/live_smoke.py` also passed for OpenAlex, Europe PMC and Crossref. CI does not run live provider checks. Hosted Streamable HTTP, production resilience, source accuracy, formal risk-of-bias validity, and competitive superiority have NOT been independently verified.
 
+## Executed live competitor search and prospective expert-review preparation
+
+[19 October 2026 same-query live comparison](docs/live_doi_competitor_smoke_20261019.md)
+ran the project, Athenaeum and Paper Search MCP on the same three historical
+queries, capped at five hits from each of OpenAlex/Crossref/Europe PMC.
+Returned counts were respectively **43/45/44** (DOI-bearing **38/41/39**).
+**Counts and overlap are not relevance, retrieval precision, or verified
+scientific superiority**, and an opponent can suppress provider failures.
+
+The [new biomedical expert-blind protocol](docs/new_expert_blind_validation_protocol.md)
+adds an operational, label-free packet writer with separate HMAC-keyed private
+identity mapping and fail-closed synthetic tests. **No new human gold,
+independent reviewers, adjudication or prospective blind test occurred.**
+Primary scientific decisions await user authorization; no default NLI or
+other scientific model was changed.
+
 ## Completed fixed-corpus NFCorpus exploratory retrieval evaluation
 
 The [two-public-dataset exploratory report](docs/two_public_dataset_exploratory.md)

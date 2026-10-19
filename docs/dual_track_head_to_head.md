@@ -124,6 +124,17 @@ not opened here. NFCorpus requires a fixed-corpus ranking comparator;
 VitaminC is a Wikipedia, not biomedical, evidence-label benchmark.
 These **do not constitute a blinded head-to-head study**.
 
+## Follow-up after public exploratory experiments (19 October 2026)
+
+[Three actual live competitor free-text searches](live_doi_competitor_smoke_20261019.md)
+were executed with shared providers, limits and queries. Since no qualified
+expert judged DOI relevancy, they are **not** the gold-labeled same-task
+comparisons required here. A separate
+[new prospective biomedical expert-label packet protocol](new_expert_blind_validation_protocol.md)
+was implemented with opaque IDs, frozen byte hashes and no source text
+committed to Git. **Independent expert labels and approved primary outcomes
+are still missing.** Do not mistake packet generation for scientific truth.
+
 ## Required scientific steps before any superiority claim
 
 1. Select the **independent labeled dataset(s)**, make licensing and
