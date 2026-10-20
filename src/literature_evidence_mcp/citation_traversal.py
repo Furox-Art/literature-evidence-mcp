@@ -159,9 +159,6 @@ async def traverse_citations(
                                     "evidence_source": "openalex.referenced_works",
                                     "observed_at_depth": level,
                                 }
-                        except _RequestBudgetExhausted:
-                            incomplete = True
-                            break
                         except (ProviderError, ValueError, TypeError, KeyError) as exc:
                             errors.append({"work": current, "relation": "references",
                                            "error": str(exc)})
