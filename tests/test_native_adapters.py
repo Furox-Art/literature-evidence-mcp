@@ -181,7 +181,7 @@ async def test_go_timeout(monkeypatch):
         return proc
 
     async def fake_wait_for(awaitable, timeout):
-        await awaitable
+        _ = await awaitable
         raise TimeoutError()
 
     monkeypatch.setattr(native.asyncio, "create_subprocess_exec", launch)
