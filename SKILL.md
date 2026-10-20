@@ -55,7 +55,7 @@ MCP client configuration (stdio):
 Set `OPENALEX_API_KEY` for regular OpenAlex use; keyless access has a restrictive
 daily budget. Do not commit environment values.
 
-## Tool groups (35 tools as of 0.5.0)
+## Key tool groups (35 tools total as of 0.5.0)
 
 - Search and retrieval: `search_literature`, `search_literature_extended`,
   `get_paper`, `expand_citation_chain`, `find_data_and_code`
