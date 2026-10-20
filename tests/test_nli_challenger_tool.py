@@ -185,8 +185,10 @@ def test_score_uses_actual_label_map_not_fixed_order(monkeypatch):
         def __call__(self, **kwargs):
             return SimpleNamespace(logits=Tensor([[.91,.05,.04]]))
 
-    fake_torch = SimpleNamespace(inference_mode=lambda: nullcontext(),
-                                 softmax=lambda logits, dim: logits)
+    def softmax(logits, dim):
+        return logits
+
+    fake_torch = SimpleNamespace(inference_mode=nullcontext, softmax=softmax)
     monkeypatch.setattr(challenger, "_load_candidate", lambda *args:
                         (Tokenizer(), Model(), fake_torch, "cpu",
                          {0:"entailment",1:"neutral",2:"contradiction"}))

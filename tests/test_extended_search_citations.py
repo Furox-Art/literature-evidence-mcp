@@ -210,7 +210,7 @@ async def test_bidirectional_two_hops_bounded_with_provenance(monkeypatch):
     assert out["coverage"] == "NON_EXHAUSTIVE_ONE_PAGE_PER_DIRECTION"
     assert all(edge["relation"] == "CITES_PROVIDER_ASSERTED" for edge in out["edges"])
     assert out["scientific_content_verified"] is False
-    assert all("api.openalex.org" in uri for uri in requests)
+    assert all(httpx.URL(uri).host == "api.openalex.org" for uri in requests)
 
 
 @pytest.mark.asyncio
@@ -300,8 +300,9 @@ async def test_graph_no_edges_is_not_proof_of_no_citations(monkeypatch):
 async def test_protocol_registers_both_tools():
     from mcp.client import Client
 
-    from literature_evidence_mcp.server import mcp
-    async with Client(mcp) as client:
+    import literature_evidence_mcp.server as server_module
+
+    async with Client(server_module.mcp) as client:
         result = await client.list_tools()
         names = {item.name for item in result.tools}
         assert {"expand_citation_chain", "search_literature_extended"} <= names
@@ -335,6 +336,7 @@ async def test_s2_same_metadata_does_not_invent_conflicts(monkeypatch):
 @pytest.mark.asyncio
 async def test_server_wrapper_wires_four_provider_search_and_graph(monkeypatch):
     import literature_evidence_mcp.server as s
+
     async def search(query, size):
         return {"query": query, "size": size, "mock": True}
     async def graph(doi, depth, limit, directions):
