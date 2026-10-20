@@ -1,13 +1,10 @@
-import asyncio
-import json
-
 import httpx
 import pytest
 
 from literature_evidence_mcp.core import (
     EvidenceLedger, ResearchClient, normalize_doi, ProviderError,
     verify_quote, screen_methodology, evidence_graph, compare_metadata,
-    _as_paper, CROSSREF, OPENALEX, EUROPE_PMC,
+    _as_paper, CROSSREF, OPENALEX,
 )
 
 

@@ -19,6 +19,12 @@ from literature_evidence_mcp.core import (
 
 WORK = re.compile(r"W[0-9]{1,15}")
 
+_REQUEST_LIMIT = 12
+
+
+class _RequestBudgetExhausted(Exception):
+    """Raised when the traversal has spent its twelve-request budget."""
+
 
 def _work_id(record: object) -> str | None:
     if not isinstance(record, str):
@@ -70,6 +76,8 @@ async def traverse_citations(
     async with ResearchClient() as client:
         async def fetch(path: str, params: dict | None = None) -> dict:
             nonlocal requests
+            if requests >= _REQUEST_LIMIT:
+                raise _RequestBudgetExhausted
             requests += 1
             return await client._get(OPENALEX, path, params)
 
@@ -156,9 +164,6 @@ async def traverse_citations(
                                            "error": str(exc)})
                             incomplete = True
                 if directions in ("forward", "both"):
-                    if requests >= 12:
-                        incomplete = True
-                        break
                     try:
                         incoming = await fetch("/works", {
                             "filter": "cites:" + current, "per_page": max_per_direction
@@ -191,6 +196,9 @@ async def traverse_citations(
                                 "evidence_source": "openalex.filter.cites",
                                 "observed_at_depth": level,
                             }
+                    except _RequestBudgetExhausted:
+                        incomplete = True
+                        break
                     except (ProviderError, ValueError, TypeError, KeyError) as exc:
                         errors.append({"work": current, "relation": "citations",
                                        "error": str(exc)})
