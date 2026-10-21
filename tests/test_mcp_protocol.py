@@ -6,12 +6,15 @@ import pytest
 pytest.importorskip("mcp")
 
 from mcp.client import Client
+
+from literature_evidence_mcp import __version__
 from literature_evidence_mcp.server import mcp
 
 
 @pytest.mark.asyncio
 async def test_protocol_lists_and_executes_tools():
     async with Client(mcp) as client:
+        assert client.server_info is not None and client.server_info.version == __version__
         listed = await client.list_tools()
         names = {tool.name for tool in listed.tools}
         assert len(names) == 35

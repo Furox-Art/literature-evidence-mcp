@@ -228,9 +228,9 @@ pytest -q --cov=literature_evidence_mcp --cov-branch --cov-report=term-missing -
 - Provider disagreements and source provenance from v0.3.1 remain visible. No metadata consistency check or DOI format validation is a scientific truth verdict.
 - **Quality gate unchanged:** 100% statement and branch coverage across Python 3.11, 3.12 and 3.13, including DOI normalization and all error paths.
 
-## Node.js / TypeScript MCP adapter (v0.3.2)
+## Node.js / TypeScript MCP adapter (v0.5.1)
 
-An optional **TypeScript v2 MCP stdio front end** is available under [`packages/npm`](packages/npm). It dynamically discovers the Python server's available MCP tools (20 in v0.4), forwards their input schemas and result/error statuses unchanged, and keeps all scientific decisions in the Python core. It provides a Node/npm integration point without rewriting or duplicating the scientific methodology. **Both Python and Node.js are required; this is not a standalone TypeScript scientific engine.**
+An optional **TypeScript v2 MCP stdio front end** is available under [`packages/npm`](packages/npm). It dynamically discovers the Python server's available MCP tools (35 in v0.5.1), forwards their input schemas and result/error statuses unchanged, and keeps all scientific decisions in the Python core. It provides a Node/npm integration point without rewriting or duplicating the scientific methodology. **Both Python and Node.js are required; this is not a standalone TypeScript scientific engine.**
 
 From a checked-out repository:
 
@@ -250,7 +250,7 @@ native/go_sources and native/cpp_meta. Their explicit MCP endpoints are
 rust_locate_quote, go_parallel_provider_status and cpp_fixed_effect_meta.
 They are optional: an unavailable component returns NATIVE_NOT_INSTALLED,
 and the original Python scientific pipeline remains unchanged. The TypeScript
-MCP bridge dynamically discovers the now 20 Python tools. There is NO npm
+MCP bridge dynamically discovers the now 35 Python tools. There is NO npm
 registry publication in this change.
 
 Rust matches source text, not research claims. Go probes availability of three
