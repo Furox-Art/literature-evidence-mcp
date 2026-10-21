@@ -8,9 +8,10 @@ name: Release
 # literature-evidence-mcp, workflow release.yml, environment pypi.
 #
 # workflow_dispatch is a recovery path for a tag ref only: dispatch against the
-# release tag, e.g. `gh workflow run release.yml --ref v0.5.1`. The guard below
-# rejects any run whose ref is not a tag, or whose tag is not exactly `v` plus
-# the pyproject.toml version, so a branch dispatch or a stale tag can never
+# release tag, e.g. `gh workflow run release.yml --ref v0.5.1`. The guards below
+# reject any run whose ref is not a tag, whose tag is not exactly `v` plus the
+# pyproject.toml version, or whose commit is not an ancestor of origin/main, so
+# a branch dispatch, a stale tag, or a tag cut from an unmerged branch can never
 # reach the `pypi` environment.
 
 on:
@@ -25,7 +26,8 @@ permissions:
 jobs:
   # A tag can point at a commit that never ran through CI, so the release
   # workflow gates publication on the test suite itself instead of trusting
-  # that the tag was cut from a green main.
+  # that the tag was cut from a green main. The publish job additionally
+  # requires the tagged commit to be an ancestor of origin/main.
   test:
     name: Test the tagged commit
     runs-on: ubuntu-latest
@@ -39,8 +41,30 @@ jobs:
           python-version: "3.12"
       - name: Install package and test dependencies
         run: python -m pip install -e '.[dev,retrieval]'
-      - name: Run the test suite
-        run: pytest -q
+      - name: Run the test suite with the CI coverage gate
+        run: >-
+          pytest -q
+          --cov=literature_evidence_mcp
+          --cov-branch
+          --cov-report=term-missing
+          --cov-fail-under=100
+          --junitxml=pytest.xml
+      - name: Reject skipped tests
+        # CI fails a release once the MCP protocol test is skipped; the release
+        # gate rejects any skip so a tag can never publish with unexercised code.
+        run: |
+          python - <<'PY'
+          from defusedxml import ElementTree as ET
+
+          root = ET.parse("pytest.xml").getroot()
+          skipped = [
+              case.get("name")
+              for case in root.iter("testcase")
+              if case.find("skipped") is not None
+          ]
+          assert not skipped, f"release tests were skipped: {skipped}"
+          print("No skipped tests in the release gate")
+          PY
 
   publish:
     needs: test
@@ -53,9 +77,24 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          # Full history so the main-ancestry check can see origin/main.
+          fetch-depth: 0
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
+      - name: Require the release commit to be on main
+        # A tag can be created on any commit, including one on an unmerged
+        # branch. Asserting ancestry rejects that while still allowing a release
+        # commit that main has since moved past.
+        shell: bash
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin main
+          git merge-base --is-ancestor HEAD origin/main || {
+            echo "::error::release commit $(git rev-parse HEAD) is not an ancestor of origin/main"
+            exit 1
+          }
       - name: Require a release tag that matches pyproject.toml
         shell: bash
         env:
@@ -105,3 +144,68 @@ jobs:
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
         with:
           packages-dir: dist/
+          # A re-run whose files are already uploaded is a no-op instead of a
+          # failure; the verification step below still fails when files are absent.
+          skip-existing: true
+      - name: Verify the release is live on PyPI
+        # Authoritative gate: the job succeeds only when the expected sdist and
+        # wheel are visible on PyPI, which is idempotent across re-runs.
+        run: |
+          python - <<'PY'
+          import hashlib
+          import json
+          import time
+          import tomllib
+          import urllib.error
+          import urllib.request
+          from pathlib import Path
+
+          project = "literature-evidence-mcp"
+          version = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
+          expected = sorted(
+              path.name
+              for path in Path("dist").iterdir()
+              if path.is_file() and (path.name.endswith(".tar.gz") or path.name.endswith(".whl"))
+          )
+          assert len([name for name in expected if name.endswith(".whl")]) == 1, expected
+          assert len([name for name in expected if name.endswith(".tar.gz")]) == 1, expected
+          url = f"https://pypi.org/pypi/{project}/{version}/json"
+
+          data = None
+          last_error = None
+          for attempt in range(12):
+              try:
+                  with urllib.request.urlopen(url, timeout=60) as response:
+                      data = json.load(response)
+                  break
+              except urllib.error.HTTPError as error:
+                  last_error = error
+                  if error.code not in (404, 410):
+                      raise
+                  time.sleep(10)
+              except OSError as error:
+                  last_error = error
+                  time.sleep(10)
+
+          assert data is not None, (
+              f"{project} {version} is not visible on PyPI after publishing "
+              f"(last error: {last_error!r})"
+          )
+          published = sorted(item["filename"] for item in data["urls"])
+          missing = sorted(set(expected) - set(published))
+          assert not missing, f"PyPI is missing expected distributions: {missing}"
+
+          print(f"{project} {version} is live on PyPI with {len(published)} files:")
+          for item in sorted(data["urls"], key=lambda entry: entry["filename"]):
+              local = Path("dist") / item["filename"]
+              note = ""
+              if local.is_file():
+                  digest = hashlib.sha256(local.read_bytes()).hexdigest()
+                  note = (
+                      " [sha256 matches this build]"
+                      if digest == item["digests"]["sha256"]
+                      else " [sha256 differs from this build; advisory only]"
+                  )
+              print(f"  {item['filename']}{note}")
+          print(f"PASS {project} {version} published with all expected distributions")
+          PY

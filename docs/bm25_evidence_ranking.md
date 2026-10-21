@@ -1,4 +1,4 @@
-# Optional BM25 candidate evidence retrieval (30th MCP tool)
+# Optional BM25 candidate evidence retrieval (MCP tool 33 of 35)
 
 **Purpose:** Rank *only caller-supplied* titles and abstracts against a
 hypothesis/query. This is a **lexical retrieval tool**, not a scientific

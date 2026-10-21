@@ -55,7 +55,7 @@ certified RoB 2 or PRISMA 2020 complete review.
 ## 2026-10-19 engineering update (not a competitive win claim)
 
 The original dated v0.3 comparison above remains historical. Current
-Literature Evidence MCP adds an offline 33rd `export_bibliography` tool
+Literature Evidence MCP adds the offline `export_bibliography` tool
 with BibTeX/RIS/CSL-JSON serialization. This closes the previously
 documented *basic metadata reference export* gap but is **not** the same
 as Zotero synchronization, citation network traversal, wider paper

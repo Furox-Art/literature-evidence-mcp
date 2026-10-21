@@ -6,22 +6,20 @@ It does **not** reimplement scientific evaluations or make correctness claims. A
 
 ## Install and run
 
-**Python 3.11+ and Node.js 22+ are both required.** After both packages have been published to their registries, install them:
+**Python 3.11+ and Node.js 22+ are both required.** The Python core is published on PyPI; the npm adapter has no registry release yet:
 
 ```sh
 python -m pip install literature-evidence-mcp
-npm install -g @furox-scientific/literature-evidence-mcp
+```
+
+From a repository checkout, install the adapter locally:
+
+```sh
+npm install -g ./packages/npm
 literature-evidence-mcp-ts
 ```
 
-Until registry publishing is independently verified, install both packages from this repository checkout:
-
-```sh
-python -m pip install -e .
-npm install -g ./packages/npm
-```
-
-If the Python executable is not available as `python3` (Unix) or `python` (Windows), set `LITERATURE_EVIDENCE_PYTHON` to its absolute path. Python core installation from PyPI is only usable once its release is published; until then install from the GitHub source:
+If the Python executable is not available as `python3` (Unix) or `python` (Windows), set `LITERATURE_EVIDENCE_PYTHON` to its absolute path. To test unreleased Python changes, install the core from this checkout or from the GitHub source:
 
 ```sh
 python -m pip install 'git+https://github.com/Furox-Art/literature-evidence-mcp.git'

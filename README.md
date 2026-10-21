@@ -2,9 +2,9 @@
 
 An open-source **scientific literature and evidence provenance** MCP server.
 
-> **Important:** v0.3 is a **bibliographic/traceability and evidence-audit MVP**, NOT an automated peer reviewer, meta-analysis engine, PRISMA-compliant review engine, validated quality score, or scientific truth oracle. It never labels a paper scientifically proven solely from an abstract or citation.
+> **Important:** v0.5.1 is a **bibliographic/traceability and evidence-audit toolset**, NOT an automated peer reviewer, meta-analysis engine, certified PRISMA-compliant review engine, validated quality score, or scientific truth oracle. It never labels a paper scientifically proven solely from an abstract or citation. The v0.5 PRISMA and PDF provenance helpers are workflow utilities, not certified complete systematic-review engines.
 
-## Features implemented in v0.3
+## Core features (v0.3 baseline, retained in v0.5.1)
 
 | MCP tool | Status / guarantee |
 | --- | --- |
@@ -58,15 +58,15 @@ OpenAlex basic queries can be keyless but have a restrictive daily budget. Obtai
 - No unrestricted URL retrieval: fixed trusted origins and API paths, DOI and PMCID validation, request timeouts, streaming response-size limits, bounded retries.
 - Raw bibliographic responses are not persisted unless explicitly passed into `export_evidence` or through `log_review_search`.
 - Full-text reuse and redistribution are controlled by source/publisher licenses; this server does not download arbitrary PDFs or bypass access controls.
-- Hash-chain is not independently authenticated; keep external checkpoints if you need tamper-evidence against complete log replacement. v0.3 serializes writers across processes using a local lock file; it cannot guarantee atomic behavior on all network filesystems.
+- Hash-chain is not independently authenticated; keep external checkpoints if you need tamper-evidence against complete log replacement. v0.3 and later serialize writers across processes using a local lock file; they cannot guarantee atomic behavior on all network filesystems.
 
 ## Current limitations and roadmap (NOT YET IMPLEMENTED)
 
 1. Evaluate API coverage/precision against independently labeled benchmark queries and monitor API drift.
-2. Page/figure/table provenance from licensed PDFs and JATS XML; v0.2 supports paragraph-level XML spans only.
+2. Licensed PDF retrieval/redistribution and verified figure/table contents; v0.5 adds bounded caller-supplied PDF page text, table and image object provenance but does not fetch or redistribute PDFs.
 3. Human-supervised formal RoB 2, ROBINS-I, GRADE; v0.3 adds cited annotation traceability and numerical field screens but NOT validated risk judgments or statistical reproduction.
-4. Citation graph with verified edge provenance and correction/retraction propagation.
-5. PRISMA 2020-compatible reviewer double-screening and export.
+4. Citation graph with independently verified edge provenance; v0.5 adds caller-supplied edge traversal and Crossref notice propagation, but edges and notices remain provider-asserted.
+5. Full two-stage PRISMA 2020 retrieval, study-level inclusion/adjudication and report export; v0.5 adds caller-supplied two-reviewer screening records and checklist/identification accounting.
 6. Audited quantitative extraction/meta-analysis with independent statistical tests and uncertainty.
 7. API rate accounting, request queueing, persistent cache, integration/security hardening and authenticated hosting.
 8. Obtain a blind expert-labeled retrieval and risk-of-bias test set; current ROBoto2 excerpt-match audit and 3-query competitor smoke cannot prove accuracy superiority.
@@ -163,7 +163,7 @@ optional tool explicitly reports `RATE_LIMITED` and the HTTP code. Citation
 traversal now fails closed on an OpenAlex seed DOI mismatch or missing DOI.
 [Protocol, examples, hard limits and verification](docs/extended_search_citation_traversal.md).
 
-## Bibliographic export (33rd MCP tool)
+## Bibliographic export (MCP tool 14 of 35)
 
 The offline, opt-in `export_bibliography` MCP tool converts supplied citation metadata
 to **BibTeX, RIS or CSL-JSON**, with injection-safe escaping, explicit DOI
@@ -301,7 +301,7 @@ No npm registry publication is performed.
 
 A separate [full-corpus evaluation protocol](docs/scifact_full_corpus.md) measures independent BM25 and lexical retrieval across all 5,183 SciFact abstracts. The historical benchmark did **not** modify the scientific MCP; a separate opt-in local BM25 candidate ranker is now available. No unsupported science-accuracy claims are made. Aggregated results are persisted as GitHub CI artifacts and are not published to npm.
 
-## Optional BM25 evidence candidate ranking (30th MCP tool)
+## Optional BM25 evidence candidate ranking (MCP tool 33 of 35)
 
 `bm25_rank_evidence` uses [rank-bm25](https://pypi.org/project/rank-bm25/) to
 rank **caller-supplied** paper titles and abstracts. It is not invoked by the
@@ -317,7 +317,7 @@ Without that optional extra, the tool remains discoverable but returns
 `OPTIONAL_BM25_NOT_INSTALLED`. No automatic installation or npm publication
 takes place. See [usage, input restrictions and scientific cautions](docs/bm25_evidence_ranking.md).
 
-## Experimental offline claim/evidence NLI (31st MCP tool)
+## Experimental offline claim/evidence NLI (MCP tool 34 of 35)
 
 An explicitly optional, **not clinically validated** three-way
 `nli_assess_evidence` MCP tool evaluates whether a caller-supplied passage
@@ -361,7 +361,7 @@ analysis](docs/healthver_three_way_validation.md). The raw HealthVer
 data and large model weights are never published to the repository.
 
 
-## Explicitly selected experimental NLI alternatives (32nd MCP tool)
+## Explicitly selected experimental NLI alternatives (MCP tool 35 of 35)
 
 Two additional pinned third-party NLI checkpoints are now available
 **only through an explicitly selected, local, offline challenger tool**,
