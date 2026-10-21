@@ -37,12 +37,12 @@ export async function connectPython(
   executable: string,
   args: string[] = ['-m', 'literature_evidence_mcp.server'],
 ): Promise<{ server: McpServer; python: Client }> {
-  const python = new Client({ name: 'literature-evidence-typescript-bridge', version: '0.3.2' });
+  const python = new Client({ name: 'literature-evidence-typescript-bridge', version: '0.5.1' });
   // Always force stdio inside the child; ignore an inherited HTTP setting.
   const env = { ...process.env, MCP_TRANSPORT: 'stdio' } as Record<string, string>;
   try {
     await python.connect(new StdioClientTransport({ command: executable, args, env }));
-    const server = new McpServer({ name: 'literature-evidence-mcp-ts', version: '0.3.2' });
+    const server = new McpServer({ name: 'literature-evidence-mcp-ts', version: '0.5.1' });
     const tools = await listAllTools(async (cursor) => {
       return await python.listTools({ cursor });
     });

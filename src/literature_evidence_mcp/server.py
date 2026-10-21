@@ -8,6 +8,7 @@ import os
 
 from mcp.server import MCPServer
 
+from literature_evidence_mcp import __version__
 from literature_evidence_mcp.appraisal import grade_domain_record, risk_of_bias_review
 from literature_evidence_mcp.bibliography import export_bibliography_records
 from literature_evidence_mcp.bm25_retrieval import rank_supplied_evidence
@@ -41,7 +42,7 @@ from literature_evidence_mcp.prisma import dual_screen
 from literature_evidence_mcp.prisma_flow import review_flow
 from literature_evidence_mcp.source_audit import audit_pmc_paragraph_evidence
 
-mcp = MCPServer("Literature Evidence MCP")
+mcp = MCPServer("Literature Evidence MCP", version=__version__)
 
 
 @mcp.tool()

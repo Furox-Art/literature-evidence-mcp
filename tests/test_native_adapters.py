@@ -43,6 +43,9 @@ def test_rust_absent_and_present(monkeypatch):
     ("", "valid"), ("x" * 250001, "valid"), (None, "valid"),
     ("data", ""), ("data", " " * 5), ("data", "z" * 2501),
     ("data", None),
+], ids=[
+    "empty-text", "oversize-text", "none-text",
+    "empty-quote", "blank-quote", "oversize-quote", "none-quote",
 ])
 def test_rust_invalid(text, quote):
     with pytest.raises(ValueError):
@@ -139,6 +142,9 @@ async def test_go_launch_failure(monkeypatch):
     (b"[]", 0, "NATIVE_INVALID_RESPONSE"),
     (b'{"status":"unexpected"}', 0, "NATIVE_INVALID_RESPONSE"),
     (b'{"status":"PROVIDER_STATUS_ONLY"}', 0, "PROVIDER_STATUS_ONLY"),
+], ids=[
+    "nonzero-exit", "oversize-output", "invalid-json",
+    "list-json", "unexpected-status", "valid-status",
 ])
 @pytest.mark.asyncio
 async def test_go_untrusted_outputs(monkeypatch, output, code, expected):

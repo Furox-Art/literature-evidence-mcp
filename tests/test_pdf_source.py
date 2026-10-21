@@ -59,6 +59,10 @@ def test_real_pdf_page_table_and_image_boundaries():
     (pdf_fixture(), 1001, "trial"), (pdf_fixture(), 3, "trial"),
     (pdf_fixture(), 1, ""), (pdf_fixture(), 1, " " * 30),
     (pdf_fixture(), 1, "x" * 2001),
+], ids=[
+    "invalid-base64", "empty-data", "not-a-pdf", "none-data",
+    "oversize-base64", "page-zero", "page-bool", "page-over-limit",
+    "page-out-of-range", "empty-quote", "blank-quote", "oversize-quote",
 ])
 def test_reject_hostile_or_incomplete_pdf_inputs(data, page, quote):
     with pytest.raises(ValueError):

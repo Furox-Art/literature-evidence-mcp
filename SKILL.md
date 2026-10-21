@@ -3,7 +3,7 @@ name: literature-evidence-mcp
 description: "Use when a task needs verifiable scientific-literature metadata, DOI/citation checks, retraction lookup, full-text quote provenance, methodology screening, or a hash-chained evidence ledger through MCP. Reports traceable evidence and uncertainty; never certifies that a claim is scientifically true and never performs peer review."
 argument-hint: "<research question, citation, DOI/PMCID, quote, or claim to audit>"
 metadata:
-  version: "0.5.0"
+  version: "0.5.1"
 ---
 
 # Literature Evidence MCP
@@ -55,7 +55,7 @@ MCP client configuration (stdio):
 Set `OPENALEX_API_KEY` for regular OpenAlex use; keyless access has a restrictive
 daily budget. Do not commit environment values.
 
-## Key tool groups (35 tools total as of 0.5.0)
+## Key tool groups (35 tools total as of 0.5.1)
 
 - Search and retrieval: `search_literature`, `search_literature_extended`,
   `get_paper`, `expand_citation_chain`, `find_data_and_code`

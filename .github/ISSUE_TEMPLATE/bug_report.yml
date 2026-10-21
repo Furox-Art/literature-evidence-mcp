@@ -52,7 +52,7 @@ body:
     attributes:
       label: Version and install source
       description: Which version are you running, and how was it installed?
-      placeholder: "0.5.0, editable install from a checkout"
+      placeholder: "0.5.1, editable install from a checkout"
     validations:
       required: true
 

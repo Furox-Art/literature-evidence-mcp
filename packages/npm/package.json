@@ -1,6 +1,6 @@
 {
   "name": "@furox-scientific/literature-evidence-mcp",
-  "version": "0.3.2",
+  "version": "0.5.1",
   "description": "TypeScript MCP stdio adapter for the open-source Literature Evidence Python engine",
   "type": "module",
   "bin": {

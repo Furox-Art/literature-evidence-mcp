@@ -105,9 +105,12 @@ def test_packet_writer_separates_private_map_and_refuses_existing_files(tmp_path
     manifest = tmp_path / "sealed" / "manifest.json"
     result = blind.write_packet(source, packet, private, manifest, b"k" * 32)
     assert result["item_count"] == 1
-    assert stat.S_IMODE(packet.stat().st_mode) == 0o600
-    assert stat.S_IMODE(private.stat().st_mode) == 0o600
-    assert stat.S_IMODE(manifest.stat().st_mode) == 0o600
+    # Windows has no POSIX permission bits: os.chmod(..., 0o600) succeeds but
+    # stat reports 0o666. Only the POSIX hosts can assert the mode contract.
+    if sys.platform != "win32":
+        assert stat.S_IMODE(packet.stat().st_mode) == 0o600
+        assert stat.S_IMODE(private.stat().st_mode) == 0o600
+        assert stat.S_IMODE(manifest.stat().st_mode) == 0o600
     assert "case1" not in packet.read_text()
     assert "case1" in private.read_text()
     with pytest.raises(FileExistsError):
