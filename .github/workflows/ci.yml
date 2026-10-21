@@ -19,8 +19,16 @@ jobs:
         run: python -m pip install -e '.[dev,retrieval]'
       - name: Test and enforce 100 percent statement and branch coverage
         run: pytest -q --cov=literature_evidence_mcp --cov-branch --cov-report=term-missing --cov-report=json:coverage.json --cov-fail-under=100
-      - name: Verify protocol test was not skipped
-        run: pytest -q tests/test_mcp_protocol.py -rs
+      - name: Require the protocol test to run
+        shell: bash
+        run: |
+          set -o pipefail
+          output="$(pytest -q tests/test_mcp_protocol.py -rs)"
+          printf '%s\n' "${output}"
+          if grep -q "SKIPPED" <<<"${output}"; then
+            echo "::error::tests/test_mcp_protocol.py was skipped; the mcp SDK must be installed in CI."
+            exit 1
+          fi
       - name: Lint v0.3 evidence audit and benchmark additions
         run: >-
           ruff check
