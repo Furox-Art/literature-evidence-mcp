@@ -22,9 +22,14 @@ jobs:
       - name: Require the protocol test to run
         shell: bash
         run: |
-          set -o pipefail
+          set -uo pipefail
           output="$(pytest -q tests/test_mcp_protocol.py -rs)"
+          status=$?
           printf '%s\n' "${output}"
+          if [ "${status}" -ne 0 ]; then
+            echo "::error::tests/test_mcp_protocol.py failed or errored (exit ${status})."
+            exit 1
+          fi
           if grep -q "SKIPPED" <<<"${output}"; then
             echo "::error::tests/test_mcp_protocol.py was skipped; the mcp SDK must be installed in CI."
             exit 1
