@@ -3,9 +3,9 @@
 **Scientific status: experimental, NOT validated clinical fact checking.** Two pinned,
 externally trained checkpoints were assessed alongside the existing DeBERTa-small
 under the **same unchanged decision rule**: directional softmax >= 0.70 and
-winning margin >= 0.15. The user-selected 32nd MCP tool makes candidates
+winning margin >= 0.15. The user-selected 35th MCP tool makes candidates
 available **only after explicit local configuration**. The original NLI
-tool and other 31 MCP tools retain their behavior. No npm registry release.
+tool and other 34 MCP tools retain their behavior. No npm registry release.
 
 ## Models, provenance and pinning
 

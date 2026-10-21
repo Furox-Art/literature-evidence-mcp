@@ -21,8 +21,9 @@ and scientific validation.
 - Audit a review workflow with human-supplied annotations and source hashes.
 - Export append-only evidence records and verify ledger integrity.
 
-Do not use it to claim that a paper is scientifically valid, to run a PRISMA
-review, or to produce a risk-of-bias judgment. Those are not implemented.
+Do not use it to claim that a paper is scientifically valid or that a review is a
+certified PRISMA/RoB judgment. The PRISMA and RoB tools only record
+caller-supplied human decisions; they do not produce validated judgments.
 
 ## Install and run
 
