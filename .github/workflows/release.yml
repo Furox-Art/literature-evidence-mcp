@@ -23,6 +23,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  # Serialise releases of the same tag. A recovery dispatch must never race a
+  # tag-triggered run; npm/PyPI immutability makes a duplicate upload a hard
+  # failure rather than a no-op.
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   # A tag can point at a commit that never ran through CI, so the release
   # workflow gates publication on the test suite itself instead of trusting
@@ -140,20 +147,58 @@ jobs:
           assert "literature_evidence_mcp/server.py" in zipfile.ZipFile(wheels[0]).namelist()
           print(f"Verified {metadata['Name']} {metadata['Version']} artifacts")
           PY
+      - name: Check whether this version is already on PyPI
+        id: gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="$(python -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')"
+          json_url="https://pypi.org/pypi/literature-evidence-mcp/${version}/json"
+          complete=false
+          state="$(mktemp)"
+          if curl --retry 2 --retry-delay 2 -sfL "$json_url" -o "$state"; then
+            if python - "$state" <<'PY'
+          import json, pathlib, sys
+
+          published = {
+              entry["filename"]
+              for entry in json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8")).get("urls", [])
+          }
+          expected = {
+              path.name
+              for path in pathlib.Path("dist").iterdir()
+              if path.name.endswith((".whl", ".tar.gz"))
+          }
+          missing = sorted(expected - published)
+          if missing:
+              print("missing from PyPI: " + ", ".join(missing))
+              sys.exit(1)
+          print("PyPI already serves every expected file")
+          PY
+            then
+              complete=true
+            fi
+          fi
+          rm -f "$state"
+          echo "preexisting=$complete" >> "$GITHUB_OUTPUT"
       - name: Publish to PyPI
+        if: steps.gate.outputs.preexisting != 'true'
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
         with:
           packages-dir: dist/
-          # A re-run whose files are already uploaded is a no-op instead of a
-          # failure; the verification step below still fails when files are absent.
+          # A partial release (one file present) uploads only the missing file;
+          # a complete release never reaches this step.
           skip-existing: true
       - name: Verify the release is live on PyPI
         # Authoritative gate: the job succeeds only when the expected sdist and
         # wheel are visible on PyPI, which is idempotent across re-runs.
+        env:
+          PREEXISTING: ${{ steps.gate.outputs.preexisting }}
         run: |
           python - <<'PY'
           import hashlib
           import json
+          import os
           import time
           import tomllib
           import urllib.error
@@ -201,11 +246,18 @@ jobs:
               note = ""
               if local.is_file():
                   digest = hashlib.sha256(local.read_bytes()).hexdigest()
-                  note = (
-                      " [sha256 matches this build]"
-                      if digest == item["digests"]["sha256"]
-                      else " [sha256 differs from this build; advisory only]"
-                  )
+                  if digest == item["digests"]["sha256"]:
+                      note = " [sha256 matches this build]"
+                  elif os.environ.get("PREEXISTING") == "true":
+                      # Re-runs rebuild the artifacts; wheel/sdist bytes are not
+                      # bit-reproducible, so a hash difference here says nothing
+                      # about the original upload.
+                      note = " [sha256 differs from this rebuild; the files predate this run]"
+                  else:
+                      raise SystemExit(
+                          f"sha256 mismatch for {item['filename']}: PyPI serves bytes "
+                          "this run did not build"
+                      )
               print(f"  {item['filename']}{note}")
           print(f"PASS {project} {version} published with all expected distributions")
           PY
