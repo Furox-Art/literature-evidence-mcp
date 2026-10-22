@@ -24,9 +24,9 @@ permissions:
   contents: read
 
 concurrency:
-  # Serialise releases of the same tag. A recovery dispatch must never race a
-  # tag-triggered run; npm/PyPI immutability makes a duplicate upload a hard
-  # failure rather than a no-op.
+  # Serialise releases of the same tag so a recovery dispatch cannot race a
+  # tag-triggered run. The publish gate below turns a completed re-run into a
+  # no-op instead of relying on the registry to reject a duplicate.
   group: release-${{ github.ref }}
   cancel-in-progress: false
 
@@ -72,6 +72,23 @@ jobs:
           assert not skipped, f"release tests were skipped: {skipped}"
           print("No skipped tests in the release gate")
           PY
+      - name: Build the distributions once
+        run: |
+          python -m pip install "build==1.6.1"
+          python -m build
+      - name: Install the built wheel and smoke the console script
+        run: |
+          python -m venv /tmp/wheel-smoke
+          /tmp/wheel-smoke/bin/python -m pip install --upgrade pip
+          /tmp/wheel-smoke/bin/python -m pip install dist/*.whl
+          /tmp/wheel-smoke/bin/literature-evidence-mcp --help > /dev/null
+          /tmp/wheel-smoke/bin/python -c "import importlib.metadata as md; print('installed', md.version('literature-evidence-mcp'))"
+      - name: Upload the tested distributions
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: dist
+          path: dist/
+          if-no-files-found: error
 
   publish:
     needs: test
@@ -120,10 +137,11 @@ jobs:
             echo "::error::Tag ${REF_NAME} does not match pyproject.toml version ${version}; expected tag ${expected}."
             exit 1
           fi
-      - name: Build sdist and wheel
-        run: |
-          python -m pip install --upgrade build
-          python -m build
+      - name: Download the tested distributions
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: dist
+          path: dist
       - name: Verify the artifacts match pyproject.toml
         run: |
           python - <<'PY'
@@ -156,8 +174,10 @@ jobs:
           json_url="https://pypi.org/pypi/literature-evidence-mcp/${version}/json"
           complete=false
           state="$(mktemp)"
+          present="$(mktemp)"
+          echo '[]' > "$present"
           if curl --retry 2 --retry-delay 2 -sfL "$json_url" -o "$state"; then
-            if python - "$state" <<'PY'
+            if python - "$state" "$present" <<'PY'
           import json, pathlib, sys
 
           published = {
@@ -169,6 +189,11 @@ jobs:
               for path in pathlib.Path("dist").iterdir()
               if path.name.endswith((".whl", ".tar.gz"))
           }
+          # Record which expected files predate this run: those bytes come from an
+          # earlier build and are not expected to match this run's sha256.
+          pathlib.Path(sys.argv[2]).write_text(
+              json.dumps(sorted(expected & published)), encoding="utf-8"
+          )
           missing = sorted(expected - published)
           if missing:
               print("missing from PyPI: " + ", ".join(missing))
@@ -179,8 +204,9 @@ jobs:
               complete=true
             fi
           fi
-          rm -f "$state"
           echo "preexisting=$complete" >> "$GITHUB_OUTPUT"
+          echo "preexisting_files=$(<"$present")" >> "$GITHUB_OUTPUT"
+          rm -f "$state" "$present"
       - name: Publish to PyPI
         if: steps.gate.outputs.preexisting != 'true'
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
@@ -193,7 +219,7 @@ jobs:
         # Authoritative gate: the job succeeds only when the expected sdist and
         # wheel are visible on PyPI, which is idempotent across re-runs.
         env:
-          PREEXISTING: ${{ steps.gate.outputs.preexisting }}
+          PREEXISTING_FILES: ${{ steps.gate.outputs.preexisting_files }}
         run: |
           python - <<'PY'
           import hashlib
@@ -239,6 +265,7 @@ jobs:
           published = sorted(item["filename"] for item in data["urls"])
           missing = sorted(set(expected) - set(published))
           assert not missing, f"PyPI is missing expected distributions: {missing}"
+          preexisting = set(json.loads(os.environ.get("PREEXISTING_FILES") or "[]"))
 
           print(f"{project} {version} is live on PyPI with {len(published)} files:")
           for item in sorted(data["urls"], key=lambda entry: entry["filename"]):
@@ -248,11 +275,12 @@ jobs:
                   digest = hashlib.sha256(local.read_bytes()).hexdigest()
                   if digest == item["digests"]["sha256"]:
                       note = " [sha256 matches this build]"
-                  elif os.environ.get("PREEXISTING") == "true":
-                      # Re-runs rebuild the artifacts; wheel/sdist bytes are not
-                      # bit-reproducible, so a hash difference here says nothing
-                      # about the original upload.
-                      note = " [sha256 differs from this rebuild; the files predate this run]"
+                  elif item["filename"] in preexisting:
+                      # A recovery run rebuilds the artifacts in its test job;
+                      # wheel/sdist bytes are not bit-reproducible, so for a file
+                      # that was on PyPI before this run a hash difference says
+                      # nothing about the original upload.
+                      note = " [sha256 differs from this run's build; the file predates it]"
                   else:
                       raise SystemExit(
                           f"sha256 mismatch for {item['filename']}: PyPI serves bytes "
