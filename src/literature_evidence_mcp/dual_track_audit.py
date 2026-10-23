@@ -43,7 +43,7 @@ def _mean(values: list[float]) -> float | None:
 
 
 def _retrieval(gold: dict[str, dict], rows: dict[str, dict]) -> dict:
-    scores = {cut: [] for cut in CUTS}
+    scores: dict[int, list[float]] = {cut: [] for cut in CUTS}
     reciprocal = []
     without_positive = 0
     state_counts = {state: 0 for state in RETRIEVAL_STATES}
@@ -123,7 +123,7 @@ def audit_dual_track(gold: dict, systems: dict) -> dict:
     if any(not isinstance(system, str) or not system.strip() or len(system) > 80
            for system in systems):
         raise ValueError("System identifiers must be nonempty bounded strings")
-    results = {"retrieval": {}, "classification": {}}
+    results: dict[str, dict[str, dict]] = {"retrieval": {}, "classification": {}}
     for name, payload in systems.items():
         if not isinstance(payload, dict) or set(payload) != set(reference):
             raise ValueError("Both system tracks are required")
@@ -135,7 +135,7 @@ def audit_dual_track(gold: dict, systems: dict) -> dict:
                 _retrieval(baseline, rows) if track == "retrieval"
                 else _classification(baseline, rows)
             )
-    paired = {"retrieval": {}, "classification": {}}
+    paired: dict[str, dict[str, dict]] = {"retrieval": {}, "classification": {}}
     for first, second in combinations(sorted(systems), 2):
         key = f"{first}__versus__{second}"
         for cut in CUTS:

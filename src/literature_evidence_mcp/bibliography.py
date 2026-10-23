@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import re
 import unicodedata
+from typing import Any
 
 from literature_evidence_mcp.core import normalize_doi
 
@@ -99,8 +100,8 @@ def _record(paper: dict, ordinal: int) -> tuple[str, str, dict, dict]:
     if doi:
         ris.append(f"DO  - {doi}")
     ris.extend(["ER  - ", ""])
-    csl = {"id": citekey, "type": "article-journal" if journal else "document",
-           "title": title}
+    csl: dict[str, Any] = {"id": citekey, "type": "article-journal" if journal else "document",
+                           "title": title}
     if authors:
         csl["author"] = [{"literal": author} for author in authors]
     if journal:
@@ -133,9 +134,10 @@ def export_bibliography_records(papers: list[dict], output_format: str = "bibtex
     if output_format == "csl-json":
         content = json.dumps([entry[2] for entry in entries], ensure_ascii=False,
                              sort_keys=True, indent=2)
+    elif output_format == "bibtex":
+        content = "\n\n".join(entry[0] for entry in entries)
     else:
-        formatted = [entry[0 if output_format == "bibtex" else 1] for entry in entries]
-        content = "\n\n".join(formatted) if output_format == "bibtex" else "\n".join(formatted)
+        content = "\n".join(entry[1] for entry in entries)
     return {
         "format": output_format,
         "record_count": len(entries),

@@ -2,9 +2,18 @@ import httpx
 import pytest
 
 from literature_evidence_mcp.core import (
-    EvidenceLedger, ResearchClient, normalize_doi, ProviderError,
-    verify_quote, screen_methodology, evidence_graph, compare_metadata,
-    _as_paper, CROSSREF, OPENALEX,
+    CROSSREF,
+    OPENALEX,
+    EvidenceLedger,
+    ProviderError,
+    ResearchClient,
+    _as_paper,
+    _update_rows,
+    compare_metadata,
+    evidence_graph,
+    normalize_doi,
+    screen_methodology,
+    verify_quote,
 )
 
 
@@ -66,9 +75,11 @@ async def test_search_dedupe_and_errors():
         return httpx.Response(200, json={"message": {"items": [{"DOI": "10.1000/test",
             "title": ["Experiment"], "published": {"date-parts": [[2025]]}}]}})
 
-    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http:
-        async with ResearchClient(http) as client:
-            out = await client.search("consciousness", 4)
+    async with (
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http,
+        ResearchClient(http) as client,
+    ):
+        out = await client.search("consciousness", 4)
     assert len(out["papers"]) == 1
     assert set(out["papers"][0]["sources"]) == {"openalex", "crossref"}
     assert out["provider_status"]["europepmc"]["status"] == "ERROR"
@@ -79,35 +90,65 @@ async def test_search_dedupe_and_errors():
 async def test_crossref_retraction_and_absence():
     def handler(request):
         suffix = str(request.url).lower()
-        update = ([{"type": "retraction", "DOI": "10.1234/retraction", "source": "retraction-watch"}]
+        if "notice" in suffix:
+            return httpx.Response(200, json={"message": {"DOI": "10.1234/notice",
+                "title": ["Retraction notice"], "update-to": [
+                    {"type": "retraction", "DOI": "10.1234/retracted",
+                     "updated": {"date-parts": [[2010, 2, 2]]}}]}})
+        update = ([{"type": "retraction", "DOI": "10.1234/notice",
+                    "source": "retraction-watch"}]
                   if "retracted" in suffix else [])
         return httpx.Response(200, json={"message": {"DOI": "10.1234/sample",
-            "title": ["Study"], "update-to": update}})
-    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http:
-        async with ResearchClient(http) as client:
-            assert (await client.retraction("10.1234/retracted"))["status"] == "RETRACTION_REPORTED"
-            assert (await client.retraction("10.1234/clear"))["status"] == "NO_UPDATE_IN_CHECKED_METADATA"
+            "title": ["Study"], "updated-by": update}})
+    async with (
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http,
+        ResearchClient(http) as client,
+    ):
+        retracted = await client.retraction("10.1234/retracted")
+        assert retracted["status"] == "RETRACTION_REPORTED"
+        assert retracted["updated_by"][0]["type"] == "retraction"
+        assert retracted["updates"] == []
+        notice = await client.retraction("10.1234/notice")
+        assert notice["status"] == "RETRACTION_NOTICE_REPORTED"
+        assert notice["updates"][0]["date"] == [[2010, 2, 2]]
+        assert notice["updated_by"] == []
+        assert (await client.retraction("10.1234/clear"))["status"] == "NO_UPDATE_IN_CHECKED_METADATA"
+
+
+@pytest.mark.parametrize("value", [None, "retraction", 7, [None, "x", 5]])
+def test_malformed_update_relations_are_ignored(value):
+    assert _update_rows(value) == []
+
+
+def test_update_relation_without_date_or_type_is_normalized():
+    assert _update_rows([{"DOI": "10.1000/x", "updated": "not-an-object"}]) == [
+        {"type": "", "doi": "10.1000/x", "source": None, "date": None}]
 
 
 @pytest.mark.asyncio
 async def test_crossref_not_found_returns_unverified():
-    async with httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(404))) as http:
-        async with ResearchClient(http) as client:
-            assert (await client.retraction("10.1234/nope"))["status"] == "NOT_VERIFIED"
-            with pytest.raises(ProviderError):
-                await client.paper("10.1234/nope")
+    async with (
+        httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(404))) as http,
+        ResearchClient(http) as client,
+    ):
+        assert (await client.retraction("10.1234/nope"))["status"] == "NOT_VERIFIED"
+        with pytest.raises(ProviderError):
+            await client.paper("10.1234/nope")
 
 
 @pytest.mark.asyncio
 async def test_fixed_hosts_and_routes():
-    async with httpx.AsyncClient(transport=httpx.MockTransport(lambda _: httpx.Response(200, json={}))) as http:
-        async with ResearchClient(http) as client:
-            for base, path in [("http://169.254.169.254", "/works"),
-                               (CROSSREF, "//evil.com/works"),
-                               (CROSSREF, "/evil"),
-                               (OPENALEX, "/works/../secrets")]:
-                with pytest.raises(ValueError):
-                    await client._get(base, path)
+    async with (
+        httpx.AsyncClient(
+            transport=httpx.MockTransport(lambda _: httpx.Response(200, json={}))) as http,
+        ResearchClient(http) as client,
+    ):
+        for base, path in [("http://169.254.169.254", "/works"),
+                           (CROSSREF, "//evil.com/works"),
+                           (CROSSREF, "/evil"),
+                           (OPENALEX, "/works/../secrets")]:
+            with pytest.raises(ValueError):
+                await client._get(base, path)
 
 
 @pytest.mark.asyncio
@@ -143,15 +184,17 @@ async def test_fulltext_xml_with_provenance():
     </body></article>'''
     def handler(request):
         return httpx.Response(200, content=xml)
-    async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http:
-        async with ResearchClient(http) as client:
-            out = await client.fulltext("PMC12345")
-            assert "Null result" in out["content"]
-            assert out["title"] == "Measured result"
-            assert len(out["sha256_xml"]) == 64
-            assert out["truncated"] is False
-            with pytest.raises(ValueError):
-                await client.fulltext("http://evil.test/")
+    async with (
+        httpx.AsyncClient(transport=httpx.MockTransport(handler)) as http,
+        ResearchClient(http) as client,
+    ):
+        out = await client.fulltext("PMC12345")
+        assert "Null result" in out["content"]
+        assert out["title"] == "Measured result"
+        assert len(out["sha256_xml"]) == 64
+        assert out["truncated"] is False
+        with pytest.raises(ValueError):
+            await client.fulltext("http://evil.test/")
 
 
 @pytest.mark.asyncio
@@ -159,8 +202,7 @@ async def test_fulltext_rejects_entity_expansion():
     xml = b'''<!DOCTYPE x [<!ENTITY attack "exfil">]><article><body>
     <sec><p>&attack;</p></sec></body></article>'''
     async with httpx.AsyncClient(transport=httpx.MockTransport(
-        lambda request: httpx.Response(200, content=xml))) as http:
-        async with ResearchClient(http) as client:
-            import defusedxml.common
-            with pytest.raises(defusedxml.common.EntitiesForbidden):
-                await client.fulltext("PMC12345")
+        lambda request: httpx.Response(200, content=xml))) as http, ResearchClient(http) as client:
+        import defusedxml.common
+        with pytest.raises(defusedxml.common.EntitiesForbidden):
+            await client.fulltext("PMC12345")

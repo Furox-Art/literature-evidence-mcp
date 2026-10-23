@@ -3,6 +3,31 @@
 Release notes for literature-evidence-mcp. Versions before 0.5.1 were not
 tracked in this file.
 
+## Unreleased
+
+### Fixed
+
+- `check_retraction` now reads both Crossref relation directions. A retracted
+  article carries `updated-by`; a retraction notice carries `update-to`.
+  Reading only `update-to` reported "no update" for the retracted article
+  itself. Responses now include `updated_by` alongside `updates`, and the new
+  `RETRACTION_NOTICE_REPORTED` status distinguishes a queried notice from a
+  retracted work.
+- `crossref_update_alerts` consumed the same wrong relation direction and now
+  propagates only `updated-by` notices, with all DOIs fetched concurrently
+  instead of one at a time.
+- `verify_quote` and `source_quote` reject trimmed quotes shorter than three
+  characters; single-character matches are not meaningful evidence.
+- `EvidenceLedger.verify()` now reads under the same `FileLock` as appends, so
+  a concurrent append cannot surface as a false tamper verdict. Appends reuse
+  the already-held lock instead of acquiring it twice.
+
+### Security
+
+- CI lints every tracked Python file instead of a hand-maintained list and
+  type-checks the package with mypy; ruff and mypy are pinned in the dev extra.
+- Add Dependabot, OpenSSF Scorecard, dependency review and `CITATION.cff`.
+
 ## 0.5.1 - 2026-10-21
 
 ### Release integrity

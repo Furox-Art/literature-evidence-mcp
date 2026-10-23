@@ -1,0 +1,26 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "Literature Evidence MCP: provenance-first scholarly metadata server"
+abstract: >-
+  An MCP server for literature workflows that keeps every scientific verdict
+  explicit about its provenance. It retrieves metadata from fixed provider
+  origins, verifies quotes only as literal text matches, checks retraction and
+  correction notices in both Crossref relation directions, audits citation
+  graphs without treating citations as retractions, and records evidence in an
+  append-only hash-chained ledger.
+authors:
+  - family-names: "Furox"
+    given-names: "Art"
+version: 0.5.1
+date-released: "2026-10-21"
+license: Apache-2.0
+repository-code: "https://github.com/Furox-Art/literature-evidence-mcp"
+url: "https://github.com/Furox-Art/literature-evidence-mcp"
+keywords:
+  - literature review
+  - research provenance
+  - retraction checking
+  - evidence ledger
+  - mcp server
+  - scholarly metadata

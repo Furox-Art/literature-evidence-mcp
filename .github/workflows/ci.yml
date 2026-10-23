@@ -34,62 +34,10 @@ jobs:
             echo "::error::tests/test_mcp_protocol.py was skipped; the mcp SDK must be installed in CI."
             exit 1
           fi
-      - name: Lint v0.3 evidence audit and benchmark additions
-        run: >-
-          ruff check
-          src/literature_evidence_mcp/methodology.py
-          src/literature_evidence_mcp/source_audit.py
-          src/literature_evidence_mcp/server.py
-          src/literature_evidence_mcp/benchmark.py
-          scripts/benchmark_roboto2.py
-          scripts/compare_search_engines.py
-          tests/test_methodology.py
-          tests/test_source_audit.py
-          tests/test_server_tools.py
-          tests/test_benchmark.py
-          tests/test_full_coverage_core.py
-          tests/test_full_coverage_methodology.py
-          tests/test_full_coverage_final.py
-          tests/test_quote_token_integrity.py
-          tests/test_metadata_disagreements.py
-          tests/test_doi_identity_guard.py
-          tests/test_native_adapters.py
-          tests/test_advanced_review.py
-          tests/test_prisma_flow.py
-          tests/test_pdf_source.py
-          tests/test_crossref_alerts.py
-          tests/test_go_cache.py
-          tests/test_cpp_random_wrapper.py
-          tests/test_gold_evaluation_protocol.py
-          tests/test_bm25_retrieval.py
-          src/literature_evidence_mcp/bm25_retrieval.py
-          src/literature_evidence_mcp/bibliography.py
-          src/literature_evidence_mcp/extended_search.py
-          src/literature_evidence_mcp/citation_traversal.py
-          src/literature_evidence_mcp/dual_track_audit.py
-          scripts/evaluation/dual_track_head_to_head.py
-          tests/test_dual_track_audit.py
-          tests/test_extended_search_citations.py
-          tests/test_bibliography.py
-          src/literature_evidence_mcp/evidence_nli.py
-          src/literature_evidence_mcp/nli_challenger.py
-          tests/test_nli_challenger_tool.py
-          tests/test_nli_challenger_benchmark.py
-          tests/test_evidence_nli.py
-          tests/test_nli_gold_report.py
-          tests/test_healthver_nli_protocol.py
-          scripts/evaluation/healthver_nli.py
-          scripts/evaluation/scifact_nli.py
-          scripts/evaluation/scifact_gold.py
-          scripts/evaluation/evidencebench_gold.py
-          scripts/evaluation/pin_dual_track_candidate_sources.py
-          tests/test_candidate_source_pins.py
-          scripts/evaluation/nfcorpus_fixed_bm25_exploratory.py
-          scripts/evaluation/vitaminc_three_pinned_exploratory.py
-          tests/test_two_dataset_exploratory.py
-          scripts/evaluation/aggregate_live_doi_smoke.py
-          scripts/evaluation/prepare_blinded_expert_packets.py
-          tests/test_live_competitor_blind_protocol.py
+      - name: Lint every tracked Python file
+        run: ruff check .
+      - name: Type-check the package
+        run: mypy
       - name: Check benchmark fixture tests
         run: pytest -q tests/test_methodology.py tests/test_source_audit.py tests/test_benchmark.py
       - name: Compile

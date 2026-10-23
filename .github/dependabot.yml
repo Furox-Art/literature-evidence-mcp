@@ -1,0 +1,41 @@
+version: 2
+updates:
+  # Every workflow pins actions to an immutable 40-hex commit SHA, so a moved
+  # tag cannot silently change what CI executes.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    open-pull-requests-limit: 2
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+    groups:
+      routine-actions:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+
+  # Runtime dependencies and the dev tool pins live in pyproject.toml.
+  - package-ecosystem: "pip"
+    directory: "/"
+    open-pull-requests-limit: 2
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "python"
+    commit-message:
+      prefix: "deps"
+    groups:
+      # Lockstep lint/type-check pins belong in their own PR: bumping them
+      # requires reviewing the rules the 100 percent coverage gate runs under.
+      production-dependencies:
+        dependency-type: "production"
+      development-dependencies:
+        dependency-type: "development"
