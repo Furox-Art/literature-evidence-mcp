@@ -10,7 +10,7 @@ _DECISIONS = ("include", "exclude")
 
 
 def TestOneInput(data: bytes) -> None:
-    fdp = atheris.FuzzDataProvider(data)
+    fdp = atheris.FuzzedDataProvider(data)
     records = []
     for _ in range(fdp.ConsumeIntInRange(0, 4)):
         reviewers = []
