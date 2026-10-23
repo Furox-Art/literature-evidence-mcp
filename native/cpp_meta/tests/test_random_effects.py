@@ -2,7 +2,6 @@
 import math
 
 import pytest
-
 from literature_evidence_cpp import leave_one_out_dl, random_effects_dl
 
 

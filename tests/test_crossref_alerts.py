@@ -10,12 +10,12 @@ class FakeResearch:
         return None
     async def retraction(self, doi):
         if doi.endswith("/a"):
-            return {"status": "RETRACTION_REPORTED", "updates": [
+            return {"status": "RETRACTION_REPORTED", "updated_by": [
                 {"type": "retraction"}, {"type": "correction"},
                 {"type": "unrecognized"}]}
         if doi.endswith("/b"):
-            return {"status": "NOT_VERIFIED", "updates": []}
-        return {"status": "NO_UPDATE_IN_CHECKED_METADATA", "updates": [
+            return {"status": "NOT_VERIFIED", "updated_by": []}
+        return {"status": "NO_UPDATE_IN_CHECKED_METADATA", "updated_by": [
             {"type": "expression-of-concern"}, {"type": "erratum"}]}
 
 

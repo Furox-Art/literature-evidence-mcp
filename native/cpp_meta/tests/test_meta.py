@@ -1,6 +1,8 @@
 import math
+
 import pytest
 from literature_evidence_cpp import fixed_effect
+
 
 def test_symmetric():
  r=fixed_effect([(1.0,.5),(2.0,.5)])

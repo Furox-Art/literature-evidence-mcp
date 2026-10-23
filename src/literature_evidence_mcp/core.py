@@ -32,6 +32,8 @@ PMCID_RE = re.compile(r"^PMC[0-9]{1,15}$", re.IGNORECASE)
 RETR_TYPES = {"retraction", "withdrawal", "removed"}
 MAX_QUERY = 600
 MAX_TEXT = 30_000
+MIN_QUOTE = 3
+MAX_QUOTE = 1000
 
 
 class ProviderError(RuntimeError):
@@ -61,6 +63,23 @@ def _limit(value: int, upper: int = 20) -> int:
 
 def _utcnow() -> str:
     return datetime.now(UTC).isoformat()
+
+
+def _update_rows(value: Any) -> list[dict[str, Any]]:
+    """Normalize a Crossref update relation; provider values are untrusted."""
+    if not isinstance(value, list):
+        return []
+    rows = []
+    for entry in value:
+        if not isinstance(entry, dict):
+            continue
+        updated = entry.get("updated")
+        date_parts = updated.get("date-parts") if isinstance(updated, dict) else None
+        rows.append({"type": str(entry.get("type") or "").lower(),
+                     "doi": entry.get("DOI"),
+                     "source": entry.get("source"),
+                     "date": date_parts})
+    return rows
 
 
 def _authors_crossref(record: dict) -> list[str]:
@@ -282,14 +301,20 @@ class ResearchClient:
         except ProviderError as exc:
             return {"doi": doi, "status": "NOT_VERIFIED", "error": str(exc),
                     "checked_at": _utcnow(), "provider": "crossref"}
-        updates = item.get("update-to") or []
-        normalized = [{"type": x.get("type"), "doi": x.get("DOI"),
-                       "source": x.get("source"), "date": x.get("updated", {}).get("date-parts")}
-                      for x in updates if isinstance(x, dict)]
-        retracts = [x for x in normalized if str(x.get("type", "")).lower() in RETR_TYPES]
-        status = ("RETRACTION_REPORTED" if retracts else
-                  "UPDATE_REPORTED" if normalized else "NO_UPDATE_IN_CHECKED_METADATA")
-        return {"doi": doi, "status": status, "updates": normalized,
+        # Crossref stores each relation on one side only: a notice carries
+        # "update-to" (this notice updates that work), while the updated work
+        # carries "updated-by". Reading only "update-to" misses retractions of
+        # the queried article entirely.
+        updates = _update_rows(item.get("update-to"))
+        updated_by = _update_rows(item.get("updated-by"))
+        retracted = any(x["type"] in RETR_TYPES for x in updated_by)
+        notice = any(x["type"] in RETR_TYPES for x in updates)
+        status = ("RETRACTION_REPORTED" if retracted else
+                  "RETRACTION_NOTICE_REPORTED" if notice else
+                  "UPDATE_REPORTED" if updates or updated_by else
+                  "NO_UPDATE_IN_CHECKED_METADATA")
+        return {"doi": doi, "status": status, "updates": updates,
+                "updated_by": updated_by,
                 "checked_at": _utcnow(), "provider": "crossref",
                 "notice": "Absence in Crossref metadata does not establish that a paper is unretracted."}
 
@@ -316,7 +341,7 @@ class ResearchClient:
         title = " ".join(root.findtext(".//article-title", default="").split())
         # Preserve a stable, source-addressable section/paragraph location for each quote.
         # JATS sections may nest. Iterate paragraphs once to prevent double counting.
-        segments = []
+        segments: list[dict[str, Any]] = []
         body = root.find(".//body")
         if body is not None:
             parents = {child: parent for parent in body.iter() for child in parent}
@@ -357,8 +382,9 @@ class ResearchClient:
                           " Source rights and scientific conclusions remain unverified."}
 
     async def source_quote(self, pmcid: str, quote_text: str) -> dict:
-        if not (1 <= len(quote_text.strip()) <= 1000):
-            raise ValueError("Quote length must be 1–1000 characters")
+        if not MIN_QUOTE <= len(quote_text.strip()) <= MAX_QUOTE:
+            raise ValueError(
+                f"Quote length must be {MIN_QUOTE}–{MAX_QUOTE} characters")
         full = await self.fulltext(pmcid)
         matches = []
         for item in full["spans"]:
@@ -381,8 +407,8 @@ class ResearchClient:
 
 def verify_quote(quote_text: str, source_text: str, source_id: str) -> dict:
     """Verifies only literal textual presence; never scientific validity."""
-    if not (1 <= len(quote_text.strip()) <= 1000):
-        raise ValueError("Quote length must be 1–1000 characters")
+    if not MIN_QUOTE <= len(quote_text.strip()) <= MAX_QUOTE:
+        raise ValueError(f"Quote length must be {MIN_QUOTE}–{MAX_QUOTE} characters")
     if not (1 <= len(source_text) <= 250_000):
         raise ValueError("Source text length must be 1–250000 characters")
     if not (1 <= len(source_id.strip()) <= 300):
@@ -455,7 +481,7 @@ class EvidenceLedger:
     """Append-only hash-chained JSONL; no tamper-proof claims against file replacement."""
 
     def __init__(self, file: str | Path | None = None):
-        self.file = Path(file or os.getenv("EVIDENCE_LEDGER_PATH", "evidence-ledger.jsonl"))
+        self.file = Path(file or os.getenv("EVIDENCE_LEDGER_PATH") or "evidence-ledger.jsonl")
         self._lock_path = str(self.file) + ".lock"
 
     @staticmethod
@@ -464,6 +490,15 @@ class EvidenceLedger:
         return hashlib.sha256(data.encode()).hexdigest()
 
     def verify(self) -> dict:
+        # Reading while another process appends could observe a partial line.
+        # The append path already holds this lock; only a reader needs to take
+        # it, and an absent ledger needs no lock at all.
+        if not self.file.exists():
+            return {"status": "VALID_EMPTY", "count": 0, "head": "0" * 64}
+        with FileLock(self._lock_path, timeout=15):
+            return self._verify_locked()
+
+    def _verify_locked(self) -> dict:
         prev, count = "0" * 64, 0
         if not self.file.exists():
             return {"status": "VALID_EMPTY", "count": 0, "head": prev}
@@ -483,7 +518,8 @@ class EvidenceLedger:
         if not isinstance(kind, str) or not re.fullmatch(r"[a-z_]{2,48}", kind):
             raise ValueError("Invalid evidence type")
         if not isinstance(payload, dict):
-            raise ValueError("Evidence payload must be an object")
+            # Callers rely on ValueError for every rejected append.
+            raise ValueError("Evidence payload must be an object")  # noqa: TRY004
         encoded = json.dumps(payload, ensure_ascii=False, allow_nan=False)
         if len(encoded.encode()) > 100_000:
             raise ValueError("Evidence payload exceeds limit")
@@ -493,7 +529,7 @@ class EvidenceLedger:
         self.file.parent.mkdir(parents=True, exist_ok=True)
         # FileLock synchronizes independent tool calls, processes and server instances.
         with FileLock(self._lock_path, timeout=15):
-            check = self.verify()
+            check = self._verify_locked()
             if check["status"] not in ("VALID", "VALID_EMPTY"):
                 raise ValueError("Refusing to append to corrupt ledger")
             entry = {"schema": "evidence-ledger-v1", "kind": kind,

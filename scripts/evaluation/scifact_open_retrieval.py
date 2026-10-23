@@ -11,9 +11,9 @@ import argparse
 import hashlib
 import json
 import math
-from pathlib import Path
 import random
 import re
+from pathlib import Path
 
 HASHES = {
     "corpus.jsonl": "b8d6c89624cb2ed74dee8938effc4f5d8bd2086887880af8110d64be4ceade62",

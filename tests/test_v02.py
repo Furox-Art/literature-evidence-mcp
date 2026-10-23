@@ -7,7 +7,7 @@ import hashlib
 import httpx
 import pytest
 
-from literature_evidence_mcp.core import ResearchClient, EvidenceLedger, ProviderError, CROSSREF
+from literature_evidence_mcp.core import CROSSREF, EvidenceLedger, ProviderError, ResearchClient
 
 
 @pytest.mark.asyncio
@@ -18,10 +18,9 @@ async def test_fulltext_stable_quote_provenance_and_nested_sections():
     <p>Exploratory associations were reported.</p></sec></sec>
     <p>Unsectioned paragraph.</p></body></article>'''
     async with httpx.AsyncClient(transport=httpx.MockTransport(
-            lambda _: httpx.Response(200, content=raw))) as http:
-        async with ResearchClient(http) as client:
-            record = await client.fulltext("PMC123")
-            result = await client.source_quote("PMC123", "primary outcome was null")
+            lambda _: httpx.Response(200, content=raw))) as http, ResearchClient(http) as client:
+        record = await client.fulltext("PMC123")
+        result = await client.source_quote("PMC123", "primary outcome was null")
     assert record["sha256_xml"] == hashlib.sha256(raw).hexdigest()
     assert record["paragraph_count"] == 3
     assert len(record["spans"]) == 3
@@ -40,9 +39,8 @@ async def test_fulltext_truncation_maintains_span_alignment():
     raw = (b"<article><body><sec><title>Methods</title><p>First evidence here.</p>"
            b"<p>Second evidence is later.</p></sec></body></article>")
     async with httpx.AsyncClient(transport=httpx.MockTransport(
-            lambda _: httpx.Response(200, content=raw))) as http:
-        async with ResearchClient(http) as client:
-            result = await client.fulltext("PMC123", max_chars=32)
+            lambda _: httpx.Response(200, content=raw))) as http, ResearchClient(http) as client:
+        result = await client.fulltext("PMC123", max_chars=32)
     assert result["truncated"] is True
     assert result["paragraph_count"] == 2
     assert result["spans"][0]["span_id"] == "PMC123:p1"
@@ -63,19 +61,17 @@ async def test_ledger_parallel_writers_preserve_chain(tmp_path):
 @pytest.mark.asyncio
 async def test_stream_capped_before_buffering():
     async with httpx.AsyncClient(transport=httpx.MockTransport(lambda _:
-            httpx.Response(200, content=b"x" * 2_000_001))) as http:
-        async with ResearchClient(http) as client:
-            with pytest.raises(ProviderError, match="too large"):
-                await client._get(CROSSREF, "/works")
+            httpx.Response(200, content=b"x" * 2_000_001))) as http, ResearchClient(http) as client:
+        with pytest.raises(ProviderError, match="too large"):
+            await client._get(CROSSREF, "/works")
 
 
 @pytest.mark.asyncio
 async def test_source_quote_missing_does_not_invent_scientific_verdict():
     raw = b"<article><body><sec><p>Null result.</p></sec></body></article>"
     async with httpx.AsyncClient(transport=httpx.MockTransport(
-            lambda _: httpx.Response(200, content=raw))) as http:
-        async with ResearchClient(http) as client:
-            result = await client.source_quote("PMC2", "statistically significant")
+            lambda _: httpx.Response(200, content=raw))) as http, ResearchClient(http) as client:
+        result = await client.source_quote("PMC2", "statistically significant")
     assert result["status"] == "NOT_VERIFIED"
     assert result["matched_spans"] == []
     assert result["scientific_claim_verified"] is False

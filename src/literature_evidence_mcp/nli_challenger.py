@@ -6,10 +6,11 @@ import importlib
 import os
 from functools import lru_cache
 from pathlib import Path
+from typing import Any
 
 from literature_evidence_mcp.evidence_nli import LABELS, decide
 
-CANDIDATES = {
+CANDIDATES: dict[str, dict[str, Any]] = {
     "fever_anli_deberta_base": {
         "id": "MoritzLaurer/DeBERTa-v3-base-mnli-fever-anli",
         "revision": "6f5cf0a2b59cabb106aca4c287eed12e357e90eb",

@@ -1,6 +1,8 @@
-import pytest
 import literature_evidence_rust as rust
+import pytest
+
 from literature_evidence_mcp.methodology import _locate
+
 
 @pytest.mark.parametrize("source,quote", [
  ("The treatment was insignificant.","significant"),

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -10,7 +11,6 @@ from rank_bm25 import BM25Okapi
 
 from literature_evidence_mcp.bm25_retrieval import rank_supplied_evidence
 from scripts.evaluation.scifact_open_retrieval import HASHES
-import hashlib
 
 TOKEN = re.compile(r"(?u)\b\w\w+\b")
 

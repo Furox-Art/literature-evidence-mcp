@@ -89,7 +89,7 @@ async def verify_citation(doi: str, claimed_title: str) -> dict:
 
 @mcp.tool()
 async def check_retraction(doi: str) -> dict:
-    """Inspect Crossref update-to and Retraction Watch-linked updates; absence is inconclusive."""
+    """Inspect Crossref updated-by/update-to and Retraction Watch-linked updates; absence is inconclusive."""
     async with ResearchClient() as researcher:
         return await researcher.retraction(doi)
 

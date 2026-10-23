@@ -11,7 +11,7 @@ An open-source **scientific literature and evidence provenance** MCP server.
 | `search_literature` | OpenAlex, Europe PMC, Crossref concurrent metadata search, DOI deduplication, provider error reporting. Search is non-exhaustive. |
 | `get_paper` | Crossref metadata, relations, publisher links. |
 | `verify_citation` | Exact normalized DOI/title metadata match, NOT content verification. |
-| `check_retraction` | Crossref `update-to` checks, including Retraction Watch updates where available. Absence is inconclusive. |
+| `check_retraction` | Crossref `updated-by` and `update-to` relations, including Retraction Watch updates where available. Absence is inconclusive. |
 | `read_fulltext` | Europe PMC/PMC XML for supplied PMCID; records section/paragraph-span IDs, offsets, XML and paragraph SHA-256, and truncation. No PDF page claims. |
 | `verify_source_quote` | Fetches Europe PMC JATS XML and returns direct matching paragraph IDs, section, and hashes; no scientific validity verdict. |
 | `verify_claim` | Deterministic literal text presence only. Does not prove scientific claim. |

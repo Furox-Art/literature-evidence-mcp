@@ -2,7 +2,10 @@
 import pytest
 
 from scripts.evaluation.scifact_open_retrieval import (
-    metrics, paired_difference, percentile_interval, tokenize,
+    metrics,
+    paired_difference,
+    percentile_interval,
+    tokenize,
 )
 
 

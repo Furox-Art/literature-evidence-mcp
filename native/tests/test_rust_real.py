@@ -1,6 +1,7 @@
 from literature_evidence_mcp import server
 from literature_evidence_mcp.methodology import _locate
 
+
 def test_real_rust_unicode_and_negative_prefix_parity():
     pairs = [
         ("αβ significant Δ", "significant"),

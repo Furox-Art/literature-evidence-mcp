@@ -185,8 +185,8 @@ async def test_quote_invalid_and_bounded_lookup():
         with pytest.raises(ValueError):
             await client.source_quote("PMC999", "")
     assert verify_quote("found", "found", "ref")["text_match"]
-    for quote, text, ref in [("a", "", "ref"), ("a", "body", ""),
-                             ("a" * 1001, "body", "ref")]:
+    for quote, text, ref in [("ab", "body", "ref"), ("a" * 1001, "body", "ref"),
+                             ("body", "", "ref"), ("body", "body", "")]:
         with pytest.raises(ValueError):
             verify_quote(quote, text, ref)
 

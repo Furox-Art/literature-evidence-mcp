@@ -1,5 +1,7 @@
 import math
+
 from literature_evidence_mcp import server
+
 
 def test_real_cpp_against_analytic_two_study_reference():
     data = [{"estimate": 1.0, "standard_error": 0.5},
