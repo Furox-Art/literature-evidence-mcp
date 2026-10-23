@@ -1,0 +1,19 @@
+# Non-modifying hooks only. No formatter or fixer runs here, so a pre-commit
+# run can never rewrite the tree; every hook either passes or reports a
+# violation for a human to fix.
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-yaml
+      - id: check-toml
+      - id: check-ast
+      - id: detect-private-key
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff 0.17.1 is the version pinned in the `dev` extra of pyproject.toml,
+    # which .github/workflows/ci.yml installs before running `ruff check .`.
+    rev: 38bfb07c0c64c304f47eb52090f8288150c77730  # v0.17.1
+    hooks:
+      - id: ruff

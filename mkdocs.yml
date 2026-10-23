@@ -1,0 +1,29 @@
+site_name: Literature Evidence MCP
+site_description: >-
+  Open-source, evidence-provenance-first scientific literature MCP server with
+  bibliographic traceability and evidence-audit tooling.
+site_author: Furox Scientific Toolkit
+repo_url: https://github.com/Furox-Art/literature-evidence-mcp
+repo_name: Furox-Art/literature-evidence-mcp
+copyright: Apache-2.0 licensed.
+
+docs_dir: docs
+
+# Several documents link to generated reports under ../reports/, which lives
+# outside docs_dir. Those links resolve on GitHub but not in the rendered site,
+# so downgrade that known case instead of failing the build.
+validation:
+  links:
+    not_found: info
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
