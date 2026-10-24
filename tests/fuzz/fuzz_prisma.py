@@ -1,6 +1,7 @@
 """Atheris harness for the two-reviewer PRISMA screening validator."""
 
 import sys
+from contextlib import suppress
 
 import atheris
 
@@ -30,10 +31,8 @@ def TestOneInput(data: bytes) -> None:
                 "reviewers": reviewers,
             }
         )
-    try:
+    with suppress(TypeError, ValueError):
         dual_screen(records)
-    except (TypeError, ValueError):
-        pass
 
 
 atheris.Setup(sys.argv, TestOneInput)
