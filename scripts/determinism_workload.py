@@ -9,6 +9,17 @@ from pathlib import Path
 from typing import Any
 
 
+def _rounded(value: Any) -> Any:
+    """Round floats recursively so compiler-level noise cannot fail the matrix gate."""
+    if isinstance(value, float):
+        return round(value, 12)
+    if isinstance(value, list):
+        return [_rounded(item) for item in value]
+    if isinstance(value, dict):
+        return {key: _rounded(item) for key, item in value.items()}
+    return value
+
+
 def main() -> None:
     repo_root = Path(__file__).resolve().parents[1]
     source_dir = repo_root / "src"
@@ -24,6 +35,10 @@ def main() -> None:
         verify_quote,
     )
     from literature_evidence_mcp.methodology import audit_statistical_fields
+    from literature_evidence_mcp.native import (
+        cpp_fixed_effect_meta_analysis,
+        cpp_random_effects_meta,
+    )
     from literature_evidence_mcp.prisma import dual_screen
 
     papers = [
@@ -49,6 +64,13 @@ def main() -> None:
         "A power analysis fixed the sample size, and the trial was preregistered. "
         "We report a 95% CI and apply Bonferroni correction for multiple testing."
     )
+    meta_studies = [
+        {"estimate": 0.85, "standard_error": 0.12},
+        {"estimate": -0.4, "standard_error": 0.25},
+        {"estimate": 0.3, "standard_error": 0.18},
+        {"estimate": 1.2, "standard_error": 0.3},
+        {"estimate": 0.05, "standard_error": 0.2},
+    ]
     payload: dict[str, Any] = {
         "dois": [
             normalize_doi(value)
@@ -121,9 +143,20 @@ def main() -> None:
                 },
             ]
         ),
+        "meta": {
+            "fixed": _rounded(cpp_fixed_effect_meta_analysis(meta_studies)),
+            "random": _rounded(cpp_random_effects_meta(meta_studies, leave_one_out=True)),
+        },
     }
     if not payload["quote"]["text_match"] or payload["prisma"]["included_records"] != 1:
         raise SystemExit("workload produced unverifiable results; it is vacuous")
+    if payload["meta"]["fixed"]["status"] != "NUMERICAL_CALCULATION_ONLY":
+        if os.environ.get("DETERMINISM_REQUIRE_NATIVE") == "1":
+            raise SystemExit(
+                "native C++ meta module is required but not installed; build native/cpp_meta"
+            )
+    elif len(payload["meta"]["random"]["leave_one_out"]) != len(meta_studies):
+        raise SystemExit("leave-one-out did not cover every study; the workload is vacuous")
     artifact_dir = os.environ.get("DETERMINISM_ARTIFACT_DIR")
     if artifact_dir:
         Path(artifact_dir, "payload.json").write_text(

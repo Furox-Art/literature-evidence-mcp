@@ -28,6 +28,16 @@ tracked in this file.
   type-checks the package with mypy; ruff and mypy are pinned in the dev extra.
 - Add Dependabot, OpenSSF Scorecard, dependency review and `CITATION.cff`.
 
+### Determinism
+
+- The determinism workload now samples the compiled C++ meta-analysis binding
+  (`fixed_effect`, `random_effects_dl` and leave-one-out) instead of only the
+  pure-Python core, and the matrix job builds `native/cpp_meta` on all three
+  operating systems and fails when the extension is missing or a leave-one-out
+  report is dropped. C++ reports are rounded to 12 decimals before hashing, so
+  cross-compiler float noise cannot trip the cross-OS gate while systematic
+  drift still does.
+
 ## 0.5.1 - 2026-10-21
 
 ### Release integrity
