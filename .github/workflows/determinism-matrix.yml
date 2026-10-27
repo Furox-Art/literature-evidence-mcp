@@ -38,8 +38,25 @@ jobs:
       - name: Install package
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e .
+          python -m pip install -e . pybind11
+      - name: Build the native C++ meta module
+        shell: bash
+        run: |
+          set -euo pipefail
+          cmake -S native/cpp_meta -B native/cpp_meta/build \
+            -Dpybind11_DIR="$(python -m pybind11 --cmakedir)" \
+            -DPython_EXECUTABLE="$(python -c 'import sys; print(sys.executable)')"
+          cmake --build native/cpp_meta/build --config Release --parallel 2
+          mkdir -p native-modules
+          find native/cpp_meta/build \( -name 'literature_evidence_cpp*.so' -o -name 'literature_evidence_cpp*.pyd' \) -exec cp {} native-modules/ \;
+      - name: Verify the native module imports
+        env:
+          PYTHONPATH: ${{ github.workspace }}/native-modules
+        run: python -c "import literature_evidence_cpp; print(literature_evidence_cpp.__file__)"
       - name: Run determinism matrix
+        env:
+          PYTHONPATH: ${{ github.workspace }}/native-modules
+          DETERMINISM_REQUIRE_NATIVE: "1"
         run: >
           python scripts/determinism_matrix.py run
           --workload scripts/determinism_workload.py
