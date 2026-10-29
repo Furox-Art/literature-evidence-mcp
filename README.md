@@ -382,10 +382,10 @@ No npm registry publication.
 
 ## Related projects
 
-Part of the Furox scientific-computing portfolio — eleven independently versioned projects that pair agent-facing interfaces (MCP servers and Agent Skills) with deterministic, fail-closed verification.
+Part of the Furox scientific-computing portfolio: independently versioned projects that pair agent-facing interfaces (MCP servers and Agent Skills) with deterministic, fail-closed verification.
 
 - [scientific-computing-system](https://github.com/Furox-Art/scientific-computing-system) — zero-dependency Python numerics with run manifests.
-- [scientific-computing-system-2.0](https://github.com/Furox-Art/scientific-computing-system-2.0) — NumPy/SciPy/pandas build with replayable fit provenance.
+- [scientific-computing-system-2.0](https://github.com/Furox-Art/scientific-computing-system-2.0) — NumPy/SciPy/pandas build with replayable fit records.
 - [scientific-toolkit](https://github.com/Furox-Art/scientific-toolkit) — MCP gateway over nine research tools.
 - [axiomize](https://github.com/Furox-Art/axiomize) — unit-checked modeling engine with SBML, CellML and Modelica export.
 - [axiomize-quantum-skills-2.0](https://github.com/Furox-Art/axiomize-quantum-skills-2.0) — modeling engine plus quantum-inspired reasoning bundle.
