@@ -379,3 +379,18 @@ clinically reliable or a scientific truth verifier.
 
 A third, explicitly exploratory [HealthFC syntax-only question normalization audit](docs/healthfc_syntax_only_audit.md) uses only 511 conservatively transformed questions; 239 are excluded and meaning equivalence is **not expert-verified**. On this unreviewed subset, FEVER/ANLI accuracy was **70.25%** versus original **59.30%**; this is **not confirmatory superiority**. Original/transformed CC BY-NC-ND texts are not published.
 No npm registry publication.
+
+## Related projects
+
+Part of the Furox scientific-computing portfolio: independently versioned projects that pair agent-facing interfaces (MCP servers and Agent Skills) with deterministic, fail-closed verification.
+
+- [scientific-computing-system](https://github.com/Furox-Art/scientific-computing-system) — zero-dependency Python numerics with run manifests.
+- [scientific-computing-system-2.0](https://github.com/Furox-Art/scientific-computing-system-2.0) — NumPy/SciPy/pandas build with replayable fit records.
+- [scientific-toolkit](https://github.com/Furox-Art/scientific-toolkit) — MCP gateway over nine research tools.
+- [axiomize](https://github.com/Furox-Art/axiomize) — unit-checked modeling engine with SBML, CellML and Modelica export.
+- [axiomize-quantum-skills-2.0](https://github.com/Furox-Art/axiomize-quantum-skills-2.0) — modeling engine plus quantum-inspired reasoning bundle.
+- [quantum-reasoning-skill](https://github.com/Furox-Art/quantum-reasoning-skill) — agent skill that keeps competing hypotheses alive.
+- [plan-auditor](https://github.com/Furox-Art/plan-auditor) — evidence-based completion gate for coding agents.
+- [nomosguard](https://github.com/Furox-Art/nomosguard) — deterministic security decision layer with a hash-chained ledger.
+- [eq-layer](https://github.com/Furox-Art/eq-layer) — interaction-policy layer that decides how an agent speaks.
+- [repocraft](https://github.com/Furox-Art/repocraft) — byte-deterministic project scaffolding.

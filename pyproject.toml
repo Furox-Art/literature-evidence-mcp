@@ -9,7 +9,19 @@ description = "Open-source, evidence-provenance-first scientific literature MCP 
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
-keywords = ["mcp", "scientific-literature", "research", "doi", "provenance"]
+classifiers = [
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Information Analysis",
+]
+keywords = ["mcp", "mcp-server", "scientific-literature", "research", "doi", "provenance", "openalex", "europe-pmc", "crossref", "systematic-review", "prisma", "retraction-checking", "evidence-ledger", "fact-checking", "bm25", "nli", "meta-analysis"]
 authors = [{name = "Furox Scientific Toolkit"}]
 dependencies = ["mcp>=2,<3", "httpx>=0.27,<1", "defusedxml>=0.7.1,<1", "filelock>=3.12,<5", "pdfplumber>=0.11,<1"]
 
@@ -17,6 +29,13 @@ dependencies = ["mcp>=2,<3", "httpx>=0.27,<1", "defusedxml>=0.7.1,<1", "filelock
 dev = ["pytest>=8,<10", "pytest-asyncio>=0.24,<2", "pytest-cov>=6,<8", "ruff==0.17.2", "mypy>=1.10,<3", "build>=1,<2", "reportlab>=4,<6"]
 retrieval = ["rank-bm25==0.2.2"]
 nli = ["torch>=2.4,<3", "transformers>=4.45,<6", "sentencepiece>=0.2,<1", "safetensors>=0.4,<1"]
+
+[project.urls]
+Homepage = "https://github.com/Furox-Art/literature-evidence-mcp"
+Repository = "https://github.com/Furox-Art/literature-evidence-mcp"
+Issues = "https://github.com/Furox-Art/literature-evidence-mcp/issues"
+Documentation = "https://github.com/Furox-Art/literature-evidence-mcp/tree/main/docs"
+Changelog = "https://github.com/Furox-Art/literature-evidence-mcp/releases"
 
 [project.scripts]
 literature-evidence-mcp = "literature_evidence_mcp.server:main"
