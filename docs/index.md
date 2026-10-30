@@ -13,13 +13,16 @@ abstract or citation alone, and its methodology checks are screening aids, not
 formal risk-of-bias judgments. Search results are non-exhaustive, and absence of
 a retraction notice is not a clearance certificate.
 
-The current release is v0.5.1. It requires Python 3.11 or later and is installed
-from source:
+The current release is v0.5.1. It requires Python 3.11 or later and is published
+on PyPI:
 
 ```bash
-python -m pip install -e '.[dev]'
+python -m pip install literature-evidence-mcp
 literature-evidence-mcp
 ```
+
+To work on the source instead, install the checkout with
+`python -m pip install -e '.[dev]'`.
 
 ## Documentation
 

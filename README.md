@@ -31,6 +31,13 @@ An open-source **scientific literature and evidence provenance** MCP server.
 Requires Python 3.11 or later.
 
 ```sh
+python -m pip install literature-evidence-mcp
+literature-evidence-mcp           # stdio; no terminal output is expected
+```
+
+To work on the source instead:
+
+```sh
 python -m venv .venv
 . .venv/bin/activate                     # Linux/macOS
 # Windows PowerShell: .\.venv\Scripts\Activate.ps1
