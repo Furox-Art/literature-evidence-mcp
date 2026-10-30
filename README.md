@@ -371,8 +371,9 @@ data and large model weights are never published to the repository.
 ## Explicitly selected experimental NLI alternatives (MCP tool 35 of 35)
 
 Two additional pinned third-party NLI checkpoints are now available
-**only through an explicitly selected, local, offline challenger tool**,
-with model files, tokenizer and configuration SHA-256 validated.
+**only through an explicitly selected, local, offline
+`nli_assess_challenger_evidence` challenger tool**, with model files,
+tokenizer and configuration SHA-256 validated.
 The current scientific model and original tools are unchanged.
 
 Exploratory HealthVer comparison: FEVER/ANLI DeBERTa-base had **48.99%
