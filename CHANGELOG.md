@@ -7,6 +7,17 @@ tracked in this file.
 
 ### Fixed
 
+- `check_retraction` recognizes the Crossref update types `partial_retraction`
+  and `removal` alongside `retraction`, `withdrawal` and `removed`, in both
+  relation directions; a partially retracted or removed work no longer reports
+  as a generic update.
+- `EvidenceLedger.append` no longer re-hashes the whole chain on every write
+  (O(n²) over a session). The append gate verifies only the newest link — the
+  tail entry, its predecessor and the bond between them — under the same lock,
+  and still refuses corrupt ledgers. `verify()` remains the full-chain audit.
+- `verify_source_quote` / `source_quote` scan abstracts, table cells and figure
+  captions in addition to body paragraphs, without double counting, and accept
+  `max_chars` so the 30k retrieval truncation is configurable instead of fixed.
 - `check_retraction` now reads both Crossref relation directions. A retracted
   article carries `updated-by`; a retraction notice carries `update-to`.
   Reading only `update-to` reported "no update" for the retracted article

@@ -13,7 +13,7 @@ An open-source **scientific literature and evidence provenance** MCP server.
 | `verify_citation` | Exact normalized DOI/title metadata match, NOT content verification. |
 | `check_retraction` | Crossref `updated-by` and `update-to` relations, including Retraction Watch updates where available. Absence is inconclusive. |
 | `read_fulltext` | Europe PMC/PMC XML for supplied PMCID; records section/paragraph-span IDs, offsets, XML and paragraph SHA-256, and truncation. No PDF page claims. |
-| `verify_source_quote` | Fetches Europe PMC JATS XML and returns direct matching paragraph IDs, section, and hashes; no scientific validity verdict. |
+| `verify_source_quote` | Fetches Europe PMC JATS XML and returns direct matching passage IDs (body paragraphs, abstracts, table cells and figure captions), section, and hashes; `max_chars` configures retrieval truncation; no scientific validity verdict. |
 | `verify_claim` | Deterministic literal text presence only. Does not prove scientific claim. |
 | `assess_methodology` | Transparent keyword/phrase screening; NOT risk-of-bias evaluation. |
 | `audit_methodology` | Outcome-specific source-anchored HUMAN-SUPPLIED annotation validation. Flags untraceable/contradictory evidence; never infers formal RoB2/ROBINS-I judgments. |

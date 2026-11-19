@@ -45,7 +45,7 @@ class FakeResearchClient:
     async def fulltext(self, pmcid, max_chars=30000):
         return _fulltext()
 
-    async def source_quote(self, pmcid, quote):
+    async def source_quote(self, pmcid, quote, max_chars=30000):
         return {"pmcid": pmcid, "quote": quote, "status": "TEXTUAL_MATCH_ONLY"}
 
     async def find_assets(self, doi):
