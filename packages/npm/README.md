@@ -6,10 +6,12 @@ It does **not** reimplement scientific evaluations or make correctness claims. A
 
 ## Install and run
 
-**Python 3.11+ and Node.js 22+ are both required.** The Python core is published on PyPI; the npm adapter has no registry release yet:
+**Python 3.11+ and Node.js 22+ are both required.** Install the Python core and npm adapter:
 
 ```sh
 python -m pip install literature-evidence-mcp
+npm install -g @furox-art/literature-evidence-mcp
+literature-evidence-mcp-ts
 ```
 
 From a repository checkout, install the adapter locally:
