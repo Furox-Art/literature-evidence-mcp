@@ -6,7 +6,7 @@ It does **not** reimplement scientific evaluations or make correctness claims. A
 
 ## Install and run
 
-**Python 3.11+ and Node.js 22+ are both required.** The Python core is published on PyPI and the npm adapter is published as `literature-evidence-mcp`:
+**Python 3.11+ and Node.js 22+ are both required.** The Python core is published on PyPI; the npm adapter uses the unscoped name `literature-evidence-mcp`:
 
 ```sh
 python -m pip install literature-evidence-mcp

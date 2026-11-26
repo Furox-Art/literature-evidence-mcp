@@ -178,7 +178,7 @@ syntax/verification separation, missing-field honesty and conflict flags. It
 closes an earlier documented reference-export feature gap without adding a
 source provider or asserting scientific accuracy. See
 [reference export and reproducibility](docs/bibliography_export.md).
-No Zotero sync/account integration. The Node adapter is published on npm as `literature-evidence-mcp`.
+No Zotero sync/account integration. The Node adapter uses the unscoped npm name `literature-evidence-mcp`.
 
 ## License and contributions
 
@@ -239,7 +239,7 @@ pytest -q --cov=literature_evidence_mcp --cov-branch --cov-report=term-missing -
 
 An optional **TypeScript v2 MCP stdio front end** is available under [`packages/npm`](packages/npm). It dynamically discovers the Python server's available MCP tools (35 in v0.5.1), forwards their input schemas and result/error statuses unchanged, and keeps all scientific decisions in the Python core. It provides a Node/npm integration point without rewriting or duplicating the scientific methodology. **Both Python and Node.js are required; this is not a standalone TypeScript scientific engine.**
 
-Install the published adapter (Python 3.11+ and Node.js 22+ are both required):
+Install the adapter (Python 3.11+ and Node.js 22+ are both required):
 
 ```sh
 python -m pip install literature-evidence-mcp
@@ -256,7 +256,7 @@ npm run --prefix packages/npm build
 LITERATURE_EVIDENCE_PYTHON=python3 node packages/npm/dist/cli.js
 ```
 
-Windows users should point `LITERATURE_EVIDENCE_PYTHON` to their installed Python executable. The npm package is published as `literature-evidence-mcp`; **a successful CI run does not imply a new release was published**. The Python test gate remains 100% statement/branch coverage; a separate Node.js CI job checks real client-to-Python MCP protocol behavior and **100% TypeScript line/branch/function coverage**, plus package packing. The opt-in Rust text matcher was added in v0.4 (not in the original TypeScript adapter release).
+Windows users should point `LITERATURE_EVIDENCE_PYTHON` to their installed Python executable. The npm package name is `literature-evidence-mcp`; **a successful CI run does not imply a release was published**. The Python test gate remains 100% statement/branch coverage; a separate Node.js CI job checks real client-to-Python MCP protocol behavior and **100% TypeScript line/branch/function coverage**, plus package packing. The opt-in Rust text matcher was added in v0.4 (not in the original TypeScript adapter release).
 
 ## Parallel native accelerators / numerical component (v0.4)
 
