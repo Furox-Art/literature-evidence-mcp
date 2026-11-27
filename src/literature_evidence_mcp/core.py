@@ -29,7 +29,7 @@ SEMANTIC_SCHOLAR = "https://api.semanticscholar.org"
 USER_AGENT = f"LiteratureEvidenceMCP/{__version__} (scholarly-metadata-client)"
 DOI_RE = re.compile(r"^10\.\d{4,9}/\S{1,240}$", re.IGNORECASE)
 PMCID_RE = re.compile(r"^PMC[0-9]{1,15}$", re.IGNORECASE)
-RETR_TYPES = {"retraction", "withdrawal", "removed"}
+RETR_TYPES = {"retraction", "withdrawal", "removed", "partial_retraction", "removal"}
 MAX_QUERY = 600
 MAX_TEXT = 30_000
 MIN_QUOTE = 3
@@ -341,14 +341,43 @@ class ResearchClient:
         title = " ".join(root.findtext(".//article-title", default="").split())
         # Preserve a stable, source-addressable section/paragraph location for each quote.
         # JATS sections may nest. Iterate paragraphs once to prevent double counting.
+        # Quotes may also live in abstracts, table cells and figure captions, so
+        # scan those too; a <p> already emitted is never counted a second time.
         segments: list[dict[str, Any]] = []
+        emitted: set[int] = set()
+
+        def add_segment(text: str, section: str) -> None:
+            text = " ".join(text.split())
+            if not text:
+                return
+            index = len(segments) + 1
+            segments.append({"span_id": f"{pmcid}:p{index}", "section": section,
+                             "paragraph_index": index, "text": text,
+                             "sha256_text": hashlib.sha256(text.encode()).hexdigest()})
+
+        def float_label(element: Any, default: str) -> str:
+            label = element.find("label")
+            if label is not None:
+                text = " ".join("".join(label.itertext()).split())
+                if text:
+                    return text
+            return default
+
         body = root.find(".//body")
+        # Abstracts sit in front matter, outside <body>; scan them explicitly.
+        for abstract in root.iter("abstract"):
+            for paragraph in abstract.iter("p"):
+                emitted.add(id(paragraph))
+                add_segment("".join(paragraph.itertext()), "Abstract")
         if body is not None:
             parents = {child: parent for parent in body.iter() for child in parent}
             for paragraph in body.iter("p"):
+                if id(paragraph) in emitted:
+                    continue
                 paragraph_text = " ".join("".join(paragraph.itertext()).split())
                 if not paragraph_text:
                     continue
+                emitted.add(id(paragraph))
                 # Walk the JATS tree using parent lookup; do not fabricate PDF page numbers.
                 current = paragraph
                 section = None
@@ -360,10 +389,23 @@ class ResearchClient:
                 sec_title = (" ".join("".join(section.find("title").itertext()).split())
                              if section is not None and section.find("title") is not None
                              else "Unsectioned body")
-                index = len(segments) + 1
-                segments.append({"span_id": f"{pmcid}:p{index}", "section": sec_title,
-                                 "paragraph_index": index, "text": paragraph_text,
-                                 "sha256_text": hashlib.sha256(paragraph_text.encode()).hexdigest()})
+                add_segment(paragraph_text, sec_title)
+        # Table cell text is not inside <p>, and captions/footnotes can live
+        # outside <body> (for example in back matter). Scan floats once each.
+        for wrapper in root.iter("table-wrap"):
+            label = float_label(wrapper, "Table")
+            for paragraph in wrapper.iter("p"):
+                if id(paragraph) not in emitted:
+                    emitted.add(id(paragraph))
+                    add_segment("".join(paragraph.itertext()), label)
+            add_segment(" ".join("".join(table.itertext()) for table in wrapper.iter("table")),
+                        label)
+        for figure in root.iter("fig"):
+            label = float_label(figure, "Figure")
+            for paragraph in figure.iter("p"):
+                if id(paragraph) not in emitted:
+                    emitted.add(id(paragraph))
+                    add_segment("".join(paragraph.itertext()), label)
         joined, spans = "", []
         for segment in segments:
             chunk = ("\n\n" if joined else "") + segment["section"] + ": " + segment["text"]
@@ -378,14 +420,15 @@ class ResearchClient:
                 "paragraph_count": len(segments),
                 "status": "FULLTEXT_ACCESSED_NOT_SCIENTIFICALLY_VERIFIED",
                 "sha256_xml": hashlib.sha256(raw).hexdigest(), "checked_at": _utcnow(),
-                "notice": "Each pN identifies a paragraph in this retrieved XML only, not a PDF page."
+                "notice": "Each pN identifies a text passage in this retrieved XML only, not a PDF page."
                           " Source rights and scientific conclusions remain unverified."}
 
-    async def source_quote(self, pmcid: str, quote_text: str) -> dict:
+    async def source_quote(self, pmcid: str, quote_text: str,
+                           max_chars: int = MAX_TEXT) -> dict:
         if not MIN_QUOTE <= len(quote_text.strip()) <= MAX_QUOTE:
             raise ValueError(
                 f"Quote length must be {MIN_QUOTE}–{MAX_QUOTE} characters")
-        full = await self.fulltext(pmcid)
+        full = await self.fulltext(pmcid, max_chars)
         matches = []
         for item in full["spans"]:
             span = _locate(item["text"], quote_text)
@@ -514,6 +557,46 @@ class EvidenceLedger:
             return {"status": "TAMPER_OR_CORRUPTION_DETECTED", "line": count + 1}
         return {"status": "VALID", "count": count, "head": prev}
 
+    def _tail_state_locked(self) -> dict:
+        """Verify only the newest chain link instead of re-hashing every entry.
+
+        Appending needs a trustworthy head and count, not a full audit: the
+        newest record must hash correctly and chain to its predecessor (or to
+        the genesis zero hash), and the predecessor must hash correctly too.
+        Older links are audited by verify(), which still re-hashes the whole
+        chain. Anything else fails closed. This keeps append O(1) in hashing
+        work instead of re-verifying the full chain on every write.
+        """
+        prev, count = "0" * 64, 0
+        if not self.file.exists():
+            return {"status": "VALID_EMPTY", "count": 0, "head": prev}
+        tail: list[str] = []
+        try:
+            with self.file.open(encoding="utf-8") as file:
+                for line in file:
+                    count += 1
+                    tail.append(line)
+                    if len(tail) > 2:
+                        tail.pop(0)
+            if tail:
+                record = json.loads(tail[-1])
+                digest = record.pop("entry_hash")
+                if self._hash(record) != digest:
+                    return {"status": "TAMPER_DETECTED", "line": count}
+                expected = prev
+                if len(tail) == 2:
+                    predecessor = json.loads(tail[0])
+                    predecessor_digest = predecessor.pop("entry_hash")
+                    if self._hash(predecessor) != predecessor_digest:
+                        return {"status": "TAMPER_DETECTED", "line": count - 1}
+                    expected = predecessor_digest
+                if record.get("previous_hash") != expected:
+                    return {"status": "TAMPER_DETECTED", "line": count}
+                prev = digest
+        except (OSError, ValueError, KeyError, TypeError, AttributeError):
+            return {"status": "TAMPER_OR_CORRUPTION_DETECTED", "line": count}
+        return {"status": "VALID" if count else "VALID_EMPTY", "count": count, "head": prev}
+
     async def append(self, kind: str, payload: dict) -> dict:
         if not isinstance(kind, str) or not re.fullmatch(r"[a-z_]{2,48}", kind):
             raise ValueError("Invalid evidence type")
@@ -529,7 +612,7 @@ class EvidenceLedger:
         self.file.parent.mkdir(parents=True, exist_ok=True)
         # FileLock synchronizes independent tool calls, processes and server instances.
         with FileLock(self._lock_path, timeout=15):
-            check = self._verify_locked()
+            check = self._tail_state_locked()
             if check["status"] not in ("VALID", "VALID_EMPTY"):
                 raise ValueError("Refusing to append to corrupt ledger")
             entry = {"schema": "evidence-ledger-v1", "kind": kind,

@@ -102,10 +102,11 @@ async def read_fulltext(pmcid: str, max_chars: int = 30000) -> dict:
 
 
 @mcp.tool()
-async def verify_source_quote(pmcid: str, quote: str) -> dict:
-    """Retrieve Europe PMC full text and locate quote in source paragraphs; NOT a scientific verdict."""
+async def verify_source_quote(pmcid: str, quote: str, max_chars: int = 30000) -> dict:
+    """Retrieve Europe PMC full text and locate quote in source paragraphs, abstracts,
+    tables and figure captions; max_chars configures retrieval truncation. NOT a scientific verdict."""
     async with ResearchClient() as researcher:
-        return await researcher.source_quote(pmcid, quote)
+        return await researcher.source_quote(pmcid, quote, max_chars)
 
 
 @mcp.tool()
