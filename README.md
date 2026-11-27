@@ -13,7 +13,7 @@ An open-source **scientific literature and evidence provenance** MCP server.
 | `verify_citation` | Exact normalized DOI/title metadata match, NOT content verification. |
 | `check_retraction` | Crossref `updated-by` and `update-to` relations, including Retraction Watch updates where available. Absence is inconclusive. |
 | `read_fulltext` | Europe PMC/PMC XML for supplied PMCID; records section/paragraph-span IDs, offsets, XML and paragraph SHA-256, and truncation. No PDF page claims. |
-| `verify_source_quote` | Fetches Europe PMC JATS XML and returns direct matching paragraph IDs, section, and hashes; no scientific validity verdict. |
+| `verify_source_quote` | Fetches Europe PMC JATS XML and returns direct matching passage IDs (body paragraphs, abstracts, table cells and figure captions), section, and hashes; `max_chars` configures retrieval truncation; no scientific validity verdict. |
 | `verify_claim` | Deterministic literal text presence only. Does not prove scientific claim. |
 | `assess_methodology` | Transparent keyword/phrase screening; NOT risk-of-bias evaluation. |
 | `audit_methodology` | Outcome-specific source-anchored HUMAN-SUPPLIED annotation validation. Flags untraceable/contradictory evidence; never infers formal RoB2/ROBINS-I judgments. |
@@ -178,7 +178,7 @@ syntax/verification separation, missing-field honesty and conflict flags. It
 closes an earlier documented reference-export feature gap without adding a
 source provider or asserting scientific accuracy. See
 [reference export and reproducibility](docs/bibliography_export.md).
-No Zotero sync/account integration and no npm Registry release.
+No Zotero sync/account integration. The Node adapter uses the unscoped npm name `literature-evidence-mcp`.
 
 ## License and contributions
 
@@ -239,7 +239,15 @@ pytest -q --cov=literature_evidence_mcp --cov-branch --cov-report=term-missing -
 
 An optional **TypeScript v2 MCP stdio front end** is available under [`packages/npm`](packages/npm). It dynamically discovers the Python server's available MCP tools (35 in v0.5.1), forwards their input schemas and result/error statuses unchanged, and keeps all scientific decisions in the Python core. It provides a Node/npm integration point without rewriting or duplicating the scientific methodology. **Both Python and Node.js are required; this is not a standalone TypeScript scientific engine.**
 
-From a checked-out repository:
+Install the adapter (Python 3.11+ and Node.js 22+ are both required):
+
+```sh
+python -m pip install literature-evidence-mcp
+npm install -g literature-evidence-mcp
+literature-evidence-mcp-ts
+```
+
+Or, from a checked-out repository:
 
 ```sh
 python -m pip install -e .
@@ -248,7 +256,7 @@ npm run --prefix packages/npm build
 LITERATURE_EVIDENCE_PYTHON=python3 node packages/npm/dist/cli.js
 ```
 
-Windows users should point `LITERATURE_EVIDENCE_PYTHON` to their installed Python executable. The npm package is prepared for publication; **a successful npm registry publication is not implied** by CI success. The Python test gate remains 100% statement/branch coverage; a separate Node.js CI job checks real client-to-Python MCP protocol behavior and **100% TypeScript line/branch/function coverage**, plus package packing. The opt-in Rust text matcher was added in v0.4 (not in the original TypeScript adapter release).
+Windows users should point `LITERATURE_EVIDENCE_PYTHON` to their installed Python executable. The npm package name is `literature-evidence-mcp`; **a successful CI run does not imply a release was published**. The Python test gate remains 100% statement/branch coverage; a separate Node.js CI job checks real client-to-Python MCP protocol behavior and **100% TypeScript line/branch/function coverage**, plus package packing. The opt-in Rust text matcher was added in v0.4 (not in the original TypeScript adapter release).
 
 ## Parallel native accelerators / numerical component (v0.4)
 
@@ -399,6 +407,6 @@ Part of the Furox scientific-computing portfolio: independently versioned projec
 - [axiomize-quantum-skills-2.0](https://github.com/Furox-Art/axiomize-quantum-skills-2.0) — modeling engine plus quantum-inspired reasoning bundle.
 - [quantum-reasoning-skill](https://github.com/Furox-Art/quantum-reasoning-skill) — agent skill that keeps competing hypotheses alive.
 - [plan-auditor](https://github.com/Furox-Art/plan-auditor) — evidence-based completion gate for coding agents.
-- [nomosguard](https://github.com/Furox-Art/nomosguard) — deterministic security decision layer with a hash-chained ledger.
+- [nomosguard](https://github.com/Furox-Art/evidence-ledger-policy-gate) — deterministic security decision layer with a hash-chained ledger.
 - [eq-layer](https://github.com/Furox-Art/eq-layer) — interaction-policy layer that decides how an agent speaks.
-- [repocraft](https://github.com/Furox-Art/repocraft) — byte-deterministic project scaffolding.
+- [repocraft](https://github.com/Furox-Art/deterministic-recipe-scaffolder) — byte-deterministic project scaffolding.
